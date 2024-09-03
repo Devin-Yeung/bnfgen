@@ -1,0 +1,74 @@
+use crate::token::{Token, LexicalError};
+use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind};
+
+// grammar start
+grammar;
+
+// bridge the lexer
+extern {
+  type Location = usize;
+  type Error = LexicalError;
+
+  enum Token {
+    "{" => Token::LBrace,
+    "}" => Token::RBrace,
+    "|" => Token::Or,
+    "," => Token::Comma,
+    "::=" => Token::Def,
+    ";" => Token::Semi,
+    "terminal" => Token::Terminal(<String>),
+    "nonterminal" => Token::NonTerminal(<String>),
+    "int" => Token::Int(<usize>),
+  }
+}
+
+pub RawGrammar: RawGrammar = {
+    <_l: @L> <rules: Rule*> <_r: @R> => {
+        RawGrammar {
+            rules,
+        }
+    }
+};
+
+Rule: Rule = {
+    <name: "nonterminal"> "::=" <alternatives: Alternatives> ";" => {
+        Rule {
+            name,
+            alternatives,
+        }
+    }
+};
+
+Or<T>: Vec<T> = {
+    <mut v:(<T> "|")*> <e:T?> => match e {
+        None => v,
+        Some(e) => {
+            v.push(e);
+            v
+        }
+    }
+};
+
+Alternatives = Or<Alternative>;
+
+Alternative: Alternative = {
+    <weight: "int"?> <symbols: Symbol+> => {
+        Alternative {
+            weight: weight.unwrap_or(1),
+            symbols,
+        }
+    }
+};
+
+Symbol: Symbol = {
+    "terminal" => {
+        Symbol {
+            kind: SymbolKind::Terminal(<>)
+        }
+    },
+    "nonterminal" => {
+        Symbol {
+            kind: SymbolKind::NonTerminal(<>)
+        }
+    },
+};

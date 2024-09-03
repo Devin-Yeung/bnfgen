@@ -31,7 +31,7 @@ expression: tokens
     Ok(
         (
             25,
-            OR,
+            Or,
             26,
         ),
     ),

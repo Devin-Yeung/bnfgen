@@ -11,15 +11,15 @@ pub enum Token {
     #[token("}")]
     RBrace,
     #[token("|")]
-    OR,
+    Or,
     #[token(",")]
-    COMMA,
+    Comma,
     #[token("::=")]
     Def,
     #[token(";")]
     Semi,
-    #[regex("[0-9]+", |lex| lex.slice().parse::<u32>())]
-    Int(u32),
+    #[regex("[0-9]|[1-9][0-9]*", |lex| lex.slice().parse::<usize>())]
+    Int(usize),
     #[regex("<(?:[a-zA-Z]*)>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
     NonTerminal(String),
     #[regex(r#"'(?:\\'|[^(')])*'|"(?:\\"|[^(")])*""#, |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
