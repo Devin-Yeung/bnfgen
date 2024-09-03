@@ -6,353 +6,379 @@ RawGrammar {
     rules: [
         Rule {
             name: "start",
-            alternatives: [
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "statements",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "statements",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "statements",
-            alternatives: [
-                Alternative {
-                    weight: 100,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "statements",
-                            ),
-                        },
-                        Symbol {
-                            kind: NonTerminal(
-                                "statement",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "statement",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 100,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "statements",
+                                ),
+                            },
+                            Symbol {
+                                kind: NonTerminal(
+                                    "statement",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "statement",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "statement",
-            alternatives: [
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "loop",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "commands",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "loop",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "commands",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "loop",
-            alternatives: [
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: Terminal(
-                                "[",
-                            ),
-                        },
-                        Symbol {
-                            kind: NonTerminal(
-                                "commands",
-                            ),
-                        },
-                        Symbol {
-                            kind: Terminal(
-                                "]",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "[",
+                                ),
+                            },
+                            Symbol {
+                                kind: NonTerminal(
+                                    "commands",
+                                ),
+                            },
+                            Symbol {
+                                kind: Terminal(
+                                    "]",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "commands",
-            alternatives: [
-                Alternative {
-                    weight: 10,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "commands",
-                            ),
-                        },
-                        Symbol {
-                            kind: NonTerminal(
-                                "command",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "command",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 10,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "commands",
+                                ),
+                            },
+                            Symbol {
+                                kind: NonTerminal(
+                                    "command",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "command",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "command",
-            alternatives: [
-                Alternative {
-                    weight: 5,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "ptrgroup",
-                            ),
-                        },
-                        Symbol {
-                            kind: NonTerminal(
-                                "arithmgroup",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "io",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 5,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "ptrgroup",
+                                ),
+                            },
+                            Symbol {
+                                kind: NonTerminal(
+                                    "arithmgroup",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "io",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "ptrinc",
-            alternatives: [
-                Alternative {
-                    weight: 5,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "ptrinc",
-                            ),
-                        },
-                        Symbol {
-                            kind: Terminal(
-                                ">",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: Terminal(
-                                ">",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 5,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "ptrinc",
+                                ),
+                            },
+                            Symbol {
+                                kind: Terminal(
+                                    ">",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    ">",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "ptrdec",
-            alternatives: [
-                Alternative {
-                    weight: 5,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "ptrdec",
-                            ),
-                        },
-                        Symbol {
-                            kind: Terminal(
-                                "<",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: Terminal(
-                                "<",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 5,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "ptrdec",
+                                ),
+                            },
+                            Symbol {
+                                kind: Terminal(
+                                    "<",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "<",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "valinc",
-            alternatives: [
-                Alternative {
-                    weight: 5,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "valinc",
-                            ),
-                        },
-                        Symbol {
-                            kind: Terminal(
-                                "+",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: Terminal(
-                                "+",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 5,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "valinc",
+                                ),
+                            },
+                            Symbol {
+                                kind: Terminal(
+                                    "+",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "+",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "valdec",
-            alternatives: [
-                Alternative {
-                    weight: 5,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "valdec",
-                            ),
-                        },
-                        Symbol {
-                            kind: Terminal(
-                                "+",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: Terminal(
-                                "-",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 5,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "valdec",
+                                ),
+                            },
+                            Symbol {
+                                kind: Terminal(
+                                    "+",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "-",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "ptrgroup",
-            alternatives: [
-                Alternative {
-                    weight: 5,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "ptrinc",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "ptrdec",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 5,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "ptrinc",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "ptrdec",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "arithmgroup",
-            alternatives: [
-                Alternative {
-                    weight: 5,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "valinc",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: NonTerminal(
-                                "valdec",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 5,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "valinc",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "valdec",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
         Rule {
             name: "io",
-            alternatives: [
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: Terminal(
-                                ".",
-                            ),
-                        },
-                    ],
-                },
-                Alternative {
-                    weight: 1,
-                    symbols: [
-                        Symbol {
-                            kind: Terminal(
-                                ",",
-                            ),
-                        },
-                    ],
-                },
-            ],
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    ".",
+                                ),
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    ",",
+                                ),
+                            },
+                        ],
+                    },
+                ],
+            },
         },
     ],
 }

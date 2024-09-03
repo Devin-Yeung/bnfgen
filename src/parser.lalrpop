@@ -1,5 +1,5 @@
 use crate::token::{Token, LexicalError};
-use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind};
+use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction};
 
 // grammar start
 grammar;
@@ -31,10 +31,12 @@ pub RawGrammar: RawGrammar = {
 };
 
 Rule: Rule = {
-    <name: "nonterminal"> "::=" <alternatives: Alternatives> ";" => {
+    <name: "nonterminal"> "::=" <production: Alternatives> ";" => {
         Rule {
             name,
-            alternatives,
+            production: WeightedProduction {
+                production,
+            }
         }
     }
 };
