@@ -2,6 +2,7 @@ use rand::distributions::Distribution;
 use rand::distributions::WeightedIndex;
 use rand::Rng;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 use crate::{lexer, parser};
 
@@ -41,11 +42,15 @@ pub struct CheckedGrammar {
 }
 
 impl CheckedGrammar {
-    fn reduce(&self, symbol: SymbolKind) -> (Option<String>, Vec<SymbolKind>) {
+    fn reduce(&self, symbol: SymbolKind) -> (Option<Rc<String>>, Vec<SymbolKind>) {
         match symbol {
             SymbolKind::Terminal(s) => (Some(s), vec![]),
             SymbolKind::NonTerminal(s) => {
-                let syms = self.rules.get(&s).unwrap().choose(&mut rand::thread_rng());
+                let syms = self
+                    .rules
+                    .get(s.as_ref())
+                    .unwrap()
+                    .choose(&mut rand::thread_rng());
                 (None, syms)
             }
             SymbolKind::Repeat { symbol, min, max } => {
@@ -86,9 +91,9 @@ pub struct Alternative {
 }
 
 #[derive(Debug, Clone)]
-pub enum SymbolKind {
-    Terminal(String),
-    NonTerminal(String),
+pub(crate) enum SymbolKind {
+    Terminal(Rc<String>),
+    NonTerminal(Rc<String>),
     Repeat {
         symbol: Box<SymbolKind>,
         min: usize,

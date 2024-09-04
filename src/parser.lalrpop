@@ -1,5 +1,6 @@
 use crate::token::{Token, LexicalError};
 use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction};
+use std::rc::Rc;
 
 // grammar start
 grammar;
@@ -65,12 +66,12 @@ Alternative: Alternative = {
 Symbol: Symbol = {
     "terminal" => {
         Symbol {
-            kind: SymbolKind::Terminal(<>)
+            kind: SymbolKind::Terminal(Rc::new(<>))
         }
     },
     "nonterminal" => {
         Symbol {
-            kind: SymbolKind::NonTerminal(<>)
+            kind: SymbolKind::NonTerminal(Rc::new(<>))
         }
     },
 };
