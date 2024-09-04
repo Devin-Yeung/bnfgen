@@ -35,6 +35,14 @@ impl RawGrammar {
             },
         } // TODO: Error Handling
     }
+
+    pub fn to_checked(self) -> CheckedGrammar {
+        let mut rules = HashMap::new();
+        for rule in self.rules {
+            rules.insert(rule.name, rule.production);
+        }
+        CheckedGrammar { rules }
+    }
 }
 
 pub struct CheckedGrammar {
@@ -42,15 +50,19 @@ pub struct CheckedGrammar {
 }
 
 impl CheckedGrammar {
-    fn reduce(&self, symbol: SymbolKind) -> (Option<Rc<String>>, Vec<SymbolKind>) {
+    pub(crate) fn reduce<R: Rng>(
+        &self,
+        symbol: SymbolKind,
+        rng: &mut R,
+    ) -> (Option<Rc<String>>, Vec<SymbolKind>) {
         match symbol {
             SymbolKind::Terminal(s) => (Some(s), vec![]),
             SymbolKind::NonTerminal(s) => {
                 let syms = self
                     .rules
                     .get(s.as_ref())
-                    .unwrap()
-                    .choose(&mut rand::thread_rng());
+                    .expect(&format!("Fail to find rule of {}", s))
+                    .choose(rng);
                 (None, syms)
             }
             SymbolKind::Repeat { symbol, min, max } => {

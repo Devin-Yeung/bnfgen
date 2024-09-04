@@ -8,6 +8,7 @@ logos = "0.14.1"
 lalrpop-util = "0.20.2"
 indexmap = "2.5.0"
 rand = "0.8.5"
+typed-builder = "0.20.0"
 
 # Add a build-time dependency on the lalrpop library:
 [build-dependencies]

@@ -20,9 +20,9 @@ pub enum Token {
     Semi,
     #[regex("[0-9]|[1-9][0-9]*", |lex| lex.slice().parse::<usize>())]
     Int(usize),
-    #[regex("<(?:[a-zA-Z]*)>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
+    #[regex("<(?:[^<>]*)>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
     NonTerminal(String),
-    #[regex(r#"'(?:\\'|[^(')])*'|"(?:\\"|[^(")])*""#, |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
+    #[regex(r#"'(?:[^'])*'|"(?:[^"])*""#, |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
     Terminal(String),
 }
 
