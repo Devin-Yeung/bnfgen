@@ -22,8 +22,13 @@ pub enum Token {
     Int(usize),
     #[regex("<(?:[^<>]*)>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
     NonTerminal(String),
-    #[regex(r#"'(?:[^'])*'|"(?:[^"])*""#, |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
+    #[regex(r#"'(?:[^'])*'|"(?:[^"])*""#, |lex| { let slice = &lex.slice()[1..lex.slice().len() - 1]; escape(slice) } )]
     Terminal(String),
+}
+
+fn escape(input: &str) -> String {
+    input.replace("\\n", "\n")
+        .to_string()
 }
 
 #[derive(Default, Debug, Clone, PartialEq)]
