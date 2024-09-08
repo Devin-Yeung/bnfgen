@@ -1,5 +1,4 @@
 use crate::span::Span;
-use miette;
 
 pub type Result<T> = std::result::Result<T, Error>;
 

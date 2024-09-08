@@ -39,7 +39,7 @@ impl RawGrammar {
             if let Some(prev) = seen.get(&rule.name) {
                 return Err(Error::DuplicatedRules {
                     span: rule.span,
-                    prev: prev.clone(),
+                    prev: *prev,
                 });
             }
             seen.insert(rule.name.clone(), rule.span);
@@ -102,7 +102,7 @@ impl CheckedGrammar {
                 let syms = self
                     .rules
                     .get(s.as_ref())
-                    .expect(&format!("Fail to find rule of {}", s))
+                    .unwrap_or_else(|| panic!("Fail to find rule of {}", s))
                     .choose(rng);
                 (None, syms)
             }
@@ -182,7 +182,7 @@ mod test {
         err: T,
         source: S,
     ) -> String {
-        let source = Arc::new(String::from(source.to_string()));
+        let source = Arc::new(source.to_string());
         let diagnostic = Report::from(err).with_source_code(source);
 
         let mut reporter = Reporter::new(Style::NoColor);

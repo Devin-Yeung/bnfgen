@@ -1,4 +1,4 @@
-use logos::{Logos, Span, SpannedIter};
+use logos::{Logos, SpannedIter};
 
 use crate::token::{LexicalError, Token};
 
@@ -25,7 +25,7 @@ impl<'input> Iterator for Lexer<'input> {
             Ok(tok) => Ok((span.start, tok, span.end)),
             Err(e) => match e {
                 LexicalError::InternalInvalidToken => Err(LexicalError::InvalidToken(span.into())),
-                e @ _ => Err(e),
+                e => Err(e),
             },
         })
     }

@@ -38,7 +38,7 @@ impl Regex {
                 Class::Unicode(unicode) => {
                     let idx = rng.gen_range(0..unicode.iter().count());
                     let range = unicode.iter().nth(idx).unwrap();
-                    let pick = rng.gen_range(range.start()..=range.end()) as char;
+                    let pick = rng.gen_range(range.start()..=range.end());
                     pick.to_string()
                 }
                 Class::Bytes(bytes) => {
