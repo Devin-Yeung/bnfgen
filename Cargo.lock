@@ -63,6 +63,7 @@ dependencies = [
  "lalrpop-util",
  "logos",
  "rand",
+ "regex-syntax",
  "typed-builder",
 ]
 

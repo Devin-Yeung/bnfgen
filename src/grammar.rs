@@ -68,6 +68,9 @@ impl CheckedGrammar {
             SymbolKind::Repeat { symbol, min, max } => {
                 todo!()
             }
+            SymbolKind::Regex(_) => {
+                todo!()
+            }
         }
     }
 }
@@ -106,6 +109,7 @@ pub struct Alternative {
 pub(crate) enum SymbolKind {
     Terminal(Rc<String>),
     NonTerminal(Rc<String>),
+    Regex(Rc<String>),
     Repeat {
         symbol: Box<SymbolKind>,
         min: usize,

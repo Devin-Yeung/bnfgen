@@ -13,10 +13,13 @@ extern {
   enum Token {
     "{" => Token::LBrace,
     "}" => Token::RBrace,
+    "(" => Token::LParen,
+    ")" => Token::RParen,
     "|" => Token::Or,
     "," => Token::Comma,
     "::=" => Token::Def,
     ";" => Token::Semi,
+    "re" => Token::Re,
     "str" => Token::Str(<String>),
     "nonterminal" => Token::NonTerminal(<String>),
     "int" => Token::Int(<usize>),
@@ -74,4 +77,9 @@ Symbol: Symbol = {
             kind: SymbolKind::NonTerminal(Rc::new(<>))
         }
     },
+    "re" "(" <re: "str"> ")" => {
+        Symbol {
+            kind: SymbolKind::Regex(Rc::new(re))
+        }
+    }
 };

@@ -40,7 +40,6 @@ pub enum Token {
     Str(String),
 }
 
-
 #[derive(Default, Debug, Clone, PartialEq)]
 pub enum LexicalError {
     InvalidInteger(ParseIntError),
