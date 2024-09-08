@@ -1,6 +1,6 @@
-use std::fmt::Display;
-use std::{fmt::Formatter, num::ParseIntError};
+use std::num::ParseIntError;
 
+use crate::span::Span;
 use logos::Logos;
 
 #[derive(Logos, Debug, PartialEq, Clone)]
@@ -24,7 +24,13 @@ pub enum Token {
     Semi,
     #[token("re")]
     Re,
-    #[regex("[0-9]|[1-9][0-9]*", |lex| lex.slice().parse::<usize>())]
+    #[rustfmt::skip]
+    #[regex("[0-9]|[1-9][0-9]*", |lex| {
+        match lex.slice().parse::<usize>() {
+            Ok(t) => Ok(t),
+            Err(e) => Err(LexicalError::InvalidInteger(e, lex.span().into()))
+        }
+    })]
     Int(usize),
     #[regex("<[^<>]*>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
     NonTerminal(String),
@@ -40,24 +46,12 @@ pub enum Token {
     Str(String),
 }
 
-#[derive(Default, Debug, Clone, PartialEq)]
+#[derive(thiserror::Error, miette::Diagnostic, Default, Debug, Clone, PartialEq, Eq)]
 pub enum LexicalError {
-    InvalidInteger(ParseIntError),
+    #[error("Invalid integer")]
+    InvalidInteger(ParseIntError, #[label("this int is invalid")] Span),
     #[default]
+    #[error("Invalid token")]
+    // see: https://github.com/maciejhirsz/logos/issues/352
     InvalidToken,
-}
-
-impl From<ParseIntError> for LexicalError {
-    fn from(err: ParseIntError) -> Self {
-        LexicalError::InvalidInteger(err)
-    }
-}
-
-impl Display for LexicalError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        match self {
-            LexicalError::InvalidInteger(err) => write!(f, "invalid integer: {}", err),
-            LexicalError::InvalidToken => write!(f, "invalid token"),
-        }
-    }
 }

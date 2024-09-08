@@ -4,6 +4,8 @@ use rand::Rng;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use crate::error::Result;
+use crate::utils::convert_parse_error;
 use crate::{lexer, parser};
 
 #[repr(transparent)]
@@ -13,27 +15,10 @@ pub struct RawGrammar {
 }
 
 impl RawGrammar {
-    pub fn parse<S: AsRef<str>>(input: S) -> RawGrammar {
+    pub fn parse<S: AsRef<str>>(input: S) -> Result<RawGrammar> {
         let lexer = lexer::Lexer::new(input.as_ref());
         let parser = parser::RawGrammarParser::new();
-        match parser.parse(lexer) {
-            Ok(grammar) => grammar,
-            Err(e) => match e {
-                lalrpop_util::ParseError::UnrecognizedToken { token, expected } => {
-                    panic!("Unrecognized token: {:?}, expected: {:?}", token, expected)
-                }
-                lalrpop_util::ParseError::ExtraToken { token } => {
-                    panic!("Extra token: {:?}", token)
-                }
-                lalrpop_util::ParseError::User { error } => panic!("User error: {:?}", error),
-                lalrpop_util::ParseError::InvalidToken { location } => {
-                    panic!("Invalid token: {:?}", location)
-                }
-                lalrpop_util::ParseError::UnrecognizedEof { location, expected } => {
-                    panic!("Unrecognized EOF: {:?}, expected: {:?}", location, expected)
-                }
-            },
-        } // TODO: Error Handling
+        parser.parse(lexer).map_err(convert_parse_error)
     }
 
     pub fn to_checked(self) -> CheckedGrammar {
@@ -125,11 +110,34 @@ pub struct Symbol {
 #[cfg(test)]
 mod test {
     use super::RawGrammar;
+    use crate::report::{Reporter, Style};
+    use miette::{Diagnostic, Report};
+    use std::sync::Arc;
+
+    fn report_with_unnamed_source<T: Diagnostic + Sync + Send + 'static, S: ToString>(
+        err: T,
+        source: S,
+    ) -> String {
+        let source = Arc::new(String::from(source.to_string()));
+        let diagnostic = Report::from(err).with_source_code(source);
+
+        let mut reporter = Reporter::new(Style::NoColor);
+        reporter.push(diagnostic);
+        reporter.report_to_string()
+    }
 
     #[test]
     fn brainfuck() {
         let text = include_str!("../examples/brainfuck.bnfgen");
-        let grammar = RawGrammar::parse(text);
+        let grammar = RawGrammar::parse(text).unwrap();
         insta::assert_debug_snapshot!(grammar);
+    }
+
+    #[test]
+    fn unexpected_eof() {
+        let text = "<start> ::= \"Hello\" | \"World\""; // no semi
+        let err = RawGrammar::parse(text).err().unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
     }
 }

@@ -1,0 +1,10 @@
+---
+source: src/grammar.rs
+expression: ui
+---
+  × Unrecognized EOF
+   ╭────
+ 1 │ <start> ::= "Hello" | "World"
+   ·                             ┬
+   ·                             ╰── expect ";", "nonterminal", "re", "str", "|"
+   ╰────
