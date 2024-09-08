@@ -86,5 +86,26 @@ Symbol: Symbol = {
             kind: SymbolKind::Regex(Rc::new(re)),
             span: Span::new(l, r),
         }
+    },
+    <l: @L> <s: Symbol> "{" <lo: "int"> "," <hi: "int"?> "}" <r: @R>  => {
+        Symbol {
+            kind: SymbolKind::Repeat {
+                symbol: Box::new(s.kind), 
+                min: lo, 
+                max: hi,
+            },
+            span: Span::new(l, r),
+        }
+    },
+    // exact match
+    <l: @L> <s: Symbol> "{" <cnt: "int"> "}" <r: @R>  => {
+        Symbol {
+            kind: SymbolKind::Repeat {
+                symbol: Box::new(s.kind), 
+                min: cnt, 
+                max: Some(cnt),
+            },
+            span: Span::new(l, r),
+        }
     }
 };

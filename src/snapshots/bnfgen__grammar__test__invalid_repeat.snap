@@ -1,0 +1,12 @@
+---
+source: src/grammar.rs
+expression: ui
+---
+  × Invalid repeat range
+   ╭─[2:21]
+ 1 │ 
+ 2 │             <E> ::= "a" {10, 1};
+   ·                     ─────┬─────
+   ·                          ╰── min should be less than or equal to max
+ 3 │         
+   ╰────

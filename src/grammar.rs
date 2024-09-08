@@ -23,7 +23,7 @@ impl RawGrammar {
     }
 
     pub fn to_checked(self) -> Result<CheckedGrammar> {
-        self.check_undefined()?.check_duplicate()?;
+        self.check_undefined()?.check_duplicate()?.check_repeats()?;
 
         let mut rules = HashMap::new();
         for rule in self.rules {
@@ -46,16 +46,32 @@ impl RawGrammar {
         }
         Ok(self)
     }
+
+    fn check_repeats(&self) -> Result<&Self> {
+        for rule in &self.rules {
+            for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
+                match &sym.kind {
+                    SymbolKind::Repeat {
+                        symbol: _,
+                        min,
+                        max,
+                    } => {
+                        if min > &max.unwrap_or(usize::MAX) {
+                            return Err(Error::InvalidRepeatRange { span: sym.span });
+                        }
+                    }
+                    _ => { /* do nothing */ }
+                }
+            }
+        }
+        Ok(self)
+    }
+
     fn check_undefined(&self) -> Result<&Self> {
         let defined: HashSet<String> =
             HashSet::from_iter(self.rules.iter().map(|r| r.name.clone()));
         for rule in &self.rules {
-            for sym in rule
-                .production
-                .production
-                .iter()
-                .flat_map(|a| a.symbols.iter())
-            {
+            for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
                 match &sym.kind {
                     SymbolKind::NonTerminal(s) => {
                         if !defined.contains(s.as_ref()) {
@@ -105,6 +121,12 @@ pub struct Rule {
     pub(crate) name: String,
     pub(crate) production: WeightedProduction,
     pub(crate) span: Span,
+}
+
+impl Rule {
+    pub fn rhs(&self) -> &[Alternative] {
+        self.production.production.as_slice()
+    }
 }
 
 #[derive(Debug)]
@@ -176,6 +198,15 @@ mod test {
     }
 
     #[test]
+    fn repeat() {
+        let text = r#"
+            <E> ::= "a" {1, 10} | "b" {2, } | "c" {3} ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap();
+        insta::assert_debug_snapshot!(grammar);
+    }
+
+    #[test]
     fn unexpected_eof() {
         let text = "<start> ::= \"Hello\" | \"World\""; // no semi
         let err = RawGrammar::parse(text).err().unwrap();
@@ -205,6 +236,16 @@ mod test {
             <E> ::= <S>;
             <S> ::= <E>;
             <E> ::= "?";
+        "#;
+        let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
+
+    #[test]
+    fn invalid_repeat() {
+        let text = r#"
+            <E> ::= "a" {10, 1};
         "#;
         let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
         let ui = report_with_unnamed_source(err, text);

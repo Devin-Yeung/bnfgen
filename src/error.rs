@@ -34,6 +34,11 @@ pub enum Error {
         #[label("previous defined here")]
         prev: Span,
     },
+    #[error("Invalid repeat range")]
+    InvalidRepeatRange {
+        #[label("min should be less than or equal to max")]
+        span: Span,
+    },
     #[error(transparent)]
     #[diagnostic(transparent)]
     LexicalError(#[from] crate::token::LexicalError),

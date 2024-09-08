@@ -1,0 +1,77 @@
+---
+source: src/grammar.rs
+expression: grammar
+---
+RawGrammar {
+    rules: [
+        Rule {
+            name: "E",
+            production: WeightedProduction {
+                production: [
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Repeat {
+                                    symbol: Terminal(
+                                        "a",
+                                    ),
+                                    min: 1,
+                                    max: Some(
+                                        10,
+                                    ),
+                                },
+                                span: Span {
+                                    start: 21,
+                                    end: 32,
+                                },
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Repeat {
+                                    symbol: Terminal(
+                                        "b",
+                                    ),
+                                    min: 2,
+                                    max: None,
+                                },
+                                span: Span {
+                                    start: 35,
+                                    end: 44,
+                                },
+                            },
+                        ],
+                    },
+                    Alternative {
+                        weight: 1,
+                        symbols: [
+                            Symbol {
+                                kind: Repeat {
+                                    symbol: Terminal(
+                                        "c",
+                                    ),
+                                    min: 3,
+                                    max: Some(
+                                        3,
+                                    ),
+                                },
+                                span: Span {
+                                    start: 47,
+                                    end: 54,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            span: Span {
+                start: 13,
+                end: 56,
+            },
+        },
+    ],
+}
