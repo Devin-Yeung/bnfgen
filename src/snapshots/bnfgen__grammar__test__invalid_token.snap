@@ -1,0 +1,10 @@
+---
+source: src/grammar.rs
+expression: ui
+---
+  × Invalid token
+   ╭────
+ 1 │ :
+   · ┬
+   · ╰── this token is invalid
+   ╰────

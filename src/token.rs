@@ -50,8 +50,10 @@ pub enum Token {
 pub enum LexicalError {
     #[error("Invalid integer")]
     InvalidInteger(ParseIntError, #[label("this int is invalid")] Span),
-    #[default]
     #[error("Invalid token")]
+    InvalidToken(#[label("this token is invalid")] Span),
     // see: https://github.com/maciejhirsz/logos/issues/352
-    InvalidToken,
+    #[default]
+    #[error("Internal Error. Please file an issue if you see this")]
+    InternalInvalidToken,
 }

@@ -140,4 +140,12 @@ mod test {
         let ui = report_with_unnamed_source(err, text);
         insta::assert_snapshot!(ui);
     }
+
+    #[test]
+    fn invalid_token() {
+        let text = ":";
+        let err = RawGrammar::parse(text).err().unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
 }
