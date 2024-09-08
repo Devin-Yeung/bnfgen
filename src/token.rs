@@ -10,6 +10,10 @@ pub enum Token {
     LBrace,
     #[token("}")]
     RBrace,
+    #[token("(")]
+    LParen,
+    #[token(")")]
+    RParen,
     #[token("|")]
     Or,
     #[token(",")]
@@ -18,18 +22,24 @@ pub enum Token {
     Def,
     #[token(";")]
     Semi,
+    #[token("re")]
+    Re,
     #[regex("[0-9]|[1-9][0-9]*", |lex| lex.slice().parse::<usize>())]
     Int(usize),
-    #[regex("<(?:[^<>]*)>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
+    #[regex("<[^<>]*>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
     NonTerminal(String),
-    #[regex(r#"'(?:[^'])*'|"(?:[^"])*""#, |lex| { let slice = &lex.slice()[1..lex.slice().len() - 1]; escape(slice) } )]
-    Terminal(String),
+    #[rustfmt::skip]
+    #[regex(r#""(\\["nrt\\]|[^"\\])*""#, |lex| {
+        let text = &lex.slice()[1..lex.slice().len() - 1];
+        text.replace("\\\"", "\"")
+            .replace("\\n", "\n")
+            .replace("\\t", "\t")
+            .replace("\\r", "\r")
+            .to_string()
+    })]
+    Str(String),
 }
 
-fn escape(input: &str) -> String {
-    input.replace("\\n", "\n")
-        .to_string()
-}
 
 #[derive(Default, Debug, Clone, PartialEq)]
 pub enum LexicalError {

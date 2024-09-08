@@ -17,7 +17,7 @@ extern {
     "," => Token::Comma,
     "::=" => Token::Def,
     ";" => Token::Semi,
-    "terminal" => Token::Terminal(<String>),
+    "str" => Token::Str(<String>),
     "nonterminal" => Token::NonTerminal(<String>),
     "int" => Token::Int(<usize>),
   }
@@ -64,7 +64,7 @@ Alternative: Alternative = {
 };
 
 Symbol: Symbol = {
-    "terminal" => {
+    "str" => {
         Symbol {
             kind: SymbolKind::Terminal(Rc::new(<>))
         }
