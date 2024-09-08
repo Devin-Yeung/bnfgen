@@ -1,10 +1,11 @@
 use rand::distributions::Distribution;
 use rand::distributions::WeightedIndex;
 use rand::Rng;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
-use crate::error::Result;
+use crate::error::{Error, Result};
+use crate::span::Span;
 use crate::utils::convert_parse_error;
 use crate::{lexer, parser};
 
@@ -21,12 +22,51 @@ impl RawGrammar {
         parser.parse(lexer).map_err(convert_parse_error)
     }
 
-    pub fn to_checked(self) -> CheckedGrammar {
+    pub fn to_checked(self) -> Result<CheckedGrammar> {
+        self.check_undefined()?.check_duplicate()?;
+
         let mut rules = HashMap::new();
         for rule in self.rules {
             rules.insert(rule.name, rule.production);
         }
-        CheckedGrammar { rules }
+
+        Ok(CheckedGrammar { rules })
+    }
+
+    fn check_duplicate(&self) -> Result<&Self> {
+        let mut seen: HashMap<String, Span> = HashMap::new();
+        for rule in &self.rules {
+            if let Some(prev) = seen.get(&rule.name) {
+                return Err(Error::DuplicatedRules {
+                    span: rule.span,
+                    prev: prev.clone(),
+                });
+            }
+            seen.insert(rule.name.clone(), rule.span);
+        }
+        Ok(self)
+    }
+    fn check_undefined(&self) -> Result<&Self> {
+        let defined: HashSet<String> =
+            HashSet::from_iter(self.rules.iter().map(|r| r.name.clone()));
+        for rule in &self.rules {
+            for sym in rule
+                .production
+                .production
+                .iter()
+                .flat_map(|a| a.symbols.iter())
+            {
+                match &sym.kind {
+                    SymbolKind::NonTerminal(s) => {
+                        if !defined.contains(s.as_ref()) {
+                            return Err(Error::UndefinedNonTerminal { span: sym.span });
+                        }
+                    }
+                    _ => { /* do nothing */ }
+                }
+            }
+        }
+        Ok(self)
     }
 }
 
@@ -64,6 +104,7 @@ impl CheckedGrammar {
 pub struct Rule {
     pub(crate) name: String,
     pub(crate) production: WeightedProduction,
+    pub(crate) span: Span,
 }
 
 #[derive(Debug)]
@@ -105,6 +146,7 @@ pub(crate) enum SymbolKind {
 #[derive(Debug)]
 pub struct Symbol {
     pub(crate) kind: SymbolKind,
+    pub(crate) span: Span,
 }
 
 #[cfg(test)]
@@ -145,6 +187,26 @@ mod test {
     fn invalid_token() {
         let text = ":";
         let err = RawGrammar::parse(text).err().unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
+
+    #[test]
+    fn undefined_nt() {
+        let text = "<E> ::= <S>;";
+        let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
+
+    #[test]
+    fn duplicated_def() {
+        let text = r#"
+            <E> ::= <S>;
+            <S> ::= <E>;
+            <E> ::= "?";
+        "#;
+        let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
         let ui = report_with_unnamed_source(err, text);
         insta::assert_snapshot!(ui);
     }

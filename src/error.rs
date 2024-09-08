@@ -22,6 +22,18 @@ pub enum Error {
         span: Span,
         expect: String,
     },
+    #[error("Undefined non-terminal")]
+    UndefinedNonTerminal {
+        #[label("this non-terminal is undefined")]
+        span: Span,
+    },
+    #[error("Duplicated rules found")]
+    DuplicatedRules {
+        #[label("this rule is duplicated")]
+        span: Span,
+        #[label("previous defined here")]
+        prev: Span,
+    },
     #[error(transparent)]
     #[diagnostic(transparent)]
     LexicalError(#[from] crate::token::LexicalError),

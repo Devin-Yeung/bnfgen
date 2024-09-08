@@ -1,0 +1,10 @@
+---
+source: src/grammar.rs
+expression: ui
+---
+  × Undefined non-terminal
+   ╭────
+ 1 │ <E> ::= <S>;
+   ·         ─┬─
+   ·          ╰── this non-terminal is undefined
+   ╰────

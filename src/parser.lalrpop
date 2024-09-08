@@ -1,4 +1,5 @@
 use crate::token::{Token, LexicalError};
+use crate::span::Span;
 use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction};
 use std::rc::Rc;
 
@@ -35,12 +36,13 @@ pub RawGrammar: RawGrammar = {
 };
 
 Rule: Rule = {
-    <name: "nonterminal"> "::=" <production: Alternatives> ";" => {
+    <l: @L> <name: "nonterminal"> "::=" <production: Alternatives> ";" <r: @R> => {
         Rule {
             name,
             production: WeightedProduction {
                 production,
-            }
+            },
+            span: Span::new(l, r),
         }
     }
 };
@@ -67,19 +69,22 @@ Alternative: Alternative = {
 };
 
 Symbol: Symbol = {
-    "str" => {
+    <l: @L> <t: "str"> <r: @R> => {
         Symbol {
-            kind: SymbolKind::Terminal(Rc::new(<>))
+            kind: SymbolKind::Terminal(Rc::new(t)),
+            span: Span::new(l, r),
         }
     },
-    "nonterminal" => {
+    <l: @L> <nt: "nonterminal"> <r: @R> => {
         Symbol {
-            kind: SymbolKind::NonTerminal(Rc::new(<>))
+            kind: SymbolKind::NonTerminal(Rc::new(nt)),
+            span: Span::new(l, r),
         }
     },
-    "re" "(" <re: "str"> ")" => {
+    <l: @L> "re" "(" <re: "str"> ")" <r: @R> => {
         Symbol {
-            kind: SymbolKind::Regex(Rc::new(re))
+            kind: SymbolKind::Regex(Rc::new(re)),
+            span: Span::new(l, r),
         }
     }
 };

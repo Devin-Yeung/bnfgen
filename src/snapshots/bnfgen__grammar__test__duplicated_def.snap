@@ -1,0 +1,16 @@
+---
+source: src/grammar.rs
+expression: ui
+---
+  × Duplicated rules found
+   ╭─[2:13]
+ 1 │ 
+ 2 │             <E> ::= <S>;
+   ·             ──────┬─────
+   ·                   ╰── previous defined here
+ 3 │             <S> ::= <E>;
+ 4 │             <E> ::= "?";
+   ·             ──────┬─────
+   ·                   ╰── this rule is duplicated
+ 5 │         
+   ╰────
