@@ -2,7 +2,7 @@
 <Id>         ::= re("[[a-zA-Z]&&[^UI]]|[a-zA-Z][a-zA-Z]+") ;
 
 <Program>    ::= <Decl> {100} <CalcExpr> ".";
-// For generation purpose, we generate exactly 10 Decls
+// For generation purposes, we generate exactly 100 Decls
 
 <CalcExpr>   ::= "show" <Algebra>
                  | "simplify" <Algebra> ;
@@ -10,46 +10,41 @@
 <Decls>      ::= <Decl>
                  | <Decl> <Decl>;
 
-<Decl>       ::= "let" "int" <Id> "be" <Num> "." <EOL>
-                 | "let" "set" <Id> "be" <SetExpr> "." <EOL> ;
+<Ty>         ::= "int"
+                 | "set" ;
 
-<Algebra>    ::= <ArithExpr>
-                 | <SetExpr>
-                 | <BoolExpr> ;
+<Decl>       ::= "let" <Ty> <Id> "be" <Expr> "." <EOL> ;
 
-<ArithExpr0> ::= "(" <ArithExpr> ")"
+<Algebra>    ::= <Expr>
+                 | <Predicate> ;
+
+<Expr0>      ::= "{" <Id> ":" <Predicate> "}"
+                 | "(" <Expr> ")"
                  | 2 <Num>
                  | 2 <Id> ;
 
-<ArithExpr1> ::= 10 <ArithExpr0>
-                 | <ArithExpr1> "*" <ArithExpr0> ;
+<Expr1>      ::= 10 <Expr0>
+                 | <Expr1> "I" <Expr0>
+                 | <Expr1> "*" <Expr0> ;
 
-<ArithExpr>  ::= 10 <ArithExpr1>
-                 | <ArithExpr> "+" <ArithExpr1>
-                 | <ArithExpr> "-" <ArithExpr1> ;
+<Expr>       ::= 10 <Expr1>
+                 | <Expr> "U" <Expr1>
+                 | <Expr> "+" <Expr1>
+                 | <Expr> "-" <Expr1> ;
 
 <BoolExpr>   ::= <Predicate> ;
 
-<SetExpr0>   ::= "{" <Id> ":" <Predicate> "}" ;
-
-// intersection has higher precedence than union
-<SetExpr1>   ::= 5 <SetExpr0>
-                 | <SetExpr> "I" <SetExpr0> ;
-
-<SetExpr>    ::= 5 <SetExpr1>
-                 | <SetExpr> "U" <SetExpr1> ;
-
-<Predicate0> ::= <ArithExpr> "<" <ArithExpr>
-                 | <ArithExpr> ">" <ArithExpr>
-                 | <ArithExpr> "=" <ArithExpr>
-                 | <Num> "@" <SetExpr> ; // TODO: (1) assoc unclear (2) allow set of sets?
+<Predicate0> ::= <Expr> "<" <Expr>
+                 | <Expr> ">" <Expr>
+                 | <Expr> "=" <Expr>
+                 | <Expr> "@" <Expr> ;
 
 <Predicate1> ::= "(" <Predicate> ")"
                  | "!" <Predicate0>
                  | <Predicate0> ;
 
-<Predicate>  ::= 5 <Predicate1>
+<Predicate>  ::= 10 <Predicate1>
                  | <Predicate> "&" <Predicate1>
                  | <Predicate> "|" <Predicate1> ;
 
-<EOL>       ::= 1000 "\n" | "" ; // For generation purpose, make it looks better
+<EOL>       ::= 1000 "\n" | "" ; // For generation purposes, make it looks better
