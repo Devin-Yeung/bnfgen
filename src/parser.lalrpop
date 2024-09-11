@@ -37,11 +37,11 @@ pub RawGrammar: RawGrammar = {
 };
 
 Rule: Rule = {
-    <l: @L> <name: "nonterminal"> "::=" <production: Alternatives> ";" <r: @R> => {
+    <l: @L> <name: "nonterminal"> "::=" <alts: Alternatives> ";" <r: @R> => {
         Rule {
             name,
             production: WeightedProduction {
-                production,
+                alts,
             },
             span: Span::new(l, r),
         }

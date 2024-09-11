@@ -241,12 +241,12 @@ pub struct Rule {
 
 impl Rule {
     pub fn rhs(&self) -> &[Alternative] {
-        self.production.production.as_slice()
+        self.production.alts.as_slice()
     }
 
     pub fn produce_terminals(&self) -> bool {
         self.production
-            .production
+            .alts
             .iter()
             .any(|a| a.symbols.iter().all(|s| s.kind.is_terminal()))
     }
@@ -255,14 +255,14 @@ impl Rule {
 #[derive(Debug)]
 #[repr(transparent)]
 pub struct WeightedProduction {
-    pub(crate) production: Vec<Alternative>,
+    pub(crate) alts: Vec<Alternative>,
 }
 
 impl WeightedProduction {
     pub fn choose<R: Rng>(&self, rng: &mut R) -> Vec<SymbolKind> {
-        let dist = WeightedIndex::new(self.production.iter().map(|a| a.weight)).unwrap();
+        let dist = WeightedIndex::new(self.alts.iter().map(|a| a.weight)).unwrap();
         let idx = dist.sample(rng);
-        self.production[idx]
+        self.alts[idx]
             .symbols
             .iter()
             .map(|s| s.kind.clone())
