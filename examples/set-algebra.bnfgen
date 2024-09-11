@@ -8,7 +8,7 @@
                  | "simplify" <Algebra> ;
 
 <Decls>      ::= <Decl>
-                 | <Decl> <Decl>;
+                 | <Decls> <Decl>;
 
 <Ty>         ::= "int"
                  | "set" ;
@@ -31,8 +31,6 @@
                  | <Expr> "U" <Expr1>
                  | <Expr> "+" <Expr1>
                  | <Expr> "-" <Expr1> ;
-
-<BoolExpr>   ::= <Predicate> ;
 
 <Predicate0> ::= <Expr> "<" <Expr>
                  | <Expr> ">" <Expr>
