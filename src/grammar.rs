@@ -18,6 +18,42 @@ pub struct RawGrammar {
     pub(crate) rules: Vec<Rule>,
 }
 
+pub struct GrammarGraph<'rule> {
+    pub(crate) rules: &'rule Vec<Rule>,
+    pub(crate) graph: DiGraph<String, ()>,
+    pub(crate) nodes: HashMap<String, NodeIndex>,
+}
+
+impl<'rule> GrammarGraph<'rule> {
+    fn check_unused<S: AsRef<str>>(&self, start: S) -> Result<&Self> {
+        let all_nts = self.nodes.keys().collect::<HashSet<_>>();
+        // find the reachable nodes for a given start symbol
+        let start = self
+            .nodes
+            .get(start.as_ref())
+            .expect("The start symbol does not exist");
+
+        let mut dfs = Dfs::new(&self.graph, *start);
+        let mut reachable = HashSet::new();
+        while let Some(nx) = dfs.next(&self.graph) {
+            let name = &self.graph[nx];
+            reachable.insert(name);
+        }
+        let unreachable = all_nts.difference(&reachable).collect::<HashSet<_>>();
+        // find the unreachable spans
+        if !unreachable.is_empty() {
+            let spans = self
+                .rules
+                .iter()
+                .filter(|rule| unreachable.contains(&&rule.name))
+                .map(|rule| rule.span)
+                .collect::<Vec<_>>();
+            return Err(Error::UnreachableRules { spans });
+        }
+        Ok(self)
+    }
+}
+
 impl RawGrammar {
     pub fn parse<S: AsRef<str>>(input: S) -> Result<RawGrammar> {
         let lexer = lexer::Lexer::new(input.as_ref());
@@ -36,15 +72,13 @@ impl RawGrammar {
         Ok(CheckedGrammar { rules })
     }
 
-    fn check_unused<S: AsRef<str>>(&self, start: S) -> Result<&Self> {
+    fn graph(&self) -> GrammarGraph<'_> {
         let mut graph = DiGraph::<String, ()>::new();
-        let mut all_nts = HashSet::new();
         let nodes: HashMap<String, NodeIndex> = self
             .rules
             .iter()
             .map(|rule| {
                 let entry = (rule.name.clone(), graph.add_node(rule.name.clone()));
-                all_nts.insert(rule.name.clone());
                 entry
             })
             .collect();
@@ -59,29 +93,11 @@ impl RawGrammar {
                 }
             }
         }
-        // find the reachable nodes for a given start symbol
-        let start = nodes
-            .get(start.as_ref())
-            .expect("The start symbol does not exist");
-
-        let mut dfs = Dfs::new(&graph, *start);
-        let mut reachable = HashSet::new();
-        while let Some(nx) = dfs.next(&graph) {
-            let name = graph[nx].clone();
-            reachable.insert(name);
+        GrammarGraph {
+            rules: &self.rules,
+            graph,
+            nodes,
         }
-        let unreachable = all_nts.difference(&reachable).collect::<HashSet<_>>();
-        // find the unreachable spans
-        if !unreachable.is_empty() {
-            let spans = self
-                .rules
-                .iter()
-                .filter(|rule| unreachable.contains(&rule.name))
-                .map(|rule| rule.span)
-                .collect::<Vec<_>>();
-            return Err(Error::UnreachableRules { spans });
-        }
-        Ok(self)
     }
 
     fn check_duplicate(&self) -> Result<&Self> {
@@ -322,6 +338,7 @@ mod test {
         "#;
         let err = RawGrammar::parse(text)
             .unwrap()
+            .graph()
             .check_unused("E")
             .err()
             .unwrap();
