@@ -1,4 +1,4 @@
-use crate::token::{Token, LexicalError};
+use crate::token::Token;
 use crate::span::Span;
 use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction};
 use crate::regex::Regex;
@@ -10,7 +10,7 @@ grammar;
 // bridge the lexer
 extern {
   type Location = usize;
-  type Error = LexicalError;
+  type Error = crate::error::Error;
 
   enum Token {
     "{" => Token::LBrace,

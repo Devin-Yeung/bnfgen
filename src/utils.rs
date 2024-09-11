@@ -2,9 +2,7 @@ use crate::error::Error;
 use crate::span::Span;
 use crate::token::{LexicalError, Token};
 
-pub(crate) fn convert_parse_error(
-    e: lalrpop_util::ParseError<usize, Token, LexicalError>,
-) -> Error {
+pub(crate) fn convert_parse_error(e: lalrpop_util::ParseError<usize, Token, Error>) -> Error {
     match e {
         lalrpop_util::ParseError::UnrecognizedToken {
             token: (l, _, r),
@@ -27,6 +25,6 @@ pub(crate) fn convert_parse_error(
                 expect: expected,
             }
         }
-        lalrpop_util::ParseError::User { error } => Error::LexicalError(error),
+        lalrpop_util::ParseError::User { error } => error,
     }
 }

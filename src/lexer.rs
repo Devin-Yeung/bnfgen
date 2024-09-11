@@ -1,5 +1,6 @@
 use logos::{Logos, SpannedIter};
 
+use crate::error::Error;
 use crate::token::{LexicalError, Token};
 
 pub type Spanned<Tok, Loc, Error> = Result<(Loc, Tok, Loc), Error>;
@@ -18,14 +19,17 @@ impl<'input> Lexer<'input> {
 }
 
 impl<'input> Iterator for Lexer<'input> {
-    type Item = Spanned<Token, usize, LexicalError>;
+    type Item = Spanned<Token, usize, Error>;
 
     fn next(&mut self) -> Option<Self::Item> {
         self.token_stream.next().map(|(token, span)| match token {
             Ok(tok) => Ok((span.start, tok, span.end)),
             Err(e) => match e {
-                LexicalError::InternalInvalidToken => Err(LexicalError::InvalidToken(span.into())),
-                e => Err(e),
+                LexicalError::InternalInvalidToken => {
+                    let err = LexicalError::InvalidToken(span.into());
+                    Err(Error::LexicalError(err))
+                }
+                e => Err(Error::LexicalError(e)),
             },
         })
     }
