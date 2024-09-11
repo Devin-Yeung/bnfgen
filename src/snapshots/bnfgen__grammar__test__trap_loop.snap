@@ -1,0 +1,15 @@
+---
+source: src/grammar.rs
+expression: ui
+---
+  × May be trapped in a dead loop
+   ╭─[3:13]
+ 2 │             <E> ::= <D> | <F>;
+ 3 │             <C> ::= <D> ;
+   ·             ──────┬──────
+   ·                   ╰── this rule may be trapped in a dead loop
+ 4 │             <D> ::= <C> ;
+   ·             ──────┬──────
+   ·                   ╰── this rule may be trapped in a dead loop
+ 5 │             <F> ::= <G> ;
+   ╰────

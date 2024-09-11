@@ -43,6 +43,11 @@ pub enum Error {
         #[label(collection, "this rule is unreachable")]
         spans: Vec<Span>,
     },
+    #[error("May be trapped in a dead loop")]
+    TrapLoop {
+        #[label(collection, "this rule may be trapped in a dead loop")]
+        spans: Vec<Span>,
+    },
     #[error(transparent)]
     #[diagnostic(transparent)]
     LexicalError(#[from] crate::token::LexicalError),

@@ -52,6 +52,47 @@ impl<'rule> GrammarGraph<'rule> {
         }
         Ok(self)
     }
+
+    fn check_trap_loop(&self) -> Result<&Self> {
+        let sccs = petgraph::algo::tarjan_scc(&self.graph);
+        dbg!(&sccs);
+        for scc in sccs {
+            if self.is_trap_loop(&scc) {
+                let spans = scc
+                    .iter()
+                    .map(|nx| {
+                        self.rules
+                            .iter()
+                            .find(|rule| rule.name == self.graph[*nx])
+                            .unwrap()
+                            .span
+                    })
+                    .collect::<Vec<_>>();
+                return Err(Error::TrapLoop { spans });
+            }
+        }
+        Ok(&self)
+    }
+
+    fn is_trap_loop(&self, scc: &Vec<NodeIndex>) -> bool {
+        let produce_t = scc.iter().map(|nx| self.graph[*nx].as_str()).any(|name| {
+            // check if rule produce a terminal
+            self.rules
+                .iter()
+                .find(|rule| rule.name == name)
+                .unwrap()
+                .produce_terminals()
+        });
+        if produce_t {
+            return false;
+        }
+        let out_deg: HashSet<NodeIndex> = scc
+            .iter()
+            .map(|nx| self.graph.neighbors(*nx))
+            .flatten()
+            .collect();
+        out_deg == scc.iter().map(|n| *n).collect()
+    }
 }
 
 impl RawGrammar {
@@ -202,6 +243,13 @@ impl Rule {
     pub fn rhs(&self) -> &[Alternative] {
         self.production.production.as_slice()
     }
+
+    pub fn produce_terminals(&self) -> bool {
+        self.production
+            .production
+            .iter()
+            .any(|a| a.symbols.iter().all(|s| s.kind.is_terminal()))
+    }
 }
 
 #[derive(Debug)]
@@ -240,10 +288,26 @@ pub(crate) enum SymbolKind {
     },
 }
 
+impl SymbolKind {
+    pub fn is_terminal(&self) -> bool {
+        match self {
+            SymbolKind::Terminal(_) | SymbolKind::Regex(_) => true,
+            SymbolKind::Repeat { symbol, .. } => symbol.is_terminal(),
+            _ => false,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Symbol {
     pub(crate) kind: SymbolKind,
     pub(crate) span: Span,
+}
+
+impl Symbol {
+    pub fn is_terminal(&self) -> bool {
+        self.kind.is_terminal()
+    }
 }
 
 #[cfg(test)]
@@ -340,6 +404,25 @@ mod test {
             .unwrap()
             .graph()
             .check_unused("E")
+            .err()
+            .unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
+
+    #[test]
+    fn trap_loop() {
+        let text = r#"
+            <E> ::= <D> | <F>;
+            <C> ::= <D> ;
+            <D> ::= <C> ;
+            <F> ::= <G> ;
+            <G> ::= <F> | "Terminal" ;
+        "#;
+        let err = RawGrammar::parse(text)
+            .unwrap()
+            .graph()
+            .check_trap_loop()
             .err()
             .unwrap();
         let ui = report_with_unnamed_source(err, text);
