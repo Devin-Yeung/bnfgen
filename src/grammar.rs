@@ -25,7 +25,7 @@ pub struct GrammarGraph<'rule> {
 }
 
 impl<'rule> GrammarGraph<'rule> {
-    fn check_unused<S: AsRef<str>>(&self, start: S) -> Result<&Self> {
+    pub fn check_unused<S: AsRef<str>>(&self, start: S) -> Result<&Self> {
         let all_nts = self.nodes.keys().collect::<HashSet<_>>();
         // find the reachable nodes for a given start symbol
         let start = self
@@ -53,9 +53,8 @@ impl<'rule> GrammarGraph<'rule> {
         Ok(self)
     }
 
-    fn check_trap_loop(&self) -> Result<&Self> {
+    pub fn check_trap_loop(&self) -> Result<&Self> {
         let sccs = petgraph::algo::tarjan_scc(&self.graph);
-        dbg!(&sccs);
         for scc in sccs {
             if self.is_trap_loop(&scc) {
                 let spans = scc
@@ -113,7 +112,7 @@ impl RawGrammar {
         Ok(CheckedGrammar { rules })
     }
 
-    fn graph(&self) -> GrammarGraph<'_> {
+    pub fn graph(&self) -> GrammarGraph<'_> {
         let mut graph = DiGraph::<String, ()>::new();
         let nodes: HashMap<String, NodeIndex> = self
             .rules
@@ -126,11 +125,11 @@ impl RawGrammar {
         // setup the graph
         for rule in &self.rules {
             for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
-                match &sym.kind {
-                    SymbolKind::NonTerminal(name) => {
-                        graph.add_edge(nodes[&rule.name], nodes[name.as_str()], ());
+                match sym.non_terminal() {
+                    Some(name) => {
+                        graph.add_edge(nodes[&rule.name], nodes[name], ());
                     }
-                    _ => { /* do nothing */ }
+                    None => { /* do nothing */ }
                 }
             }
         }
@@ -141,7 +140,7 @@ impl RawGrammar {
         }
     }
 
-    fn check_duplicate(&self) -> Result<&Self> {
+    pub fn check_duplicate(&self) -> Result<&Self> {
         let mut seen: HashMap<String, Span> = HashMap::new();
         for rule in &self.rules {
             if let Some(prev) = seen.get(&rule.name) {
@@ -155,7 +154,7 @@ impl RawGrammar {
         Ok(self)
     }
 
-    fn check_repeats(&self) -> Result<&Self> {
+    pub fn check_repeats(&self) -> Result<&Self> {
         for rule in &self.rules {
             for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
                 match &sym.kind {
@@ -175,7 +174,7 @@ impl RawGrammar {
         Ok(self)
     }
 
-    fn check_undefined(&self) -> Result<&Self> {
+    pub fn check_undefined(&self) -> Result<&Self> {
         let defined: HashSet<String> =
             HashSet::from_iter(self.rules.iter().map(|r| r.name.clone()));
         for rule in &self.rules {
@@ -296,6 +295,14 @@ impl SymbolKind {
             _ => false,
         }
     }
+
+    pub fn non_terminal(&self) -> Option<&str> {
+        match self {
+            SymbolKind::NonTerminal(s) => Some(s.as_str()),
+            SymbolKind::Repeat { symbol, .. } => symbol.non_terminal(),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -307,6 +314,10 @@ pub struct Symbol {
 impl Symbol {
     pub fn is_terminal(&self) -> bool {
         self.kind.is_terminal()
+    }
+
+    pub fn non_terminal(&self) -> Option<&str> {
+        self.kind.non_terminal()
     }
 }
 

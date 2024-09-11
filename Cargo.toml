@@ -13,6 +13,14 @@ regex-syntax = "0.8.4"
 thiserror = "1.0.63"
 miette = { version = "7.2.0", features = ["fancy"] }
 petgraph = "0.6.5"
+clap = { version = "4.5.17", features = ["derive"], optional = true }
+
+[features]
+build-binary = ["clap"]
+
+[[bin]]
+name = "bnfgen"
+path = "src/bin/bnfgen.rs"
 
 # Add a build-time dependency on the lalrpop library:
 [build-dependencies]
