@@ -428,4 +428,24 @@ mod test {
         let ui = report_with_unnamed_source(err, text);
         insta::assert_snapshot!(ui);
     }
+
+    #[test]
+    fn tri_loop() {
+        let text = r#"
+            <no-trap-01> ::= <A> | "Terminal" ;
+            <no-trap-02> ::= <A> | <term> ;
+            <term> ::= "Terminal" ;
+            <A> ::= <B> ;
+            <B> ::= <C> ;
+            <C> ::= <A> ;
+        "#;
+        let err = RawGrammar::parse(text)
+            .unwrap()
+            .graph()
+            .check_trap_loop()
+            .err()
+            .unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
 }

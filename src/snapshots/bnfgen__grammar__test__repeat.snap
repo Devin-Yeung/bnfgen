@@ -7,7 +7,7 @@ RawGrammar {
         Rule {
             name: "E",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 1,
                         symbols: [

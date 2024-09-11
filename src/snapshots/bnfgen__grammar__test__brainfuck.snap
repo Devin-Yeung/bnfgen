@@ -7,7 +7,7 @@ RawGrammar {
         Rule {
             name: "start",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 1,
                         symbols: [
@@ -32,7 +32,7 @@ RawGrammar {
         Rule {
             name: "statements",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 100,
                         symbols: [
@@ -80,7 +80,7 @@ RawGrammar {
         Rule {
             name: "statement",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 1,
                         symbols: [
@@ -119,7 +119,7 @@ RawGrammar {
         Rule {
             name: "loop",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 1,
                         symbols: [
@@ -162,7 +162,7 @@ RawGrammar {
         Rule {
             name: "commands",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 10,
                         symbols: [
@@ -210,7 +210,7 @@ RawGrammar {
         Rule {
             name: "command",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 5,
                         symbols: [
@@ -258,7 +258,7 @@ RawGrammar {
         Rule {
             name: "ptrinc",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 5,
                         symbols: [
@@ -306,7 +306,7 @@ RawGrammar {
         Rule {
             name: "ptrdec",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 5,
                         symbols: [
@@ -354,7 +354,7 @@ RawGrammar {
         Rule {
             name: "valinc",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 5,
                         symbols: [
@@ -402,7 +402,7 @@ RawGrammar {
         Rule {
             name: "valdec",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 5,
                         symbols: [
@@ -450,7 +450,7 @@ RawGrammar {
         Rule {
             name: "ptrgroup",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 5,
                         symbols: [
@@ -489,7 +489,7 @@ RawGrammar {
         Rule {
             name: "arithmgroup",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 5,
                         symbols: [
@@ -528,7 +528,7 @@ RawGrammar {
         Rule {
             name: "io",
             production: WeightedProduction {
-                production: [
+                alts: [
                     Alternative {
                         weight: 1,
                         symbols: [
