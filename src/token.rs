@@ -4,7 +4,7 @@ use crate::span::Span;
 use logos::Logos;
 
 #[derive(Logos, Debug, PartialEq, Clone)]
-#[logos(skip r"[ \t\n\f]+", skip r"#.*\n?", error = LexicalError)]
+#[logos(skip r"[ \t\n\f]+", skip r"//.*\n?", error = LexicalError)]
 pub enum Token {
     #[token("{")]
     LBrace,

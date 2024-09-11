@@ -1,9 +1,9 @@
-mod error;
+pub mod error;
 pub mod generator;
 pub mod grammar;
 mod lexer;
 mod regex;
-mod report;
+pub mod report;
 mod span;
 mod token;
 mod utils;

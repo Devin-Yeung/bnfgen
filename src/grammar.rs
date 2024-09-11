@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 use crate::error::{Error, Result};
+use crate::regex::Regex;
 use crate::span::Span;
 use crate::utils::convert_parse_error;
 use crate::{lexer, parser};
@@ -106,11 +107,19 @@ impl CheckedGrammar {
                     .choose(rng);
                 (None, syms)
             }
-            SymbolKind::Repeat { symbol, min, max } => {
-                todo!()
-            }
-            SymbolKind::Regex(_) => {
-                todo!()
+            SymbolKind::Repeat { symbol, min, max } => match (min, max) {
+                (min, Some(max)) => {
+                    if min == max {
+                        (None, (0..=min).map(|_| *symbol.clone()).collect::<Vec<_>>())
+                    } else {
+                        todo!()
+                    }
+                }
+                _ => todo!(),
+            },
+            SymbolKind::Regex(re) => {
+                let s = re.generate(rng);
+                (Some(Rc::new(s)), vec![])
             }
         }
     }
@@ -157,7 +166,7 @@ pub struct Alternative {
 pub(crate) enum SymbolKind {
     Terminal(Rc<String>),
     NonTerminal(Rc<String>),
-    Regex(Rc<String>),
+    Regex(Rc<Regex>),
     Repeat {
         symbol: Box<SymbolKind>,
         min: usize,

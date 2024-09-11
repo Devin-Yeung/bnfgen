@@ -28,6 +28,6 @@ impl Generator {
             }
         }
 
-        buf.iter().map(|s| s.as_str()).collect::<Vec<_>>().join("")
+        buf.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(" ")
     }
 }

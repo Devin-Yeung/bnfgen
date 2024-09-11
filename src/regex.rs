@@ -24,7 +24,7 @@ impl Regex {
             HirKind::Repetition(rep) => {
                 let mut buf = Vec::new();
                 // todo: allow manually set the max reps
-                for _ in 0..rng.gen_range(rep.min..=rep.max.unwrap_or(10)) {
+                for _ in 0..rng.gen_range(rep.min..=rep.max.unwrap_or(5)) {
                     buf.push(Self::helper(&rep.sub, rng));
                 }
                 buf.join("")

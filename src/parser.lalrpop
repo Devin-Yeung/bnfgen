@@ -1,6 +1,7 @@
 use crate::token::{Token, LexicalError};
 use crate::span::Span;
 use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction};
+use crate::regex::Regex;
 use std::rc::Rc;
 
 // grammar start
@@ -83,15 +84,15 @@ Symbol: Symbol = {
     },
     <l: @L> "re" "(" <re: "str"> ")" <r: @R> => {
         Symbol {
-            kind: SymbolKind::Regex(Rc::new(re)),
+            kind: SymbolKind::Regex(Rc::new(Regex::new(&re))),
             span: Span::new(l, r),
         }
     },
     <l: @L> <s: Symbol> "{" <lo: "int"> "," <hi: "int"?> "}" <r: @R>  => {
         Symbol {
             kind: SymbolKind::Repeat {
-                symbol: Box::new(s.kind), 
-                min: lo, 
+                symbol: Box::new(s.kind),
+                min: lo,
                 max: hi,
             },
             span: Span::new(l, r),
@@ -101,8 +102,8 @@ Symbol: Symbol = {
     <l: @L> <s: Symbol> "{" <cnt: "int"> "}" <r: @R>  => {
         Symbol {
             kind: SymbolKind::Repeat {
-                symbol: Box::new(s.kind), 
-                min: cnt, 
+                symbol: Box::new(s.kind),
+                min: cnt,
                 max: Some(cnt),
             },
             span: Span::new(l, r),
