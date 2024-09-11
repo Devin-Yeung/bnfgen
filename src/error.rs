@@ -38,6 +38,11 @@ pub enum Error {
         #[label("min should be less than or equal to max")]
         span: Span,
     },
+    #[error("Found unreachable rules")]
+    UnreachableRules {
+        #[label(collection, "this rule is unreachable")]
+        spans: Vec<Span>,
+    },
     #[error(transparent)]
     #[diagnostic(transparent)]
     LexicalError(#[from] crate::token::LexicalError),

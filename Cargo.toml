@@ -12,6 +12,7 @@ typed-builder = "0.20.0"
 regex-syntax = "0.8.4"
 thiserror = "1.0.63"
 miette = { version = "7.2.0", features = ["fancy"] }
+petgraph = "0.6.5"
 
 # Add a build-time dependency on the lalrpop library:
 [build-dependencies]

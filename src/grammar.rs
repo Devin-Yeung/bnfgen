@@ -1,3 +1,5 @@
+use petgraph::graph::{DiGraph, NodeIndex};
+use petgraph::visit::Dfs;
 use rand::distributions::Distribution;
 use rand::distributions::WeightedIndex;
 use rand::Rng;
@@ -32,6 +34,54 @@ impl RawGrammar {
         }
 
         Ok(CheckedGrammar { rules })
+    }
+
+    fn check_unused<S: AsRef<str>>(&self, start: S) -> Result<&Self> {
+        let mut graph = DiGraph::<String, ()>::new();
+        let mut all_nts = HashSet::new();
+        let nodes: HashMap<String, NodeIndex> = self
+            .rules
+            .iter()
+            .map(|rule| {
+                let entry = (rule.name.clone(), graph.add_node(rule.name.clone()));
+                all_nts.insert(rule.name.clone());
+                entry
+            })
+            .collect();
+        // setup the graph
+        for rule in &self.rules {
+            for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
+                match &sym.kind {
+                    SymbolKind::NonTerminal(name) => {
+                        graph.add_edge(nodes[&rule.name], nodes[name.as_str()], ());
+                    }
+                    _ => { /* do nothing */ }
+                }
+            }
+        }
+        // find the reachable nodes for a given start symbol
+        let start = nodes
+            .get(start.as_ref())
+            .expect("The start symbol does not exist");
+
+        let mut dfs = Dfs::new(&graph, *start);
+        let mut reachable = HashSet::new();
+        while let Some(nx) = dfs.next(&graph) {
+            let name = graph[nx].clone();
+            reachable.insert(name);
+        }
+        let unreachable = all_nts.difference(&reachable).collect::<HashSet<_>>();
+        // find the unreachable spans
+        if !unreachable.is_empty() {
+            let spans = self
+                .rules
+                .iter()
+                .filter(|rule| unreachable.contains(&rule.name))
+                .map(|rule| rule.span)
+                .collect::<Vec<_>>();
+            return Err(Error::UnreachableRules { spans });
+        }
+        Ok(self)
     }
 
     fn check_duplicate(&self) -> Result<&Self> {
@@ -257,6 +307,24 @@ mod test {
             <E> ::= "a" {10, 1};
         "#;
         let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
+
+    #[test]
+    fn unreachable_nt() {
+        let text = r#"
+            <E> ::= "Hello" | <A> ;
+            <W> ::= "World" ;
+            <A> ::= <B> ;
+            <B> ::= <A> ;
+            <C> ::= <W> ;
+        "#;
+        let err = RawGrammar::parse(text)
+            .unwrap()
+            .check_unused("E")
+            .err()
+            .unwrap();
         let ui = report_with_unnamed_source(err, text);
         insta::assert_snapshot!(ui);
     }

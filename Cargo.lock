@@ -102,6 +102,7 @@ dependencies = [
  "lalrpop-util",
  "logos",
  "miette",
+ "petgraph",
  "rand",
  "regex-syntax",
  "thiserror",
