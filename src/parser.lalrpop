@@ -82,11 +82,15 @@ Symbol: Symbol = {
             span: Span::new(l, r),
         }
     },
-    <l: @L> "re" "(" <re: "str"> ")" <r: @R> => {
-        Symbol {
-            kind: SymbolKind::Regex(Rc::new(Regex::new(&re))),
+    <l: @L> "re" "(" <re: "str"> ")" <r: @R> =>? {
+        Ok(Symbol {
+            kind: SymbolKind::Regex(
+                Rc::new(
+                    Regex::spanned(&re, l, r)?
+                )
+            ),
             span: Span::new(l, r),
-        }
+        })
     },
     <l: @L> <s: Symbol> "{" <lo: "int"> "," <hi: "int"?> "}" <r: @R>  => {
         Symbol {

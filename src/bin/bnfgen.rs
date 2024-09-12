@@ -1,9 +1,9 @@
 use bnfgen::grammar::RawGrammar;
 use bnfgen::report::{Reporter, Style};
 use clap::Parser;
+use miette::Report;
 use std::path::PathBuf;
 use std::sync::Arc;
-use miette::Report;
 
 #[derive(Parser, Debug, Clone)]
 pub struct Cli {
@@ -21,7 +21,7 @@ fn main() {
     let text = std::fs::read_to_string(&args.grammar).unwrap();
     let text = Arc::new(text);
     let mut reporter = Reporter::new(Style::NoColor);
-    
+
     let report_and = |reporter: &mut Reporter, e, v| {
         let diagnostic = Report::from(e).with_source_code(text.clone());
         reporter.push(diagnostic);
@@ -52,14 +52,18 @@ fn main() {
         .map_or_else(|e| report_and(&mut reporter, e, false), |_| true) &&
         grammar.check_repeats()
         .map_or_else(|e| report_and(&mut reporter, e, false), |_| true) ;
-    
+
     if continue_check {
         let graph = grammar.graph();
-        let _ = graph.check_trap_loop().map_err(|e| report_and(&mut reporter, e, false));
+        let _ = graph
+            .check_trap_loop()
+            .map_err(|e| report_and(&mut reporter, e, false));
         if let Some(start) = &args.check_unused {
-            let _ = graph.check_unused(start).map_err(|e| report_and(&mut reporter, e, false));
+            let _ = graph
+                .check_unused(start)
+                .map_err(|e| report_and(&mut reporter, e, false));
         }
     }
-    
+
     shutdown(&reporter);
 }

@@ -48,6 +48,11 @@ pub enum Error {
         #[label(collection, "this rule may be trapped in a dead loop")]
         spans: Vec<Span>,
     },
+    #[error("Invalid regex")]
+    InvalidRegex {
+        #[label("this regex is invalid")]
+        span: Span,
+    },
     #[error(transparent)]
     #[diagnostic(transparent)]
     LexicalError(#[from] crate::token::LexicalError),

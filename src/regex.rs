@@ -1,3 +1,5 @@
+use crate::error::{Error, Result};
+use crate::span::Span;
 use rand::Rng;
 use regex_syntax::hir::{Class, Hir, HirKind};
 
@@ -8,9 +10,18 @@ pub struct Regex {
 }
 
 impl Regex {
-    pub fn new(input: &str) -> Self {
+    fn new(input: &str) -> Self {
         let hir = regex_syntax::Parser::new().parse(input).unwrap();
-        Regex { hir }
+        Self { hir }
+    }
+
+    pub fn spanned(input: &str, l: usize, r: usize) -> Result<Regex> {
+        let hir = regex_syntax::Parser::new()
+            .parse(input)
+            .map_err(|_| Error::InvalidRegex {
+                span: Span::new(l, r),
+            })?;
+        Ok(Regex { hir })
     }
 
     pub fn generate<R: Rng>(&self, rng: &mut R) -> String {

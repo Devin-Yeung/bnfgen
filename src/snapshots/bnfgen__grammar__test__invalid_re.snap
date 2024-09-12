@@ -1,0 +1,10 @@
+---
+source: src/grammar.rs
+expression: ui
+---
+  × Invalid regex
+   ╭────
+ 1 │ <R> ::= re("["); 
+   ·         ───┬───
+   ·            ╰── this regex is invalid
+   ╰────

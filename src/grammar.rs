@@ -373,6 +373,14 @@ mod test {
     }
 
     #[test]
+    fn invalid_re() {
+        let text = r#"<R> ::= re("["); "#;
+        let err = RawGrammar::parse(text).err().unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
+
+    #[test]
     fn undefined_nt() {
         let text = "<E> ::= <S>;";
         let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
