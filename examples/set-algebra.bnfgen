@@ -41,8 +41,10 @@
                  | "!" <Predicate0>
                  | <Predicate0> ;
 
-<Predicate>  ::= 10 <Predicate1>
-                 | <Predicate> "&" <Predicate1>
-                 | <Predicate> "|" <Predicate1> ;
+<Predicate2>  ::= 10 <Predicate1>
+                 | <Predicate2> "&" <Predicate1> ;
+
+<Predicate>  ::= 10 <Predicate2>
+                 | <Predicate> "|" <Predicate2> ;
 
 <EOL>       ::= 1000 "\n" | "" ; // For generation purposes, make it looks better
