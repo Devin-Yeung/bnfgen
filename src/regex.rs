@@ -24,8 +24,14 @@ impl Regex {
         Ok(Regex { hir })
     }
 
-    pub fn generate<R: Rng>(&self, rng: &mut R) -> String {
-        Self::helper(&self.hir, rng)
+    pub fn generate<R: Rng>(&self, rng: &mut R, terminals: &[&str]) -> String {
+        // if regex produce a string that is a terminal, re-generate it
+        loop {
+            let s = Self::helper(&self.hir, rng);
+            if !terminals.contains(&s.as_str()) {
+                return s;
+            }
+        }
     }
 
     fn helper<R: Rng>(re: &Hir, rng: &mut R) -> String {
@@ -74,7 +80,9 @@ mod test {
     fn it_works() {
         let mut rng = StdRng::seed_from_u64(42);
         let re = super::Regex::new("[a-zA-Z0-9]*");
-        let generated = (0..10).map(|_| re.generate(&mut rng)).collect::<Vec<_>>();
+        let generated = (0..10)
+            .map(|_| re.generate(&mut rng, &["M"]))
+            .collect::<Vec<_>>();
         insta::assert_debug_snapshot!(generated);
     }
 }

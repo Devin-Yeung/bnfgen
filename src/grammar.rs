@@ -224,7 +224,12 @@ impl CheckedGrammar {
                 _ => todo!(),
             },
             SymbolKind::Regex(re) => {
-                let s = re.generate(rng);
+                let terminals = self
+                    .rules
+                    .values()
+                    .flat_map(|r| r.non_re_terminals())
+                    .collect::<Vec<_>>();
+                let s = re.generate(rng, terminals.as_slice());
                 (Some(Rc::new(s)), vec![])
             }
         }
@@ -267,12 +272,28 @@ impl WeightedProduction {
             .map(|s| s.kind.clone())
             .collect()
     }
+
+    pub fn non_re_terminals(&self) -> Vec<&str> {
+        self.alts
+            .iter()
+            .flat_map(|a| a.non_re_terminals())
+            .collect()
+    }
 }
 
 #[derive(Debug)]
 pub struct Alternative {
     pub(crate) weight: usize,
     pub(crate) symbols: Vec<Symbol>,
+}
+
+impl Alternative {
+    pub(crate) fn non_re_terminals(&self) -> Vec<&str> {
+        self.symbols
+            .iter()
+            .filter_map(|s| s.kind.non_re_terminal())
+            .collect()
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -288,6 +309,14 @@ pub(crate) enum SymbolKind {
 }
 
 impl SymbolKind {
+    pub fn non_re_terminal(&self) -> Option<&str> {
+        match self {
+            SymbolKind::Terminal(s) => Some(s.as_str()),
+            SymbolKind::Repeat { symbol, .. } => symbol.non_re_terminal(),
+            _ => None,
+        }
+    }
+
     pub fn is_terminal(&self) -> bool {
         match self {
             SymbolKind::Terminal(_) | SymbolKind::Regex(_) => true,
