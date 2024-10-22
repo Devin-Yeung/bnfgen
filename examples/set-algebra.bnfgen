@@ -1,5 +1,5 @@
 <Num>        ::= re("[0-9]|[1-9][0-9]+") ;
-<Id>         ::= re("[[a-zA-Z]&&[^UI]]|[a-zA-Z][a-zA-Z]+") ;
+<Id>         ::= re("[a-z]+") ;
 
 <Program>    ::= <Decl> {100} <CalcExpr> ".";
 // For generation purposes, we generate exactly 100 Decls
