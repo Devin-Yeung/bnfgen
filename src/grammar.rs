@@ -198,6 +198,10 @@ pub struct CheckedGrammar {
 }
 
 impl CheckedGrammar {
+    /// '+' --reduce--> '+'
+    ///
+    /// E   --reduce--> E, remaining: ['+', E]
+    /// if E -> E '+' E
     pub(crate) fn reduce<R: Rng>(
         &self,
         symbol: SymbolKind,
@@ -325,6 +329,7 @@ impl SymbolKind {
         }
     }
 
+    // get the non-terminal symbol if it is a non-terminal symbol, else none
     pub fn non_terminal(&self) -> Option<&str> {
         match self {
             SymbolKind::NonTerminal(s) => Some(s.as_str()),
