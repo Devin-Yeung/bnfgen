@@ -1,5 +1,5 @@
 ---
-source: src/grammar.rs
+source: src/grammar/mod.rs
 expression: ui
 ---
   × Undefined non-terminal

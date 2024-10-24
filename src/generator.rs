@@ -1,4 +1,5 @@
-use crate::grammar::{CheckedGrammar, SymbolKind};
+use crate::grammar::checked::CheckedGrammar;
+use crate::grammar::symbol::SymbolKind;
 use rand::Rng;
 
 #[derive(typed_builder::TypedBuilder)]

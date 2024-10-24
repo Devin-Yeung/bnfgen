@@ -1,6 +1,12 @@
 use crate::token::Token;
 use crate::span::Span;
-use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction, Limit};
+use crate::grammar::{
+    raw::RawGrammar,
+    rule::Rule,
+    alt::{Alternative, Limit},
+    symbol::{Symbol, SymbolKind},
+    production::WeightedProduction
+};
 use crate::regex::Regex;
 use std::rc::Rc;
 
