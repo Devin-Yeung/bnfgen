@@ -1,6 +1,6 @@
 use crate::token::Token;
 use crate::span::Span;
-use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction};
+use crate::grammar::{RawGrammar, Rule, Alternative, Symbol, SymbolKind, WeightedProduction, Limit};
 use crate::regex::Regex;
 use std::rc::Rc;
 
@@ -61,12 +61,26 @@ Or<T>: Vec<T> = {
 Alternatives = Or<Alternative>;
 
 Alternative: Alternative = {
-    <weight: "int"?> <symbols: Symbol+> => {
+    <l: @L> <weight: "int"?> <symbols: Symbol+> <r: @R> => {
         Alternative {
+            span: Span::new(l, r),
+            invoke_limit: Limit::Unlimited,
             weight: weight.unwrap_or(1),
             symbols,
         }
-    }
+    },
+
+    <l: @L> <symbols: Symbol+> "{" <lo: "int"> <comma: ","?> <hi: "int"?> "}" <r: @R> => {
+        Alternative {
+            span: Span::new(l, r),
+            invoke_limit: Limit::Limited {
+                min: lo,
+                max: hi.unwrap_or(lo),
+            },
+            weight: 1,
+            symbols,
+        }
+    },
 };
 
 Symbol: Symbol = {
@@ -92,25 +106,4 @@ Symbol: Symbol = {
             span: Span::new(l, r),
         })
     },
-    <l: @L> <s: Symbol> "{" <lo: "int"> "," <hi: "int"?> "}" <r: @R>  => {
-        Symbol {
-            kind: SymbolKind::Repeat {
-                symbol: Box::new(s.kind),
-                min: lo,
-                max: hi,
-            },
-            span: Span::new(l, r),
-        }
-    },
-    // exact match
-    <l: @L> <s: Symbol> "{" <cnt: "int"> "}" <r: @R>  => {
-        Symbol {
-            kind: SymbolKind::Repeat {
-                symbol: Box::new(s.kind),
-                min: cnt,
-                max: Some(cnt),
-            },
-            span: Span::new(l, r),
-        }
-    }
 };

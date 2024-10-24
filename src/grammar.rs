@@ -12,6 +12,18 @@ use crate::span::Span;
 use crate::utils::convert_parse_error;
 use crate::{lexer, parser};
 
+#[derive(Debug)]
+pub enum Limit {
+    /// can be invoked any number of times
+    Unlimited,
+    Limited {
+        /// should be invoked at least `min` times (inclusive)
+        min: usize,
+        /// should be invoked at most `max` times (inclusive)
+        max: usize,
+    }
+}
+
 #[repr(transparent)]
 #[derive(Debug)]
 pub struct RawGrammar {
@@ -156,18 +168,13 @@ impl RawGrammar {
 
     pub fn check_repeats(&self) -> Result<&Self> {
         for rule in &self.rules {
-            for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
-                match &sym.kind {
-                    SymbolKind::Repeat {
-                        symbol: _,
-                        min,
-                        max,
-                    } => {
-                        if min > &max.unwrap_or(usize::MAX) {
-                            return Err(Error::InvalidRepeatRange { span: sym.span });
-                        }
+            for alt in rule.rhs() {
+                if let Limit::Limited { min, max } = alt.invoke_limit {
+                    if min > max {
+                        return Err(Error::InvalidRepeatRange {
+                            span: alt.span,
+                        });
                     }
-                    _ => { /* do nothing */ }
                 }
             }
         }
@@ -217,16 +224,6 @@ impl CheckedGrammar {
                     .choose(rng);
                 (None, syms)
             }
-            SymbolKind::Repeat { symbol, min, max } => match (min, max) {
-                (min, Some(max)) => {
-                    if min == max {
-                        (None, (0..=min).map(|_| *symbol.clone()).collect::<Vec<_>>())
-                    } else {
-                        todo!()
-                    }
-                }
-                _ => todo!(),
-            },
             SymbolKind::Regex(re) => {
                 let terminals = self
                     .rules
@@ -287,7 +284,9 @@ impl WeightedProduction {
 
 #[derive(Debug)]
 pub struct Alternative {
+    pub(crate) span: Span,
     pub(crate) weight: usize,
+    pub(crate) invoke_limit: Limit,
     pub(crate) symbols: Vec<Symbol>,
 }
 
@@ -305,18 +304,12 @@ pub(crate) enum SymbolKind {
     Terminal(Rc<String>),
     NonTerminal(Rc<String>),
     Regex(Rc<Regex>),
-    Repeat {
-        symbol: Box<SymbolKind>,
-        min: usize,
-        max: Option<usize>,
-    },
 }
 
 impl SymbolKind {
     pub fn non_re_terminal(&self) -> Option<&str> {
         match self {
             SymbolKind::Terminal(s) => Some(s.as_str()),
-            SymbolKind::Repeat { symbol, .. } => symbol.non_re_terminal(),
             _ => None,
         }
     }
@@ -324,7 +317,6 @@ impl SymbolKind {
     pub fn is_terminal(&self) -> bool {
         match self {
             SymbolKind::Terminal(_) | SymbolKind::Regex(_) => true,
-            SymbolKind::Repeat { symbol, .. } => symbol.is_terminal(),
             _ => false,
         }
     }
@@ -333,7 +325,6 @@ impl SymbolKind {
     pub fn non_terminal(&self) -> Option<&str> {
         match self {
             SymbolKind::NonTerminal(s) => Some(s.as_str()),
-            SymbolKind::Repeat { symbol, .. } => symbol.non_terminal(),
             _ => None,
         }
     }
