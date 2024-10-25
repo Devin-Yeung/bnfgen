@@ -1,5 +1,13 @@
 # 📚 Bnfgen
 
+[![Build Status][actions-badge]][actions-url]
+[![MIT Licensed][mit-badge]][mit-url]
+
+[actions-badge]: https://github.com/Devin-Yeung/bnfgen/actions/workflows/ci.yml/badge.svg?branch=master
+[actions-url]: https://github.com/Devin-Yeung/bnfgen/actions/workflows/ci.yml
+[mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[mit-url]: https://github.com/Devin-Yeung/bnfgen/blob/master/LICENSE-MIT
+
 Bnfgen is a general purposed BNF grammar based random string generator ⚙️,
 with a powerful grammar extension to make it more 🪑 ergonomic to use.
 
@@ -35,3 +43,14 @@ The incorporation of regular language can't be done so easily without the help o
 - I'd also like to express my gratitude to _Maciej Hirsz_ and _Niko Matsakis_,
 their excellent work on the _[logos](https://github.com/maciejhirsz/logos)_ 
 and _[lalrpop](https://github.com/maciejhirsz/logos)_ crate makes the parsing of the grammar file a breeze 🍃.
+
+## License
+
+Licensed under either of
+
+* Apache License, Version 2.0
+  ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+* MIT license
+  ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
