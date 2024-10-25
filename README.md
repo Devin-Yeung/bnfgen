@@ -27,7 +27,7 @@ with a powerful grammar extension to make it more 🪑 ergonomic to use.
 
 This is a sample of how to represent a letter in BNF, it is obvious that the maintainability of this syntax is quite
 low.
-In our grammar extension, we incorporate the regular language to make it more maintainable.
+To address this, we integrate the regular express into our grammar extension seamlessly.
 Under our extension, the above syntax can simply be written as:
 
 ```text
@@ -36,24 +36,23 @@ Under our extension, the above syntax can simply be written as:
 
 ## Beyond the generation
 
-The design of Bnfgen is heavily influence by Rust Programming Language, most notably its exemplary error message.
-Bnfgen employs several semantic analysis on the BNF grammar, and the error message is designed to be as informative as
-possible.
+The design of Bnfgen is heavily influenced by the Rust Programming Language, particularly its outstanding error messages.
+Bnfgen conducts various semantic analyses on the BNF grammar, aiming to make its error messages as informative as possible.
 
 ```text
   × May be trapped in a dead loop
    ╭─[5:13]
- 4 │             <term> ::= "Terminal" ;
- 5 │             <A> ::= <B> ;
-   ·             ──────┬──────
-   ·                   ╰── this rule may be trapped in a dead loop
- 6 │             <B> ::= <C> ;
-   ·             ──────┬──────
-   ·                   ╰── this rule may be trapped in a dead loop
- 7 │             <C> ::= <A> ;
-   ·             ──────┬──────
-   ·                   ╰── this rule may be trapped in a dead loop
- 8 │         
+ 4 │        <term> ::= "Terminal" ;
+ 5 │        <A> ::= <B> ;
+   ·        ──────┬──────
+   ·        ╰── this rule may be trapped in a dead loop
+ 6 │        <B> ::= <C> ;
+   ·        ──────┬──────
+   ·        ╰── this rule may be trapped in a dead loop
+ 7 │        <C> ::= <A> ;
+   ·        ──────┬──────
+   ·        ╰── this rule may be trapped in a dead loop
+ 8 │
    ╰────
 ```
 
