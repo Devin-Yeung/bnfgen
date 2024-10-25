@@ -4,8 +4,11 @@
 [![MIT Licensed][mit-badge]][mit-url]
 
 [actions-badge]: https://github.com/Devin-Yeung/bnfgen/actions/workflows/ci.yml/badge.svg?branch=master
+
 [actions-url]: https://github.com/Devin-Yeung/bnfgen/actions/workflows/ci.yml
+
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+
 [mit-url]: https://github.com/Devin-Yeung/bnfgen/blob/master/LICENSE-MIT
 
 Bnfgen is a general purposed BNF grammar based random string generator ⚙️,
@@ -31,18 +34,52 @@ Under our extension, the above syntax can simply be written as:
 <letter> ::= re("[a-zA-Z]")
 ```
 
+## Beyond the generation
+
+The design of Bnfgen is heavily influence by Rust Programming Language, most notably its exemplary error message.
+Bnfgen employs several semantic analysis on the BNF grammar, and the error message is designed to be as informative as
+possible.
+
+```text
+  × May be trapped in a dead loop
+   ╭─[5:13]
+ 4 │             <term> ::= "Terminal" ;
+ 5 │             <A> ::= <B> ;
+   ·             ──────┬──────
+   ·                   ╰── this rule may be trapped in a dead loop
+ 6 │             <B> ::= <C> ;
+   ·             ──────┬──────
+   ·                   ╰── this rule may be trapped in a dead loop
+ 7 │             <C> ::= <A> ;
+   ·             ──────┬──────
+   ·                   ╰── this rule may be trapped in a dead loop
+ 8 │         
+   ╰────
+```
+
+Currently, we support the following semantic analysis:
+
+- [x] Invalid invoke limit range detection
+- [x] Undefined rule detection
+- [x] Duplicated rule detection
+- [x] Unreachable rule detection
+- [x] Dead loop detection (which avoid the possible infinite loop in the generation)
+
+We believe that an informative error message is the key to make the tool more __ergonomic__ to use.
+
 ## Acknowledgement
 
 - Born of this project is __highly inspired__ by _Daniil Baturin_'s [work](https://github.com/dmbaturin/bnfgen),
-which is also a BNF based random string generator, but in OCaml 🐫.
-The design of the grammar extension is also heavily influenced by his work.
+  which is also a BNF based random string generator, but in OCaml 🐫.
+  The design of the grammar extension is also heavily influenced by his work.
 
-- I want to thank _Andrew Gallant_ for his [work](https://github.com/rust-lang/regex) on the regex crate in Rust Eco-system.
-The incorporation of regular language can't be done so easily without the help of this crate.
+- I want to thank _Andrew Gallant_ for his [work](https://github.com/rust-lang/regex) on the regex crate in Rust
+  Eco-system.
+  The incorporation of regular language can't be done so easily without the help of this crate.
 
 - I'd also like to express my gratitude to _Maciej Hirsz_ and _Niko Matsakis_,
-their excellent work on the _[logos](https://github.com/maciejhirsz/logos)_ 
-and _[lalrpop](https://github.com/maciejhirsz/logos)_ crate makes the parsing of the grammar file a breeze 🍃.
+  their excellent work on the _[logos](https://github.com/maciejhirsz/logos)_
+  and _[lalrpop](https://github.com/maciejhirsz/logos)_ crate makes the parsing of the grammar file a breeze 🍃.
 
 ## License
 
