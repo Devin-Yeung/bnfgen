@@ -13,7 +13,6 @@ pub struct WeightedProduction {
 
 impl WeightedProduction {
     pub(crate) fn choose_by_state<R: Rng>(&self, state: &mut State<R>) -> Vec<SymbolKind> {
-        dbg!(&state.tracking);
         let candidates = match self.alts.iter().any(|alt| alt.lose_invoke_limit(state)) {
             true => self
                 .alts
@@ -32,8 +31,6 @@ impl WeightedProduction {
 
         // tracking the selected alternative
         state.track(candidates[idx].id());
-
-        println!("produce :{:?}", candidates[idx]);
 
         candidates[idx]
             .symbols

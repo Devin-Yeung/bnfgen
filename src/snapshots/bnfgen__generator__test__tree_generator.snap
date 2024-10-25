@@ -1,0 +1,169 @@
+---
+source: src/generator.rs
+expression: "&tree"
+---
+Branch {
+    name: "S",
+    children: [
+        Branch {
+            name: "S",
+            children: [
+                Branch {
+                    name: "S",
+                    children: [
+                        Branch {
+                            name: "S",
+                            children: [
+                                Branch {
+                                    name: "S",
+                                    children: [
+                                        Branch {
+                                            name: "S",
+                                            children: [
+                                                Branch {
+                                                    name: "S",
+                                                    children: [
+                                                        Branch {
+                                                            name: "S",
+                                                            children: [
+                                                                Branch {
+                                                                    name: "S",
+                                                                    children: [
+                                                                        Branch {
+                                                                            name: "S",
+                                                                            children: [
+                                                                                Branch {
+                                                                                    name: "S",
+                                                                                    children: [
+                                                                                        Branch {
+                                                                                            name: "E",
+                                                                                            children: [
+                                                                                                Leaf(
+                                                                                                    Terminal(
+                                                                                                        "b",
+                                                                                                    ),
+                                                                                                ),
+                                                                                            ],
+                                                                                        },
+                                                                                    ],
+                                                                                },
+                                                                                Branch {
+                                                                                    name: "E",
+                                                                                    children: [
+                                                                                        Leaf(
+                                                                                            Terminal(
+                                                                                                "c",
+                                                                                            ),
+                                                                                        ),
+                                                                                    ],
+                                                                                },
+                                                                            ],
+                                                                        },
+                                                                        Branch {
+                                                                            name: "E",
+                                                                            children: [
+                                                                                Leaf(
+                                                                                    Terminal(
+                                                                                        "b",
+                                                                                    ),
+                                                                                ),
+                                                                            ],
+                                                                        },
+                                                                    ],
+                                                                },
+                                                                Branch {
+                                                                    name: "E",
+                                                                    children: [
+                                                                        Leaf(
+                                                                            Terminal(
+                                                                                "a",
+                                                                            ),
+                                                                        ),
+                                                                    ],
+                                                                },
+                                                            ],
+                                                        },
+                                                        Branch {
+                                                            name: "E",
+                                                            children: [
+                                                                Leaf(
+                                                                    Terminal(
+                                                                        "c",
+                                                                    ),
+                                                                ),
+                                                            ],
+                                                        },
+                                                    ],
+                                                },
+                                                Branch {
+                                                    name: "E",
+                                                    children: [
+                                                        Leaf(
+                                                            Terminal(
+                                                                "c",
+                                                            ),
+                                                        ),
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                        Branch {
+                                            name: "E",
+                                            children: [
+                                                Leaf(
+                                                    Terminal(
+                                                        "b",
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                    ],
+                                },
+                                Branch {
+                                    name: "E",
+                                    children: [
+                                        Leaf(
+                                            Terminal(
+                                                "fallback",
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            ],
+                        },
+                        Branch {
+                            name: "E",
+                            children: [
+                                Leaf(
+                                    Terminal(
+                                        "a",
+                                    ),
+                                ),
+                            ],
+                        },
+                    ],
+                },
+                Branch {
+                    name: "E",
+                    children: [
+                        Leaf(
+                            Terminal(
+                                "a",
+                            ),
+                        ),
+                    ],
+                },
+            ],
+        },
+        Branch {
+            name: "E",
+            children: [
+                Leaf(
+                    Terminal(
+                        "c",
+                    ),
+                ),
+            ],
+        },
+    ],
+}

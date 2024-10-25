@@ -1,6 +1,8 @@
-use crate::grammar::checked::CheckedGrammar;
+use crate::grammar::checked::{CheckedGrammar, ReduceOutput};
 use crate::grammar::state::State;
 use crate::grammar::symbol::SymbolKind;
+use crate::grammar::symbol::SymbolKind::Terminal;
+use crate::parse_tree::tree::ParseTree;
 use rand::Rng;
 
 #[derive(typed_builder::TypedBuilder)]
@@ -19,11 +21,10 @@ impl Generator {
         while !stack.is_empty() {
             // pop out the first symbol
             match self.grammar.reduce(stack.remove(0), &mut state) {
-                (Some(s), syms) => {
+                ReduceOutput::Terminal(s) => {
                     buf.push(s);
-                    stack.extend(syms);
                 }
-                (None, mut syms) => {
+                ReduceOutput::NonTerminal { mut syms, .. } => {
                     // syms :: stack
                     syms.extend(stack);
                     stack = syms;
@@ -35,9 +36,38 @@ impl Generator {
     }
 }
 
+pub struct TreeGenerator {
+    pub grammar: CheckedGrammar,
+}
+
+impl TreeGenerator {
+    pub fn generate<R: Rng, S: ToString>(&self, start: S, rng: &mut R) -> ParseTree<SymbolKind> {
+        let start = SymbolKind::NonTerminal(start.to_string().into());
+        let mut state = State::new(rng);
+        self.generate_tree(start, &mut state)
+    }
+
+    fn generate_tree<R: Rng>(
+        &self,
+        symbol: SymbolKind,
+        state: &mut State<R>,
+    ) -> ParseTree<SymbolKind> {
+        match self.grammar.reduce(symbol, state) {
+            ReduceOutput::Terminal(s) => ParseTree::leaf(Terminal(s)),
+            ReduceOutput::NonTerminal { name, syms } => {
+                let subtrees = syms
+                    .into_iter()
+                    .map(|sym| self.generate_tree(sym, state))
+                    .collect::<Vec<_>>();
+                ParseTree::branch(name.to_string(), subtrees)
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use crate::generator::Generator;
+    use crate::generator::{Generator, TreeGenerator};
     use crate::grammar::raw::RawGrammar;
 
     #[test]
@@ -50,5 +80,17 @@ mod test {
         let gen = Generator::builder().grammar(grammar).build();
         let out = gen.generate("S", &mut rand::thread_rng());
         assert!(out.split(" ").count() >= 100);
+    }
+
+    #[test]
+    fn test_tree_generator() {
+        let text = r#"
+            <S> ::= <E> | <S> <E> {10};
+            <E> ::= "a" {1, 10} | "b" {2, } | "c" {3} | "fallback" ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let tree_gen = TreeGenerator { grammar };
+        let tree = tree_gen.generate("S", &mut rand::thread_rng());
+        insta::assert_debug_snapshot!(&tree);
     }
 }

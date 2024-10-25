@@ -10,11 +10,12 @@ pub enum ParseTree<T> {
 }
 
 impl<T> ParseTree<T> {
-    pub(crate) fn branch(name: String) -> ParseTree<T> {
-        ParseTree::Branch {
-            name,
-            children: Vec::new(),
-        }
+    pub(crate) fn leaf(value: T) -> ParseTree<T> {
+        ParseTree::Leaf(value)
+    }
+
+    pub(crate) fn branch(name: String, children: Vec<ParseTree<T>>) -> ParseTree<T> {
+        ParseTree::Branch { name, children }
     }
 
     pub(crate) fn children_len(&self) -> usize {
