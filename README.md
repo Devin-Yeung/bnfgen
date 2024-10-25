@@ -31,8 +31,31 @@ To address this, we integrate the regular express into our grammar extension sea
 Under our extension, the above syntax can simply be written as:
 
 ```text
-<letter> ::= re("[a-zA-Z]")
+<letter> ::= re("[a-zA-Z]");
 ```
+
+- Unpredictable generation result
+
+The generation of recursive rules in BNF is hard to control
+```text
+<decls> ::= <decl> | <decl> <decls> ;
+```
+Without any control, the generation of `<decls>` may always choose the second branch,
+which lead to an extremely long generation result and even can't stop in limited time.
+Thus, we introduce __invoke limit__ and __weighted__ branch to control the generation.
+```text
+<S> ::= <A> {1, }  // should be invoked at least once
+      | <B> { 5 }  // should be invoked exactly 5 times
+      | <C> {1, 5} // should be invoked at least once and at most 5 times
+```
+Noted it is possible that generator has nothing to choose:
+```text
+<S> ::= <X> | <X> <S> {100};
+<X> ::= "foo" {1, 5} | "bar" {10};
+```
+But, don't worry, the semantic analysis will help you out.
+We will give you a warning at the analysis stage.
+
 
 ## Beyond the generation
 
@@ -63,6 +86,7 @@ Currently, we support the following semantic analysis:
 - [x] Duplicated rule detection
 - [x] Unreachable rule detection
 - [x] Dead loop detection (which avoid the possible infinite loop in the generation)
+- [ ] Invoke limit not enough detection 
 
 We believe that an informative error message is the key to make the tool more __ergonomic__ to use.
 
