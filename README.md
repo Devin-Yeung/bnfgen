@@ -68,13 +68,13 @@ Bnfgen conducts various semantic analyses on the BNF grammar, aiming to make its
  4 │        <term> ::= "Terminal" ;
  5 │        <A> ::= <B> ;
    ·        ──────┬──────
-   ·        ╰── this rule may be trapped in a dead loop
+   ·              ╰── this rule may be trapped in a dead loop
  6 │        <B> ::= <C> ;
    ·        ──────┬──────
-   ·        ╰── this rule may be trapped in a dead loop
+   ·              ╰── this rule may be trapped in a dead loop
  7 │        <C> ::= <A> ;
    ·        ──────┬──────
-   ·        ╰── this rule may be trapped in a dead loop
+   ·              ╰── this rule may be trapped in a dead loop
  8 │
    ╰────
 ```
