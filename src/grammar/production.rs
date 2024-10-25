@@ -1,4 +1,5 @@
 use crate::grammar::alt::Alternative;
+use crate::grammar::state::State;
 use crate::grammar::symbol::SymbolKind;
 use rand::distributions::Distribution;
 use rand::distributions::WeightedIndex;
@@ -11,10 +12,30 @@ pub struct WeightedProduction {
 }
 
 impl WeightedProduction {
-    pub fn choose<R: Rng>(&self, rng: &mut R) -> Vec<SymbolKind> {
-        let dist = WeightedIndex::new(self.alts.iter().map(|a| a.weight)).unwrap();
-        let idx = dist.sample(rng);
-        self.alts[idx]
+    pub(crate) fn choose_by_state<R: Rng>(&self, state: &mut State<R>) -> Vec<SymbolKind> {
+        dbg!(&state.tracking);
+        let candidates = match self.alts.iter().any(|alt| alt.lose_invoke_limit(state)) {
+            true => self
+                .alts
+                .iter()
+                .filter(|alt| alt.lose_invoke_limit(state))
+                .collect::<Vec<_>>(),
+            false => self
+                .alts
+                .iter()
+                .filter(|alt| !alt.exceeds_invoke_limit(state))
+                .collect::<Vec<_>>(),
+        };
+
+        let dist = WeightedIndex::new(candidates.iter().map(|a| a.weight)).unwrap();
+        let idx = dist.sample(state.rng());
+
+        // tracking the selected alternative
+        state.track(candidates[idx].id());
+
+        println!("produce :{:?}", candidates[idx]);
+
+        candidates[idx]
             .symbols
             .iter()
             .map(|s| s.kind.clone())

@@ -1,4 +1,5 @@
 use crate::grammar::production::WeightedProduction;
+use crate::grammar::state::State;
 use crate::grammar::symbol::SymbolKind;
 use rand::Rng;
 use std::collections::HashMap;
@@ -16,7 +17,7 @@ impl CheckedGrammar {
     pub(crate) fn reduce<R: Rng>(
         &self,
         symbol: SymbolKind,
-        rng: &mut R,
+        state: &mut State<R>,
     ) -> (Option<Rc<String>>, Vec<SymbolKind>) {
         match symbol {
             SymbolKind::Terminal(s) => (Some(s), vec![]),
@@ -25,7 +26,7 @@ impl CheckedGrammar {
                     .rules
                     .get(s.as_ref())
                     .unwrap_or_else(|| panic!("Fail to find rule of {}", s))
-                    .choose(rng);
+                    .choose_by_state(state);
                 (None, syms)
             }
             SymbolKind::Regex(re) => {
@@ -34,7 +35,7 @@ impl CheckedGrammar {
                     .values()
                     .flat_map(|r| r.non_re_terminals())
                     .collect::<Vec<_>>();
-                let s = re.generate(rng, terminals.as_slice());
+                let s = re.generate(state.rng(), terminals.as_slice());
                 (Some(Rc::new(s)), vec![])
             }
         }

@@ -1,5 +1,7 @@
+use crate::grammar::state::State;
 use crate::grammar::symbol::Symbol;
 use crate::span::Span;
+use rand::Rng;
 use std::hash::{DefaultHasher, Hash, Hasher};
 
 #[derive(Debug)]
@@ -44,5 +46,27 @@ impl Alternative {
         let mut hasher = DefaultHasher::new();
         self.hash(&mut hasher);
         hasher.finish()
+    }
+
+    pub(crate) fn has_invoke_limits(&self) -> bool {
+        match self.invoke_limit {
+            Limit::Unlimited => false,
+            _ => true,
+        }
+    }
+
+    /// check if this alternative has exceeded its invoke limit base on the generator state
+    pub(crate) fn exceeds_invoke_limit<R: Rng>(&self, state: &State<R>) -> bool {
+        match self.invoke_limit {
+            Limit::Unlimited => false,
+            Limit::Limited { max, .. } => state.count(self.id()) > max,
+        }
+    }
+
+    pub(crate) fn lose_invoke_limit<R: Rng>(&self, state: &State<R>) -> bool {
+        match self.invoke_limit {
+            Limit::Unlimited => false,
+            Limit::Limited { min, .. } => state.count(self.id()) < min,
+        }
     }
 }
