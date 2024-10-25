@@ -1,0 +1,85 @@
+---
+source: src/grammar/mod.rs
+expression: grammar
+---
+RawGrammar {
+    rules: [
+        Rule {
+            name: "E",
+            production: WeightedProduction {
+                alts: [
+                    Alternative {
+                        span: Span {
+                            start: 21,
+                            end: 32,
+                        },
+                        weight: 1,
+                        invoke_limit: Limited {
+                            min: 1,
+                            max: 10,
+                        },
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "a",
+                                ),
+                                span: Span {
+                                    start: 21,
+                                    end: 24,
+                                },
+                            },
+                        ],
+                    },
+                    Alternative {
+                        span: Span {
+                            start: 35,
+                            end: 44,
+                        },
+                        weight: 1,
+                        invoke_limit: Limited {
+                            min: 2,
+                            max: 2,
+                        },
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "b",
+                                ),
+                                span: Span {
+                                    start: 35,
+                                    end: 38,
+                                },
+                            },
+                        ],
+                    },
+                    Alternative {
+                        span: Span {
+                            start: 47,
+                            end: 54,
+                        },
+                        weight: 1,
+                        invoke_limit: Limited {
+                            min: 3,
+                            max: 3,
+                        },
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "c",
+                                ),
+                                span: Span {
+                                    start: 47,
+                                    end: 50,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            span: Span {
+                start: 13,
+                end: 56,
+            },
+        },
+    ],
+}

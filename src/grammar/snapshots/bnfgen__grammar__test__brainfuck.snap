@@ -1,5 +1,5 @@
 ---
-source: src/grammar.rs
+source: src/grammar/mod.rs
 expression: grammar
 ---
 RawGrammar {
@@ -9,7 +9,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 12,
+                            end: 24,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -34,7 +39,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 44,
+                            end: 72,
+                        },
                         weight: 100,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -57,7 +67,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 75,
+                            end: 86,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -82,7 +97,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 105,
+                            end: 111,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -96,7 +116,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 114,
+                            end: 124,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -121,7 +146,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 138,
+                            end: 156,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: Terminal(
@@ -164,7 +194,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 174,
+                            end: 197,
+                        },
                         weight: 10,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -187,7 +222,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 200,
+                            end: 209,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -212,7 +252,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 226,
+                            end: 252,
+                        },
                         weight: 5,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -235,7 +280,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 255,
+                            end: 259,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -260,7 +310,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 275,
+                            end: 289,
+                        },
                         weight: 5,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -283,7 +338,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 292,
+                            end: 295,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: Terminal(
@@ -308,7 +368,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 311,
+                            end: 325,
+                        },
                         weight: 5,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -331,7 +396,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 328,
+                            end: 331,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: Terminal(
@@ -356,7 +426,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 347,
+                            end: 361,
+                        },
                         weight: 5,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -379,7 +454,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 364,
+                            end: 367,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: Terminal(
@@ -404,7 +484,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 383,
+                            end: 397,
+                        },
                         weight: 5,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -427,7 +512,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 400,
+                            end: 403,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: Terminal(
@@ -452,7 +542,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 421,
+                            end: 431,
+                        },
                         weight: 5,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -466,7 +561,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 434,
+                            end: 442,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -491,7 +591,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 463,
+                            end: 473,
+                        },
                         weight: 5,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -505,7 +610,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 476,
+                            end: 484,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
@@ -530,7 +640,12 @@ RawGrammar {
             production: WeightedProduction {
                 alts: [
                     Alternative {
+                        span: Span {
+                            start: 496,
+                            end: 499,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: Terminal(
@@ -544,7 +659,12 @@ RawGrammar {
                         ],
                     },
                     Alternative {
+                        span: Span {
+                            start: 502,
+                            end: 505,
+                        },
                         weight: 1,
+                        invoke_limit: Unlimited,
                         symbols: [
                             Symbol {
                                 kind: Terminal(

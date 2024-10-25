@@ -1,4 +1,4 @@
-use bnfgen::grammar::RawGrammar;
+use bnfgen::grammar::raw::RawGrammar;
 use bnfgen::report::{Reporter, Style};
 use clap::Parser;
 use miette::Report;

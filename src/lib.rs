@@ -2,6 +2,7 @@ pub mod error;
 pub mod generator;
 pub mod grammar;
 mod lexer;
+pub mod parse_tree;
 mod regex;
 pub mod report;
 mod span;
