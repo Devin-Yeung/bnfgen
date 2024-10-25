@@ -30,7 +30,9 @@ impl WeightedProduction {
         let idx = dist.sample(state.rng());
 
         // tracking the selected alternative
-        state.track(candidates[idx].id());
+        if candidates[idx].has_invoke_limits() {
+            state.track(candidates[idx].id());
+        }
 
         candidates[idx]
             .symbols
