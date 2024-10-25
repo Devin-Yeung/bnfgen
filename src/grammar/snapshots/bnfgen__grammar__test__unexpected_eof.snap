@@ -6,5 +6,5 @@ expression: ui
    ╭────
  1 │ <start> ::= "Hello" | "World"
    ·                             ┬
-   ·                             ╰── expect ";", "nonterminal", "re", "str", "{", "|"
+   ·                             ╰── expect "{", "|", ";", "re", "str", "nonterminal"
    ╰────
