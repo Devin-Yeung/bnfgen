@@ -67,9 +67,9 @@ impl TreeGenerator {
 
 #[cfg(test)]
 mod test {
-    use rand::SeedableRng;
     use crate::generator::{Generator, TreeGenerator};
     use crate::grammar::raw::RawGrammar;
+    use rand::SeedableRng;
 
     #[test]
     fn repeat_works() {
