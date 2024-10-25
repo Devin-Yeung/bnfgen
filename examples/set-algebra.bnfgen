@@ -1,14 +1,14 @@
 <Num>        ::= re("[0-9]|[1-9][0-9]+") ;
 <Id>         ::= re("[a-z]+") ;
 
-<Program>    ::= <Decl> {100} <CalcExpr> ".";
-// For generation purposes, we generate exactly 100 Decls
+<Program>    ::= <Decls> <CalcExpr> ".";
 
 <CalcExpr>   ::= "show" <Algebra>
                  | "simplify" <Algebra> ;
 
 <Decls>      ::= <Decl>
-                 | <Decls> <Decl>;
+                 | <Decls> <Decl> {100} ;
+// For generation purposes, we generate exactly 100 Decls
 
 <Ty>         ::= "int"
                  | "set" ;

@@ -67,6 +67,7 @@ impl TreeGenerator {
 
 #[cfg(test)]
 mod test {
+    use rand::SeedableRng;
     use crate::generator::{Generator, TreeGenerator};
     use crate::grammar::raw::RawGrammar;
 
@@ -90,7 +91,8 @@ mod test {
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let tree_gen = TreeGenerator { grammar };
-        let tree = tree_gen.generate("S", &mut rand::thread_rng());
+        let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
+        let tree = tree_gen.generate("S", &mut seeded_rng);
         insta::assert_debug_snapshot!(&tree);
     }
 }
