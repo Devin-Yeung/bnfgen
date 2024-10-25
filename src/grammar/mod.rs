@@ -8,10 +8,10 @@ pub mod symbol;
 
 #[cfg(test)]
 mod test {
+    use crate::grammar::raw::RawGrammar;
     use crate::report::{Reporter, Style};
     use miette::{Diagnostic, Report};
     use std::sync::Arc;
-    use crate::grammar::raw::RawGrammar;
 
     fn report_with_unnamed_source<T: Diagnostic + Sync + Send + 'static, S: ToString>(
         err: T,

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use bnfgen::error::Result;
 use bnfgen::generator::Generator;
-use bnfgen::grammar::RawGrammar;
+use bnfgen::grammar::raw::RawGrammar;
 use bnfgen::report::Style;
 use miette::Report;
 

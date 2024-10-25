@@ -2,26 +2,35 @@ use crate::error::{Error, Result};
 use crate::span::Span;
 use rand::Rng;
 use regex_syntax::hir::{Class, Hir, HirKind};
+use std::hash::Hash;
 
-#[repr(transparent)]
 #[derive(Debug)]
 pub struct Regex {
+    lit: String,
     hir: Hir,
+}
+
+impl Hash for Regex {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.lit.hash(state);
+    }
 }
 
 impl Regex {
     fn new(input: &str) -> Self {
+        let lit = input.to_string();
         let hir = regex_syntax::Parser::new().parse(input).unwrap();
-        Self { hir }
+        Self { lit, hir }
     }
 
     pub fn spanned(input: &str, l: usize, r: usize) -> Result<Regex> {
+        let lit = input.to_string();
         let hir = regex_syntax::Parser::new()
             .parse(input)
             .map_err(|_| Error::InvalidRegex {
                 span: Span::new(l, r),
             })?;
-        Ok(Regex { hir })
+        Ok(Regex { lit, hir })
     }
 
     pub fn generate<R: Rng>(&self, rng: &mut R, terminals: &[&str]) -> String {
