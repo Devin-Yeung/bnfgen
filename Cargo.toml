@@ -26,4 +26,4 @@ path = "src/bin/bnfgen.rs"
 lalrpop = { version = "0.22.0", default-features = false }
 
 [dev-dependencies]
-insta = { version = "1.40.0" }
+insta = { version = "1.41.0" }
