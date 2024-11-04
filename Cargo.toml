@@ -10,7 +10,7 @@ indexmap = "2.6.0"
 rand = "0.8.5"
 typed-builder = "0.20.0"
 regex-syntax = "0.8.5"
-thiserror = "1.0.65"
+thiserror = "1.0.67"
 miette = { version = "7.2.0", features = ["fancy"] }
 petgraph = "0.6.5"
 clap = { version = "4.5.20", features = ["derive"] }
@@ -26,4 +26,4 @@ path = "src/bin/bnfgen.rs"
 lalrpop = { version = "0.22.0", default-features = false }
 
 [dev-dependencies]
-insta = { version = "1.41.0" }
+insta = { version = "1.41.1" }
