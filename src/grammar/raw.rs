@@ -39,10 +39,7 @@ impl RawGrammar {
         let nodes: HashMap<String, NodeIndex> = self
             .rules
             .iter()
-            .map(|rule| {
-                let entry = (rule.name.clone(), graph.add_node(rule.name.clone()));
-                entry
-            })
+            .map(|rule| (rule.name.clone(), graph.add_node(rule.name.clone())))
             .collect();
         // setup the graph
         for rule in &self.rules {
