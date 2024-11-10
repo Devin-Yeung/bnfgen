@@ -106,9 +106,9 @@ Symbol: Symbol = {
         }
     },
     // typed non-terminal
-    <l: @L> "<" <nt: "id"> ":" <_ty: "str"> ">" <r: @R> => {
+    <l: @L> "<" <nt: "id"> ":" <ty: "str"> ">" <r: @R> => {
         Symbol {
-            kind: SymbolKind::NonTerminal(NonTerminal::untyped(nt)),
+            kind: SymbolKind::NonTerminal(NonTerminal::typed(nt, ty.into())),
             span: Span::new(l, r),
         }
     },

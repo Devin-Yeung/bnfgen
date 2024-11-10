@@ -44,6 +44,12 @@ pub enum Ty {
     Typed(Rc<String>),
 }
 
+impl From<String> for Ty {
+    fn from(s: String) -> Self {
+        Ty::Typed(Rc::new(s))
+    }
+}
+
 impl Hash for Ty {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         match self {
