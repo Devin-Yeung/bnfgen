@@ -56,7 +56,7 @@ impl<'rule> GrammarGraph<'rule> {
                 return Err(Error::TrapLoop { spans });
             }
         }
-        Ok(&self)
+        Ok(self)
     }
 
     fn is_trap_loop(&self, scc: &Vec<NodeIndex>) -> bool {
@@ -73,9 +73,8 @@ impl<'rule> GrammarGraph<'rule> {
         }
         let out_deg: HashSet<NodeIndex> = scc
             .iter()
-            .map(|nx| self.graph.neighbors(*nx))
-            .flatten()
+            .flat_map(|nx| self.graph.neighbors(*nx))
             .collect();
-        out_deg == scc.iter().map(|n| *n).collect()
+        out_deg == scc.iter().copied().collect()
     }
 }
