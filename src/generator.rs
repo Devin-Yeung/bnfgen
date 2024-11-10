@@ -1,7 +1,7 @@
 use crate::grammar::checked::{CheckedGrammar, ReduceOutput};
 use crate::grammar::state::State;
-use crate::grammar::symbol::SymbolKind;
 use crate::grammar::symbol::SymbolKind::Terminal;
+use crate::grammar::symbol::{NonTerminal, SymbolKind};
 use crate::parse_tree::tree::ParseTree;
 use rand::Rng;
 
@@ -11,11 +11,11 @@ pub struct Generator {
 }
 
 impl Generator {
-    pub fn generate<R: Rng, S: ToString>(&self, start: S, rng: &mut R) -> String {
+    pub fn generate<R: Rng, S: Into<String>>(&self, start: S, rng: &mut R) -> String {
         let mut buf = Vec::new();
         let mut state = State::new(rng);
 
-        let start = SymbolKind::NonTerminal(start.to_string().into());
+        let start = SymbolKind::NonTerminal(NonTerminal::untyped(start));
         let mut stack = vec![start];
 
         while !stack.is_empty() {
@@ -41,8 +41,12 @@ pub struct TreeGenerator {
 }
 
 impl TreeGenerator {
-    pub fn generate<R: Rng, S: ToString>(&self, start: S, rng: &mut R) -> ParseTree<SymbolKind> {
-        let start = SymbolKind::NonTerminal(start.to_string().into());
+    pub fn generate<R: Rng, S: Into<String>>(
+        &self,
+        start: S,
+        rng: &mut R,
+    ) -> ParseTree<SymbolKind> {
+        let start = SymbolKind::NonTerminal(NonTerminal::untyped(start));
         let mut state = State::new(rng);
         self.generate_tree(start, &mut state)
     }

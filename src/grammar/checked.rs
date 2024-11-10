@@ -28,11 +28,11 @@ impl CheckedGrammar {
             SymbolKind::NonTerminal(s) => {
                 let syms = self
                     .rules
-                    .get(s.as_ref())
-                    .unwrap_or_else(|| panic!("Fail to find rule of {}", s))
+                    .get(s.as_str())
+                    .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
                     .choose_by_state(state);
 
-                ReduceOutput::NonTerminal { name: s, syms }
+                ReduceOutput::NonTerminal { name: s.name, syms }
             }
             SymbolKind::Regex(re) => {
                 let terminals = self

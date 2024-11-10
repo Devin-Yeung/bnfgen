@@ -18,7 +18,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "statements",
+                                    NonTerminal {
+                                        name: "statements",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 12,
@@ -48,7 +51,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "statements",
+                                    NonTerminal {
+                                        name: "statements",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 48,
@@ -57,7 +63,10 @@ RawGrammar {
                             },
                             Symbol {
                                 kind: NonTerminal(
-                                    "statement",
+                                    NonTerminal {
+                                        name: "statement",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 61,
@@ -76,7 +85,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "statement",
+                                    NonTerminal {
+                                        name: "statement",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 75,
@@ -106,7 +118,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "loop",
+                                    NonTerminal {
+                                        name: "loop",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 105,
@@ -125,7 +140,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "commands",
+                                    NonTerminal {
+                                        name: "commands",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 114,
@@ -164,7 +182,10 @@ RawGrammar {
                             },
                             Symbol {
                                 kind: NonTerminal(
-                                    "commands",
+                                    NonTerminal {
+                                        name: "commands",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 142,
@@ -203,7 +224,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "commands",
+                                    NonTerminal {
+                                        name: "commands",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 177,
@@ -212,7 +236,10 @@ RawGrammar {
                             },
                             Symbol {
                                 kind: NonTerminal(
-                                    "command",
+                                    NonTerminal {
+                                        name: "command",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 188,
@@ -231,7 +258,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "command",
+                                    NonTerminal {
+                                        name: "command",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 200,
@@ -261,7 +291,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "ptrgroup",
+                                    NonTerminal {
+                                        name: "ptrgroup",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 228,
@@ -270,7 +303,10 @@ RawGrammar {
                             },
                             Symbol {
                                 kind: NonTerminal(
-                                    "arithmgroup",
+                                    NonTerminal {
+                                        name: "arithmgroup",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 239,
@@ -289,7 +325,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "io",
+                                    NonTerminal {
+                                        name: "io",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 255,
@@ -319,7 +358,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "ptrinc",
+                                    NonTerminal {
+                                        name: "ptrinc",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 277,
@@ -377,7 +419,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "ptrdec",
+                                    NonTerminal {
+                                        name: "ptrdec",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 313,
@@ -435,7 +480,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "valinc",
+                                    NonTerminal {
+                                        name: "valinc",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 349,
@@ -493,7 +541,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "valdec",
+                                    NonTerminal {
+                                        name: "valdec",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 385,
@@ -551,7 +602,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "ptrinc",
+                                    NonTerminal {
+                                        name: "ptrinc",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 423,
@@ -570,7 +624,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "ptrdec",
+                                    NonTerminal {
+                                        name: "ptrdec",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 434,
@@ -600,7 +657,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "valinc",
+                                    NonTerminal {
+                                        name: "valinc",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 465,
@@ -619,7 +679,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "valdec",
+                                    NonTerminal {
+                                        name: "valdec",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 476,
