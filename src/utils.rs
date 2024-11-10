@@ -1,6 +1,6 @@
 use crate::error::Error;
 use crate::span::Span;
-use crate::token::{LexicalError, Token};
+use crate::token::Token;
 
 pub(crate) fn convert_parse_error(e: lalrpop_util::ParseError<usize, Token, Error>) -> Error {
     match e {

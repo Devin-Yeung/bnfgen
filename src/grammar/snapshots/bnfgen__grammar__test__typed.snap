@@ -18,7 +18,10 @@ RawGrammar {
                         symbols: [
                             Symbol {
                                 kind: NonTerminal(
-                                    "E",
+                                    NonTerminal {
+                                        name: "E",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 21,
@@ -36,7 +39,10 @@ RawGrammar {
                             },
                             Symbol {
                                 kind: NonTerminal(
-                                    "E",
+                                    NonTerminal {
+                                        name: "E",
+                                        ty: Untyped,
+                                    },
                                 ),
                                 span: Span {
                                     start: 36,

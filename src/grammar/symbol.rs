@@ -3,10 +3,88 @@ use crate::span::Span;
 use std::hash::Hash;
 use std::rc::Rc;
 
+pub type Terminal = Rc<String>;
+
+#[derive(Clone, Debug)]
+pub struct NonTerminal {
+    pub(crate) name: Rc<String>,
+    pub(crate) ty: Ty,
+}
+
+impl Hash for NonTerminal {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
+        self.ty.hash(state);
+    }
+}
+
+impl NonTerminal {
+    pub fn untyped<S: Into<String>>(name: S) -> Self {
+        NonTerminal {
+            name: Rc::new(name.into()),
+            ty: Ty::Untyped,
+        }
+    }
+
+    pub fn typed<S: Into<String>>(name: S, ty: Ty) -> Self {
+        NonTerminal {
+            name: Rc::new(name.into()),
+            ty,
+        }
+    }
+
+    pub fn as_str(&self) -> &str {
+        self.name.as_str()
+    }
+}
+
+#[derive(Debug)]
+pub enum Ty {
+    Untyped,
+    Typed(Rc<String>),
+}
+
+impl Hash for Ty {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        match self {
+            Ty::Untyped => ().hash(state),
+            Ty::Typed(s) => s.hash(state),
+        }
+    }
+}
+
+impl Ty {
+    pub fn untyped() -> Self {
+        Ty::Untyped
+    }
+
+    pub fn typed<S: Into<String>>(s: S) -> Self {
+        Ty::Typed(Rc::new(s.into()))
+    }
+}
+
+impl Clone for Ty {
+    fn clone(&self) -> Self {
+        match self {
+            Ty::Untyped => Ty::Untyped,
+            Ty::Typed(s) => Ty::Typed(s.clone()),
+        }
+    }
+}
+
+impl Ty {
+    pub fn ty(&self) -> Option<&str> {
+        match self {
+            Ty::Untyped => None,
+            Ty::Typed(s) => Some(s.as_str()),
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(crate) enum SymbolKind {
-    Terminal(Rc<String>),
-    NonTerminal(Rc<String>),
+    Terminal(Terminal),
+    NonTerminal(NonTerminal),
     Regex(Rc<Regex>),
 }
 

@@ -4,7 +4,7 @@ use crate::grammar::{
     raw::RawGrammar,
     rule::Rule,
     alt::{Alternative, Limit},
-    symbol::{Symbol, SymbolKind},
+    symbol::{Symbol, SymbolKind, NonTerminal},
     production::WeightedProduction
 };
 use crate::regex::Regex;
@@ -101,14 +101,14 @@ Symbol: Symbol = {
     },
     <l: @L> "<" <nt: "id"> ">" <r: @R> => {
         Symbol {
-            kind: SymbolKind::NonTerminal(Rc::new(nt)),
+            kind: SymbolKind::NonTerminal(NonTerminal::untyped(nt)),
             span: Span::new(l, r),
         }
     },
     // typed non-terminal
     <l: @L> "<" <nt: "id"> ":" <_ty: "str"> ">" <r: @R> => {
         Symbol {
-            kind: SymbolKind::NonTerminal(Rc::new(nt)),
+            kind: SymbolKind::NonTerminal(NonTerminal::untyped(nt)),
             span: Span::new(l, r),
         }
     },
