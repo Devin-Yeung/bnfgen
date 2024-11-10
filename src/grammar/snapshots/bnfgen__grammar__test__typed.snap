@@ -20,7 +20,9 @@ RawGrammar {
                                 kind: NonTerminal(
                                     NonTerminal {
                                         name: "E",
-                                        ty: Untyped,
+                                        ty: Typed(
+                                            "int",
+                                        ),
                                     },
                                 ),
                                 span: Span {
@@ -41,7 +43,9 @@ RawGrammar {
                                 kind: NonTerminal(
                                     NonTerminal {
                                         name: "E",
-                                        ty: Untyped,
+                                        ty: Typed(
+                                            "int",
+                                        ),
                                     },
                                 ),
                                 span: Span {
