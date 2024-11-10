@@ -6,9 +6,23 @@ expression: tokens
     Ok(
         (
             1,
-            NonTerminal(
+            LAngle,
+            2,
+        ),
+    ),
+    Ok(
+        (
+            2,
+            Id(
                 "syntax",
             ),
+            8,
+        ),
+    ),
+    Ok(
+        (
+            8,
+            RAngle,
             9,
         ),
     ),
@@ -22,9 +36,23 @@ expression: tokens
     Ok(
         (
             22,
-            NonTerminal(
+            LAngle,
+            23,
+        ),
+    ),
+    Ok(
+        (
+            23,
+            Id(
                 "rule",
             ),
+            27,
+        ),
+    ),
+    Ok(
+        (
+            27,
+            RAngle,
             28,
         ),
     ),
@@ -47,18 +75,46 @@ expression: tokens
     Ok(
         (
             34,
-            NonTerminal(
+            LAngle,
+            35,
+        ),
+    ),
+    Ok(
+        (
+            35,
+            Id(
                 "rule",
             ),
+            39,
+        ),
+    ),
+    Ok(
+        (
+            39,
+            RAngle,
             40,
         ),
     ),
     Ok(
         (
             41,
-            NonTerminal(
+            LAngle,
+            42,
+        ),
+    ),
+    Ok(
+        (
+            42,
+            Id(
                 "syntax",
             ),
+            48,
+        ),
+    ),
+    Ok(
+        (
+            48,
+            RAngle,
             49,
         ),
     ),
@@ -72,9 +128,23 @@ expression: tokens
     Ok(
         (
             53,
-            NonTerminal(
+            LAngle,
+            54,
+        ),
+    ),
+    Ok(
+        (
+            54,
+            Id(
                 "rule",
             ),
+            58,
+        ),
+    ),
+    Ok(
+        (
+            58,
+            RAngle,
             59,
         ),
     ),
@@ -88,9 +158,23 @@ expression: tokens
     Ok(
         (
             74,
-            NonTerminal(
+            LAngle,
+            75,
+        ),
+    ),
+    Ok(
+        (
+            75,
+            Id(
                 "opt-whitespace",
             ),
+            89,
+        ),
+    ),
+    Ok(
+        (
+            89,
+            RAngle,
             90,
         ),
     ),
@@ -106,9 +190,23 @@ expression: tokens
     Ok(
         (
             95,
-            NonTerminal(
+            LAngle,
+            96,
+        ),
+    ),
+    Ok(
+        (
+            96,
+            Id(
                 "rule-name",
             ),
+            105,
+        ),
+    ),
+    Ok(
+        (
+            105,
+            RAngle,
             106,
         ),
     ),
@@ -124,9 +222,23 @@ expression: tokens
     Ok(
         (
             111,
-            NonTerminal(
+            LAngle,
+            112,
+        ),
+    ),
+    Ok(
+        (
+            112,
+            Id(
                 "opt-whitespace",
             ),
+            126,
+        ),
+    ),
+    Ok(
+        (
+            126,
+            RAngle,
             127,
         ),
     ),
@@ -142,18 +254,46 @@ expression: tokens
     Ok(
         (
             134,
-            NonTerminal(
+            LAngle,
+            135,
+        ),
+    ),
+    Ok(
+        (
+            135,
+            Id(
                 "opt-whitespace",
             ),
+            149,
+        ),
+    ),
+    Ok(
+        (
+            149,
+            RAngle,
             150,
         ),
     ),
     Ok(
         (
             151,
-            NonTerminal(
+            LAngle,
+            152,
+        ),
+    ),
+    Ok(
+        (
+            152,
+            Id(
                 "expression",
             ),
+            162,
+        ),
+    ),
+    Ok(
+        (
+            162,
+            RAngle,
             163,
         ),
     ),
@@ -169,9 +309,23 @@ expression: tokens
     Ok(
         (
             168,
-            NonTerminal(
+            LAngle,
+            169,
+        ),
+    ),
+    Ok(
+        (
+            169,
+            Id(
                 "line-end",
             ),
+            177,
+        ),
+    ),
+    Ok(
+        (
+            177,
+            RAngle,
             178,
         ),
     ),
@@ -185,9 +339,23 @@ expression: tokens
     Ok(
         (
             182,
-            NonTerminal(
+            LAngle,
+            183,
+        ),
+    ),
+    Ok(
+        (
+            183,
+            Id(
                 "opt-whitespace",
             ),
+            197,
+        ),
+    ),
+    Ok(
+        (
+            197,
+            RAngle,
             198,
         ),
     ),
@@ -210,9 +378,23 @@ expression: tokens
     Ok(
         (
             207,
-            NonTerminal(
+            LAngle,
+            208,
+        ),
+    ),
+    Ok(
+        (
+            208,
+            Id(
                 "opt-whitespace",
             ),
+            222,
+        ),
+    ),
+    Ok(
+        (
+            222,
+            RAngle,
             223,
         ),
     ),
@@ -251,9 +433,23 @@ expression: tokens
     Ok(
         (
             237,
-            NonTerminal(
+            LAngle,
+            238,
+        ),
+    ),
+    Ok(
+        (
+            238,
+            Id(
                 "expression",
             ),
+            248,
+        ),
+    ),
+    Ok(
+        (
+            248,
+            RAngle,
             249,
         ),
     ),
@@ -267,9 +463,23 @@ expression: tokens
     Ok(
         (
             258,
-            NonTerminal(
+            LAngle,
+            259,
+        ),
+    ),
+    Ok(
+        (
+            259,
+            Id(
                 "list",
             ),
+            263,
+        ),
+    ),
+    Ok(
+        (
+            263,
+            RAngle,
             264,
         ),
     ),
@@ -292,18 +502,46 @@ expression: tokens
     Ok(
         (
             269,
-            NonTerminal(
+            LAngle,
+            270,
+        ),
+    ),
+    Ok(
+        (
+            270,
+            Id(
                 "list",
             ),
+            274,
+        ),
+    ),
+    Ok(
+        (
+            274,
+            RAngle,
             275,
         ),
     ),
     Ok(
         (
             276,
-            NonTerminal(
+            LAngle,
+            277,
+        ),
+    ),
+    Ok(
+        (
+            277,
+            Id(
                 "opt-whitespace",
             ),
+            291,
+        ),
+    ),
+    Ok(
+        (
+            291,
+            RAngle,
             292,
         ),
     ),
@@ -319,18 +557,46 @@ expression: tokens
     Ok(
         (
             297,
-            NonTerminal(
+            LAngle,
+            298,
+        ),
+    ),
+    Ok(
+        (
+            298,
+            Id(
                 "opt-whitespace",
             ),
+            312,
+        ),
+    ),
+    Ok(
+        (
+            312,
+            RAngle,
             313,
         ),
     ),
     Ok(
         (
             314,
-            NonTerminal(
+            LAngle,
+            315,
+        ),
+    ),
+    Ok(
+        (
+            315,
+            Id(
                 "expression",
             ),
+            325,
+        ),
+    ),
+    Ok(
+        (
+            325,
+            RAngle,
             326,
         ),
     ),
@@ -344,9 +610,23 @@ expression: tokens
     Ok(
         (
             330,
-            NonTerminal(
+            LAngle,
+            331,
+        ),
+    ),
+    Ok(
+        (
+            331,
+            Id(
                 "line-end",
             ),
+            339,
+        ),
+    ),
+    Ok(
+        (
+            339,
+            RAngle,
             340,
         ),
     ),
@@ -369,18 +649,46 @@ expression: tokens
     Ok(
         (
             354,
-            NonTerminal(
+            LAngle,
+            355,
+        ),
+    ),
+    Ok(
+        (
+            355,
+            Id(
                 "opt-whitespace",
             ),
+            369,
+        ),
+    ),
+    Ok(
+        (
+            369,
+            RAngle,
             370,
         ),
     ),
     Ok(
         (
             371,
-            NonTerminal(
+            LAngle,
+            372,
+        ),
+    ),
+    Ok(
+        (
+            372,
+            Id(
                 "EOL",
             ),
+            375,
+        ),
+    ),
+    Ok(
+        (
+            375,
+            RAngle,
             376,
         ),
     ),
@@ -394,18 +702,46 @@ expression: tokens
     Ok(
         (
             379,
-            NonTerminal(
+            LAngle,
+            380,
+        ),
+    ),
+    Ok(
+        (
+            380,
+            Id(
                 "line-end",
             ),
+            388,
+        ),
+    ),
+    Ok(
+        (
+            388,
+            RAngle,
             389,
         ),
     ),
     Ok(
         (
             390,
-            NonTerminal(
+            LAngle,
+            391,
+        ),
+    ),
+    Ok(
+        (
+            391,
+            Id(
                 "line-end",
             ),
+            399,
+        ),
+    ),
+    Ok(
+        (
+            399,
+            RAngle,
             400,
         ),
     ),
@@ -419,9 +755,23 @@ expression: tokens
     Ok(
         (
             404,
-            NonTerminal(
+            LAngle,
+            405,
+        ),
+    ),
+    Ok(
+        (
+            405,
+            Id(
                 "list",
             ),
+            409,
+        ),
+    ),
+    Ok(
+        (
+            409,
+            RAngle,
             410,
         ),
     ),
@@ -435,9 +785,23 @@ expression: tokens
     Ok(
         (
             425,
-            NonTerminal(
+            LAngle,
+            426,
+        ),
+    ),
+    Ok(
+        (
+            426,
+            Id(
                 "term",
             ),
+            430,
+        ),
+    ),
+    Ok(
+        (
+            430,
+            RAngle,
             431,
         ),
     ),
@@ -451,27 +815,69 @@ expression: tokens
     Ok(
         (
             434,
-            NonTerminal(
+            LAngle,
+            435,
+        ),
+    ),
+    Ok(
+        (
+            435,
+            Id(
                 "term",
             ),
+            439,
+        ),
+    ),
+    Ok(
+        (
+            439,
+            RAngle,
             440,
         ),
     ),
     Ok(
         (
             441,
-            NonTerminal(
+            LAngle,
+            442,
+        ),
+    ),
+    Ok(
+        (
+            442,
+            Id(
                 "opt-whitespace",
             ),
+            456,
+        ),
+    ),
+    Ok(
+        (
+            456,
+            RAngle,
             457,
         ),
     ),
     Ok(
         (
             458,
-            NonTerminal(
+            LAngle,
+            459,
+        ),
+    ),
+    Ok(
+        (
+            459,
+            Id(
                 "list",
             ),
+            463,
+        ),
+    ),
+    Ok(
+        (
+            463,
+            RAngle,
             464,
         ),
     ),
@@ -485,9 +891,23 @@ expression: tokens
     Ok(
         (
             468,
-            NonTerminal(
+            LAngle,
+            469,
+        ),
+    ),
+    Ok(
+        (
+            469,
+            Id(
                 "term",
             ),
+            473,
+        ),
+    ),
+    Ok(
+        (
+            473,
+            RAngle,
             474,
         ),
     ),
@@ -501,9 +921,23 @@ expression: tokens
     Ok(
         (
             489,
-            NonTerminal(
+            LAngle,
+            490,
+        ),
+    ),
+    Ok(
+        (
+            490,
+            Id(
                 "literal",
             ),
+            497,
+        ),
+    ),
+    Ok(
+        (
+            497,
+            RAngle,
             498,
         ),
     ),
@@ -526,9 +960,23 @@ expression: tokens
     Ok(
         (
             505,
-            NonTerminal(
+            LAngle,
+            506,
+        ),
+    ),
+    Ok(
+        (
+            506,
+            Id(
                 "rule-name",
             ),
+            515,
+        ),
+    ),
+    Ok(
+        (
+            515,
+            RAngle,
             516,
         ),
     ),
@@ -551,9 +999,23 @@ expression: tokens
     Ok(
         (
             524,
-            NonTerminal(
+            LAngle,
+            525,
+        ),
+    ),
+    Ok(
+        (
+            525,
+            Id(
                 "literal",
             ),
+            532,
+        ),
+    ),
+    Ok(
+        (
+            532,
+            RAngle,
             533,
         ),
     ),
@@ -576,9 +1038,23 @@ expression: tokens
     Ok(
         (
             550,
-            NonTerminal(
+            LAngle,
+            551,
+        ),
+    ),
+    Ok(
+        (
+            551,
+            Id(
                 "text1",
             ),
+            556,
+        ),
+    ),
+    Ok(
+        (
+            556,
+            RAngle,
             557,
         ),
     ),
@@ -610,9 +1086,23 @@ expression: tokens
     Ok(
         (
             569,
-            NonTerminal(
+            LAngle,
+            570,
+        ),
+    ),
+    Ok(
+        (
+            570,
+            Id(
                 "text2",
             ),
+            575,
+        ),
+    ),
+    Ok(
+        (
+            575,
+            RAngle,
             576,
         ),
     ),
@@ -635,9 +1125,23 @@ expression: tokens
     Ok(
         (
             584,
-            NonTerminal(
+            LAngle,
+            585,
+        ),
+    ),
+    Ok(
+        (
+            585,
+            Id(
                 "text1",
             ),
+            590,
+        ),
+    ),
+    Ok(
+        (
+            590,
+            RAngle,
             591,
         ),
     ),
@@ -676,18 +1180,46 @@ expression: tokens
     Ok(
         (
             613,
-            NonTerminal(
+            LAngle,
+            614,
+        ),
+    ),
+    Ok(
+        (
+            614,
+            Id(
                 "character1",
             ),
+            624,
+        ),
+    ),
+    Ok(
+        (
+            624,
+            RAngle,
             625,
         ),
     ),
     Ok(
         (
             626,
-            NonTerminal(
+            LAngle,
+            627,
+        ),
+    ),
+    Ok(
+        (
+            627,
+            Id(
                 "text1",
             ),
+            632,
+        ),
+    ),
+    Ok(
+        (
+            632,
+            RAngle,
             633,
         ),
     ),
@@ -701,9 +1233,23 @@ expression: tokens
     Ok(
         (
             637,
-            NonTerminal(
+            LAngle,
+            638,
+        ),
+    ),
+    Ok(
+        (
+            638,
+            Id(
                 "text2",
             ),
+            643,
+        ),
+    ),
+    Ok(
+        (
+            643,
+            RAngle,
             644,
         ),
     ),
@@ -742,18 +1288,46 @@ expression: tokens
     Ok(
         (
             666,
-            NonTerminal(
+            LAngle,
+            667,
+        ),
+    ),
+    Ok(
+        (
+            667,
+            Id(
                 "character2",
             ),
+            677,
+        ),
+    ),
+    Ok(
+        (
+            677,
+            RAngle,
             678,
         ),
     ),
     Ok(
         (
             679,
-            NonTerminal(
+            LAngle,
+            680,
+        ),
+    ),
+    Ok(
+        (
+            680,
+            Id(
                 "text2",
             ),
+            685,
+        ),
+    ),
+    Ok(
+        (
+            685,
+            RAngle,
             686,
         ),
     ),
@@ -767,9 +1341,23 @@ expression: tokens
     Ok(
         (
             690,
-            NonTerminal(
+            LAngle,
+            691,
+        ),
+    ),
+    Ok(
+        (
+            691,
+            Id(
                 "character",
             ),
+            700,
+        ),
+    ),
+    Ok(
+        (
+            700,
+            RAngle,
             701,
         ),
     ),
@@ -792,9 +1380,23 @@ expression: tokens
     Ok(
         (
             714,
-            NonTerminal(
+            LAngle,
+            715,
+        ),
+    ),
+    Ok(
+        (
+            715,
+            Id(
                 "letter",
             ),
+            721,
+        ),
+    ),
+    Ok(
+        (
+            721,
+            RAngle,
             722,
         ),
     ),
@@ -817,9 +1419,23 @@ expression: tokens
     Ok(
         (
             728,
-            NonTerminal(
+            LAngle,
+            729,
+        ),
+    ),
+    Ok(
+        (
+            729,
+            Id(
                 "digit",
             ),
+            734,
+        ),
+    ),
+    Ok(
+        (
+            734,
+            RAngle,
             735,
         ),
     ),
@@ -833,9 +1449,23 @@ expression: tokens
     Ok(
         (
             738,
-            NonTerminal(
+            LAngle,
+            739,
+        ),
+    ),
+    Ok(
+        (
+            739,
+            Id(
                 "symbol",
             ),
+            745,
+        ),
+    ),
+    Ok(
+        (
+            745,
+            RAngle,
             746,
         ),
     ),
@@ -849,9 +1479,23 @@ expression: tokens
     Ok(
         (
             750,
-            NonTerminal(
+            LAngle,
+            751,
+        ),
+    ),
+    Ok(
+        (
+            751,
+            Id(
                 "letter",
             ),
+            757,
+        ),
+    ),
+    Ok(
+        (
+            757,
+            RAngle,
             758,
         ),
     ),
@@ -1697,9 +2341,23 @@ expression: tokens
     Ok(
         (
             1084,
-            NonTerminal(
+            LAngle,
+            1085,
+        ),
+    ),
+    Ok(
+        (
+            1085,
+            Id(
                 "digit",
             ),
+            1090,
+        ),
+    ),
+    Ok(
+        (
+            1090,
+            RAngle,
             1091,
         ),
     ),
@@ -1873,9 +2531,23 @@ expression: tokens
     Ok(
         (
             1166,
-            NonTerminal(
+            LAngle,
+            1167,
+        ),
+    ),
+    Ok(
+        (
+            1167,
+            Id(
                 "symbol",
             ),
+            1173,
+        ),
+    ),
+    Ok(
+        (
+            1173,
+            RAngle,
             1174,
         ),
     ),
@@ -2385,9 +3057,23 @@ expression: tokens
     Ok(
         (
             1375,
-            NonTerminal(
+            LAngle,
+            1376,
+        ),
+    ),
+    Ok(
+        (
+            1376,
+            Id(
                 "character1",
             ),
+            1386,
+        ),
+    ),
+    Ok(
+        (
+            1386,
+            RAngle,
             1387,
         ),
     ),
@@ -2410,9 +3096,23 @@ expression: tokens
     Ok(
         (
             1399,
-            NonTerminal(
+            LAngle,
+            1400,
+        ),
+    ),
+    Ok(
+        (
+            1400,
+            Id(
                 "character",
             ),
+            1409,
+        ),
+    ),
+    Ok(
+        (
+            1409,
+            RAngle,
             1410,
         ),
     ),
@@ -2442,9 +3142,23 @@ expression: tokens
     Ok(
         (
             1420,
-            NonTerminal(
+            LAngle,
+            1421,
+        ),
+    ),
+    Ok(
+        (
+            1421,
+            Id(
                 "character2",
             ),
+            1431,
+        ),
+    ),
+    Ok(
+        (
+            1431,
+            RAngle,
             1432,
         ),
     ),
@@ -2467,9 +3181,23 @@ expression: tokens
     Ok(
         (
             1444,
-            NonTerminal(
+            LAngle,
+            1445,
+        ),
+    ),
+    Ok(
+        (
+            1445,
+            Id(
                 "character",
             ),
+            1454,
+        ),
+    ),
+    Ok(
+        (
+            1454,
+            RAngle,
             1455,
         ),
     ),
@@ -2499,9 +3227,23 @@ expression: tokens
     Ok(
         (
             1466,
-            NonTerminal(
+            LAngle,
+            1467,
+        ),
+    ),
+    Ok(
+        (
+            1467,
+            Id(
                 "rule-name",
             ),
+            1476,
+        ),
+    ),
+    Ok(
+        (
+            1476,
+            RAngle,
             1477,
         ),
     ),
@@ -2515,9 +3257,23 @@ expression: tokens
     Ok(
         (
             1487,
-            NonTerminal(
+            LAngle,
+            1488,
+        ),
+    ),
+    Ok(
+        (
+            1488,
+            Id(
                 "letter",
             ),
+            1494,
+        ),
+    ),
+    Ok(
+        (
+            1494,
+            RAngle,
             1495,
         ),
     ),
@@ -2531,18 +3287,46 @@ expression: tokens
     Ok(
         (
             1498,
-            NonTerminal(
+            LAngle,
+            1499,
+        ),
+    ),
+    Ok(
+        (
+            1499,
+            Id(
                 "rule-name",
             ),
+            1508,
+        ),
+    ),
+    Ok(
+        (
+            1508,
+            RAngle,
             1509,
         ),
     ),
     Ok(
         (
             1510,
-            NonTerminal(
+            LAngle,
+            1511,
+        ),
+    ),
+    Ok(
+        (
+            1511,
+            Id(
                 "rule-char",
             ),
+            1520,
+        ),
+    ),
+    Ok(
+        (
+            1520,
+            RAngle,
             1521,
         ),
     ),
@@ -2556,9 +3340,23 @@ expression: tokens
     Ok(
         (
             1525,
-            NonTerminal(
+            LAngle,
+            1526,
+        ),
+    ),
+    Ok(
+        (
+            1526,
+            Id(
                 "rule-char",
             ),
+            1535,
+        ),
+    ),
+    Ok(
+        (
+            1535,
+            RAngle,
             1536,
         ),
     ),
@@ -2572,9 +3370,23 @@ expression: tokens
     Ok(
         (
             1546,
-            NonTerminal(
+            LAngle,
+            1547,
+        ),
+    ),
+    Ok(
+        (
+            1547,
+            Id(
                 "letter",
             ),
+            1553,
+        ),
+    ),
+    Ok(
+        (
+            1553,
+            RAngle,
             1554,
         ),
     ),
@@ -2588,9 +3400,23 @@ expression: tokens
     Ok(
         (
             1557,
-            NonTerminal(
+            LAngle,
+            1558,
+        ),
+    ),
+    Ok(
+        (
+            1558,
+            Id(
                 "digit",
             ),
+            1563,
+        ),
+    ),
+    Ok(
+        (
+            1563,
+            RAngle,
             1564,
         ),
     ),
@@ -2620,9 +3446,23 @@ expression: tokens
     Ok(
         (
             1574,
-            NonTerminal(
+            LAngle,
+            1575,
+        ),
+    ),
+    Ok(
+        (
+            1575,
+            Id(
                 "EOL",
             ),
+            1578,
+        ),
+    ),
+    Ok(
+        (
+            1578,
+            RAngle,
             1579,
         ),
     ),

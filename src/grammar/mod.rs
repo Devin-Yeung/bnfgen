@@ -34,6 +34,15 @@ mod test {
     }
 
     #[test]
+    fn typed() {
+        let text = r#"
+            <E> ::= <E: "int"> "+" <E: "int"> ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap();
+        insta::assert_debug_snapshot!(grammar);
+    }
+
+    #[test]
     fn repeat() {
         let text = r#"
             <E> ::= "a" {1, 10} | "b" {2, } | "c" {3} ;
@@ -52,7 +61,7 @@ mod test {
 
     #[test]
     fn invalid_token() {
-        let text = ":";
+        let text = "*";
         let err = RawGrammar::parse(text).err().unwrap();
         let ui = report_with_unnamed_source(err, text);
         insta::assert_snapshot!(ui);

@@ -26,10 +26,13 @@ extern {
     "|" => Token::Or,
     "," => Token::Comma,
     "::=" => Token::Def,
+    ":" => Token::Colon,
     ";" => Token::Semi,
+    "<" => Token::LAngle,
+    ">" => Token::RAngle,
     "re" => Token::Re,
     "str" => Token::Str(<String>),
-    "nonterminal" => Token::NonTerminal(<String>),
+    "id" => Token::Id(<String>),
     "int" => Token::Int(<usize>),
   }
 }
@@ -43,7 +46,7 @@ pub RawGrammar: RawGrammar = {
 };
 
 Rule: Rule = {
-    <l: @L> <name: "nonterminal"> "::=" <alts: Alternatives> ";" <r: @R> => {
+    <l: @L> "<" <name: "id"> ">" "::=" <alts: Alternatives> ";" <r: @R> => {
         Rule {
             name,
             production: WeightedProduction {
@@ -96,7 +99,14 @@ Symbol: Symbol = {
             span: Span::new(l, r),
         }
     },
-    <l: @L> <nt: "nonterminal"> <r: @R> => {
+    <l: @L> "<" <nt: "id"> ">" <r: @R> => {
+        Symbol {
+            kind: SymbolKind::NonTerminal(Rc::new(nt)),
+            span: Span::new(l, r),
+        }
+    },
+    // typed non-terminal
+    <l: @L> "<" <nt: "id"> ":" <_ty: "str"> ">" <r: @R> => {
         Symbol {
             kind: SymbolKind::NonTerminal(Rc::new(nt)),
             span: Span::new(l, r),

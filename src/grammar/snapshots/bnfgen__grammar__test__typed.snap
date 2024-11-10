@@ -1,0 +1,56 @@
+---
+source: src/grammar/mod.rs
+expression: grammar
+---
+RawGrammar {
+    rules: [
+        Rule {
+            name: "E",
+            production: WeightedProduction {
+                alts: [
+                    Alternative {
+                        span: Span {
+                            start: 21,
+                            end: 46,
+                        },
+                        weight: 1,
+                        invoke_limit: Unlimited,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    "E",
+                                ),
+                                span: Span {
+                                    start: 21,
+                                    end: 31,
+                                },
+                            },
+                            Symbol {
+                                kind: Terminal(
+                                    "+",
+                                ),
+                                span: Span {
+                                    start: 32,
+                                    end: 35,
+                                },
+                            },
+                            Symbol {
+                                kind: NonTerminal(
+                                    "E",
+                                ),
+                                span: Span {
+                                    start: 36,
+                                    end: 46,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            span: Span {
+                start: 13,
+                end: 48,
+            },
+        },
+    ],
+}
