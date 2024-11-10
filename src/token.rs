@@ -18,8 +18,14 @@ pub enum Token {
     Or,
     #[token(",")]
     Comma,
+    #[token(":")]
+    Colon,
     #[token("::=")]
     Def,
+    #[token("<")]
+    LAngle,
+    #[token(">")]
+    RAngle,
     #[token(";")]
     Semi,
     #[token("re")]
@@ -32,8 +38,8 @@ pub enum Token {
         }
     })]
     Int(usize),
-    #[regex("<[^<>]*>", |lex| lex.slice()[1..lex.slice().len() - 1].to_string())]
-    NonTerminal(String),
+    #[regex("[a-zA-Z-_0-9]*", |lex| lex.slice().to_string())]
+    Id(String),
     #[rustfmt::skip]
     #[regex(r#""(\\["nrt\\]|[^"\\])*""#, |lex| {
         let text = &lex.slice()[1..lex.slice().len() - 1];
