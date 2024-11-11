@@ -118,4 +118,13 @@ mod test {
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         insta::assert_snapshot!(gen.generate("S", &mut seeded_rng));
     }
+
+    #[test]
+    fn test_typed_set_algebra() {
+        let text = include_str!("../examples/set-algebra-typed.bnfgen");
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let gen = Generator { grammar };
+        let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
+        insta::assert_snapshot!(gen.generate("Program", &mut seeded_rng));
+    }
 }

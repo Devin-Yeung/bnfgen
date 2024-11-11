@@ -5,8 +5,8 @@ use crate::grammar::graph::GrammarGraph;
 use crate::grammar::rule::Rule;
 use crate::grammar::symbol::SymbolKind;
 use crate::lexer;
-use crate::span::Span;
 use crate::utils::convert_parse_error;
+use indexmap::IndexMap;
 use petgraph::graph::{DiGraph, NodeIndex};
 use std::collections::{HashMap, HashSet};
 
@@ -26,7 +26,7 @@ impl RawGrammar {
     pub fn to_checked(self) -> crate::error::Result<CheckedGrammar> {
         self.check_undefined()?.check_duplicate()?.check_repeats()?;
 
-        let mut rules = HashMap::new();
+        let mut rules = IndexMap::new();
         for rule in self.rules {
             rules.insert(rule.lhs, rule.production);
         }
