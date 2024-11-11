@@ -99,4 +99,19 @@ mod test {
         let tree = tree_gen.generate("S", &mut seeded_rng);
         insta::assert_debug_snapshot!(&tree);
     }
+
+    #[test]
+    fn test_typed_generator() {
+        let text = r#"
+            <S> ::= <E: "int"> "+" <E: "int">
+                  | <E: "bool"> "&" <E: "bool"> ;
+            <E: "int"> ::= "1" | "2" | "3" ;
+            <E: "bool"> ::= "true" | "false" ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let tree_gen = TreeGenerator { grammar };
+        let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
+        let tree = tree_gen.generate("S", &mut seeded_rng);
+        insta::assert_debug_snapshot!(&tree);
+    }
 }
