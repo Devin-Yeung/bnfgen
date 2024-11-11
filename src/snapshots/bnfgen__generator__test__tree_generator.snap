@@ -55,7 +55,7 @@ Branch {
                                                                                             children: [
                                                                                                 Leaf(
                                                                                                     Terminal(
-                                                                                                        "a",
+                                                                                                        "b",
                                                                                                     ),
                                                                                                 ),
                                                                                             ],
@@ -67,7 +67,7 @@ Branch {
                                                                                     children: [
                                                                                         Leaf(
                                                                                             Terminal(
-                                                                                                "c",
+                                                                                                "a",
                                                                                             ),
                                                                                         ),
                                                                                     ],
@@ -79,7 +79,7 @@ Branch {
                                                                             children: [
                                                                                 Leaf(
                                                                                     Terminal(
-                                                                                        "b",
+                                                                                        "c",
                                                                                     ),
                                                                                 ),
                                                                             ],
@@ -115,7 +115,7 @@ Branch {
                                                     children: [
                                                         Leaf(
                                                             Terminal(
-                                                                "a",
+                                                                "c",
                                                             ),
                                                         ),
                                                     ],
@@ -127,7 +127,7 @@ Branch {
                                             children: [
                                                 Leaf(
                                                     Terminal(
-                                                        "c",
+                                                        "b",
                                                     ),
                                                 ),
                                             ],
@@ -139,7 +139,7 @@ Branch {
                                     children: [
                                         Leaf(
                                             Terminal(
-                                                "fallback",
+                                                "a",
                                             ),
                                         ),
                                     ],
@@ -151,7 +151,7 @@ Branch {
                             children: [
                                 Leaf(
                                     Terminal(
-                                        "b",
+                                        "fallback",
                                     ),
                                 ),
                             ],
@@ -163,7 +163,7 @@ Branch {
                     children: [
                         Leaf(
                             Terminal(
-                                "fallback",
+                                "a",
                             ),
                         ),
                     ],

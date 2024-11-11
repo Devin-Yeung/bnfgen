@@ -1,7 +1,8 @@
 use crate::grammar::production::WeightedProduction;
 use crate::grammar::state::State;
 use crate::grammar::symbol::Ty::Untyped;
-use crate::grammar::symbol::{NonTerminal, SymbolKind};
+use crate::grammar::symbol::{NonTerminal, SymbolKind, Ty};
+use rand::prelude::SliceRandom;
 use rand::Rng;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -28,11 +29,26 @@ impl CheckedGrammar {
         match symbol {
             SymbolKind::Terminal(s) => ReduceOutput::Terminal(s),
             SymbolKind::NonTerminal(s) => {
-                let syms = self
-                    .rules
-                    .get(&s)
-                    .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
-                    .choose_by_state(state);
+                let syms = match s.ty {
+                    Untyped => {
+                        let candidates = self
+                            .rules
+                            .keys()
+                            .filter(|k| k.name == s.name)
+                            .collect::<Vec<_>>();
+                        self.rules
+                            .get(candidates.choose(state.rng()).unwrap())
+                            .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
+                            .choose_by_state(state)
+                    }
+                    Ty::Typed(_) => {
+                        // require an exact match
+                        self.rules
+                            .get(&s)
+                            .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
+                            .choose_by_state(state)
+                    }
+                };
 
                 ReduceOutput::NonTerminal { name: s.name, syms }
             }
