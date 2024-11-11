@@ -22,6 +22,9 @@ impl Generator {
             // pop out the first symbol
             match self.grammar.reduce(stack.remove(0), &mut state) {
                 ReduceOutput::Terminal(s) => {
+                    println!("{s}");
+                    use std::io::Write;
+                    std::io::stdout().flush().unwrap();
                     buf.push(s);
                 }
                 ReduceOutput::NonTerminal { mut syms, .. } => {
@@ -125,6 +128,7 @@ mod test {
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator { grammar };
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
-        insta::assert_snapshot!(gen.generate("Program", &mut seeded_rng));
+        let out = (0..100).map(|_| gen.generate("Expr", &mut seeded_rng)).collect::<Vec<_>>().join("\n");
+        insta::assert_snapshot!(out);
     }
 }
