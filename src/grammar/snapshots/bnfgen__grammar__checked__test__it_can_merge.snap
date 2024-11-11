@@ -1,0 +1,118 @@
+---
+source: src/grammar/checked.rs
+expression: grammar.to_checked().unwrap()
+---
+CheckedGrammar {
+    rules: {
+        NonTerminal {
+            name: "E",
+            ty: Untyped,
+        }: WeightedProduction {
+            alts: [
+                Alternative {
+                    span: Span {
+                        start: 69,
+                        end: 94,
+                    },
+                    weight: 1,
+                    invoke_limit: Unlimited,
+                    symbols: [
+                        Symbol {
+                            kind: NonTerminal(
+                                NonTerminal {
+                                    name: "E",
+                                    ty: Typed(
+                                        "str",
+                                    ),
+                                },
+                            ),
+                            span: Span {
+                                start: 69,
+                                end: 79,
+                            },
+                        },
+                        Symbol {
+                            kind: Terminal(
+                                "+",
+                            ),
+                            span: Span {
+                                start: 80,
+                                end: 83,
+                            },
+                        },
+                        Symbol {
+                            kind: NonTerminal(
+                                NonTerminal {
+                                    name: "E",
+                                    ty: Typed(
+                                        "str",
+                                    ),
+                                },
+                            ),
+                            span: Span {
+                                start: 84,
+                                end: 94,
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+        NonTerminal {
+            name: "E",
+            ty: Typed(
+                "str",
+            ),
+        }: WeightedProduction {
+            alts: [
+                Alternative {
+                    span: Span {
+                        start: 124,
+                        end: 149,
+                    },
+                    weight: 1,
+                    invoke_limit: Unlimited,
+                    symbols: [
+                        Symbol {
+                            kind: NonTerminal(
+                                NonTerminal {
+                                    name: "E",
+                                    ty: Typed(
+                                        "str",
+                                    ),
+                                },
+                            ),
+                            span: Span {
+                                start: 124,
+                                end: 134,
+                            },
+                        },
+                        Symbol {
+                            kind: Terminal(
+                                "+",
+                            ),
+                            span: Span {
+                                start: 135,
+                                end: 138,
+                            },
+                        },
+                        Symbol {
+                            kind: NonTerminal(
+                                NonTerminal {
+                                    name: "E",
+                                    ty: Typed(
+                                        "str",
+                                    ),
+                                },
+                            ),
+                            span: Span {
+                                start: 139,
+                                end: 149,
+                            },
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+}
