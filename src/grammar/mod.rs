@@ -37,6 +37,7 @@ mod test {
     fn typed() {
         let text = r#"
             <E> ::= <E: "int"> "+" <E: "int"> ;
+            <S: "int"> ::= <E> ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap();
         insta::assert_debug_snapshot!(grammar);

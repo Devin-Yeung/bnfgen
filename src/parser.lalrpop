@@ -54,6 +54,15 @@ Rule: Rule = {
             },
             span: Span::new(l, r),
         }
+    },
+    <l: @L> "<" <name: "id"> ":" <ty: "str"> ">" "::=" <alts: Alternatives> ";" <r: @R> => {
+        Rule {
+            lhs: NonTerminal::typed(name, ty.into()),
+            production: WeightedProduction {
+                alts,
+            },
+            span: Span::new(l, r),
+        }
     }
 };
 
