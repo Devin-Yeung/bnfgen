@@ -65,5 +65,43 @@ RawGrammar {
                 end: 48,
             },
         },
+        Rule {
+            lhs: NonTerminal {
+                name: "S",
+                ty: Typed(
+                    "int",
+                ),
+            },
+            production: WeightedProduction {
+                alts: [
+                    Alternative {
+                        span: Span {
+                            start: 76,
+                            end: 79,
+                        },
+                        weight: 1,
+                        invoke_limit: Unlimited,
+                        symbols: [
+                            Symbol {
+                                kind: NonTerminal(
+                                    NonTerminal {
+                                        name: "E",
+                                        ty: Untyped,
+                                    },
+                                ),
+                                span: Span {
+                                    start: 76,
+                                    end: 79,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            span: Span {
+                start: 61,
+                end: 81,
+            },
+        },
     ],
 }
