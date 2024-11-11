@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 pub type Terminal = Rc<String>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct NonTerminal {
     pub(crate) name: Rc<String>,
     pub(crate) ty: Ty,
@@ -38,7 +38,7 @@ impl NonTerminal {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum Ty {
     Untyped,
     Typed(Rc<String>),

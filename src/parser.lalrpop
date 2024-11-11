@@ -48,7 +48,7 @@ pub RawGrammar: RawGrammar = {
 Rule: Rule = {
     <l: @L> "<" <name: "id"> ">" "::=" <alts: Alternatives> ";" <r: @R> => {
         Rule {
-            name,
+            lhs: NonTerminal::untyped(name),
             production: WeightedProduction {
                 alts,
             },

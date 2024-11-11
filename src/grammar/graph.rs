@@ -12,7 +12,11 @@ pub struct GrammarGraph<'rule> {
 
 impl<'rule> GrammarGraph<'rule> {
     pub fn check_unused<S: AsRef<str>>(&self, start: S) -> crate::error::Result<&Self> {
-        let all_nts = self.nodes.keys().collect::<HashSet<_>>();
+        let all_nts = self
+            .nodes
+            .keys()
+            .map(|s| s.as_str())
+            .collect::<HashSet<_>>();
         // find the reachable nodes for a given start symbol
         let start = self
             .nodes
@@ -23,7 +27,7 @@ impl<'rule> GrammarGraph<'rule> {
         let mut reachable = HashSet::new();
         while let Some(nx) = dfs.next(&self.graph) {
             let name = &self.graph[nx];
-            reachable.insert(name);
+            reachable.insert(name.as_str());
         }
         let unreachable = all_nts.difference(&reachable).collect::<HashSet<_>>();
         // find the unreachable spans
@@ -31,7 +35,7 @@ impl<'rule> GrammarGraph<'rule> {
             let spans = self
                 .rules
                 .iter()
-                .filter(|rule| unreachable.contains(&&rule.name))
+                .filter(|rule| unreachable.contains(&&rule.lhs.as_str()))
                 .map(|rule| rule.span)
                 .collect::<Vec<_>>();
             return Err(Error::UnreachableRules { spans });
@@ -48,7 +52,7 @@ impl<'rule> GrammarGraph<'rule> {
                     .map(|nx| {
                         self.rules
                             .iter()
-                            .find(|rule| rule.name == self.graph[*nx])
+                            .find(|rule| rule.lhs.as_str() == self.graph[*nx])
                             .unwrap()
                             .span
                     })
@@ -64,7 +68,7 @@ impl<'rule> GrammarGraph<'rule> {
             // check if rule produce a terminal
             self.rules
                 .iter()
-                .find(|rule| rule.name == name)
+                .find(|rule| rule.lhs.as_str() == name)
                 .unwrap()
                 .produce_terminals()
         });

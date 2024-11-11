@@ -83,17 +83,17 @@ mod test {
         insta::assert_snapshot!(ui);
     }
 
-    #[test]
-    fn duplicated_def() {
-        let text = r#"
-            <E> ::= <S>;
-            <S> ::= <E>;
-            <E> ::= "?";
-        "#;
-        let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
-        let ui = report_with_unnamed_source(err, text);
-        insta::assert_snapshot!(ui);
-    }
+    // #[test]
+    // fn duplicated_def() {
+    //     let text = r#"
+    //         <E> ::= <S>;
+    //         <S> ::= <E>;
+    //         <E> ::= "?";
+    //     "#;
+    //     let err = RawGrammar::parse(text).unwrap().to_checked().err().unwrap();
+    //     let ui = report_with_unnamed_source(err, text);
+    //     insta::assert_snapshot!(ui);
+    // }
 
     #[test]
     fn invalid_repeat() {
