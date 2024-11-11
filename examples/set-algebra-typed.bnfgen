@@ -1,5 +1,5 @@
 <Num>        ::= re("[0-9]|[1-9][0-9]+") ;
-<Id>         ::= re("[a-z]+") ;
+<Id>         ::= "x" | "y" | "z" ;
 
 <Program>    ::= <Decls> <CalcExpr> ".";
 
@@ -18,28 +18,36 @@
 <Algebra>    ::= <Expr>
                  | <Predicate> ;
 
-<Expr0>      ::= "{" <Id> ":" <Predicate> "}"
-                 | "(" <Expr> ")"
-                 | 2 <Num>
-                 | 2 <Id> ;
+// <Expr0: "set">   ::= "{" <Id> ":" <Predicate> "}" ;
+<Expr0: "set">   ::= "{" <Id> ":" "Predicate" "}" ;
 
-<Expr1>      ::= 10 <Expr0>
-                 | <Expr1> "I" <Expr0>
-                 | <Expr1> "*" <Expr0> ;
+<Expr0: "int">   ::= "(" <Expr: "int"> ")"
+                     | 100 <Num>
+                     | <Id> ;
 
-<Expr>       ::= 10 <Expr1>
-                 | <Expr> "U" <Expr1>
-                 | <Expr> "+" <Expr1>
-                 | <Expr> "-" <Expr1> ;
+<Expr1: "int">   ::= 2 <Expr0: "int">
+                     | <Expr1: "int"> "*" <Expr0: "int"> ;
 
-<Predicate0> ::= <Expr> "<" <Expr>
-                 | <Expr> ">" <Expr>
-                 | <Expr> "=" <Expr>
-                 | <Expr> "@" <Expr> ;
+<Expr1: "set">   ::= 2 <Expr0: "set">
+                     | <Expr1: "set"> "U" <Expr0: "set"> ;
+
+<Expr: "int">    ::= 2 <Expr1: "int">
+                     | <Expr: "int"> "+" <Expr1: "int">
+                     | <Expr: "int"> "-" <Expr1: "int"> ;
+
+<Expr: "set">    ::= 2 <Expr1: "set">
+                     | <Expr: "set"> "U" <Expr1: "set"> ;
+
+<Predicate0: "relation"> ::= <Expr: "int"> "<" <Expr: "int">
+                             | <Expr: "int"> ">" <Expr: "int">
+                             | <Expr: "int"> "=" <Expr: "int"> ;
+                 
+<Predicate0: "relation"> ::= <Expr: "int"> "@" <Expr: "set"> ;
+
 
 <Predicate1> ::= "(" <Predicate> ")"
-                 | "!" <Predicate0>
-                 | <Predicate0> ;
+                 | 2 "!" <Predicate0>
+                 | 2 <Predicate0> ;
 
 <Predicate2>  ::= 10 <Predicate1>
                  | <Predicate2> "&" <Predicate1> ;
