@@ -5,6 +5,7 @@ use rand::Rng;
 use std::collections::HashMap;
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub struct CheckedGrammar {
     pub(crate) rules: HashMap<NonTerminal, WeightedProduction>,
 }
@@ -44,5 +45,21 @@ impl CheckedGrammar {
                 ReduceOutput::Terminal(Rc::new(s))
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::grammar::raw::RawGrammar;
+
+    #[test]
+    fn it_can_merge() {
+        let text = r#"
+            <E> ::= <E: "int"> "+" <E: "int"> ;
+            <E> ::= <E: "str"> "+" <E: "str"> ;
+            <E: "str"> ::= <E: "str"> "+" <E: "str"> ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap();
+        insta::assert_debug_snapshot!(grammar.to_checked().unwrap());
     }
 }
