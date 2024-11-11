@@ -1,12 +1,12 @@
 use crate::grammar::production::WeightedProduction;
 use crate::grammar::state::State;
-use crate::grammar::symbol::SymbolKind;
+use crate::grammar::symbol::{NonTerminal, SymbolKind};
 use rand::Rng;
 use std::collections::HashMap;
 use std::rc::Rc;
 
 pub struct CheckedGrammar {
-    pub(crate) rules: HashMap<String, WeightedProduction>,
+    pub(crate) rules: HashMap<NonTerminal, WeightedProduction>,
 }
 
 pub enum ReduceOutput {
@@ -28,7 +28,7 @@ impl CheckedGrammar {
             SymbolKind::NonTerminal(s) => {
                 let syms = self
                     .rules
-                    .get(s.as_str())
+                    .get(&s)
                     .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
                     .choose_by_state(state);
 

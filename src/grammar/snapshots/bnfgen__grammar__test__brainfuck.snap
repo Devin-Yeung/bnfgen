@@ -5,7 +5,10 @@ expression: grammar
 RawGrammar {
     rules: [
         Rule {
-            name: "start",
+            lhs: NonTerminal {
+                name: "start",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -38,7 +41,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "statements",
+            lhs: NonTerminal {
+                name: "statements",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -105,7 +111,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "statement",
+            lhs: NonTerminal {
+                name: "statement",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -160,7 +169,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "loop",
+            lhs: NonTerminal {
+                name: "loop",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -211,7 +223,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "commands",
+            lhs: NonTerminal {
+                name: "commands",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -278,7 +293,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "command",
+            lhs: NonTerminal {
+                name: "command",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -345,7 +363,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "ptrinc",
+            lhs: NonTerminal {
+                name: "ptrinc",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -406,7 +427,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "ptrdec",
+            lhs: NonTerminal {
+                name: "ptrdec",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -467,7 +491,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "valinc",
+            lhs: NonTerminal {
+                name: "valinc",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -528,7 +555,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "valdec",
+            lhs: NonTerminal {
+                name: "valdec",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -589,7 +619,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "ptrgroup",
+            lhs: NonTerminal {
+                name: "ptrgroup",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -644,7 +677,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "arithmgroup",
+            lhs: NonTerminal {
+                name: "arithmgroup",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {
@@ -699,7 +735,10 @@ RawGrammar {
             },
         },
         Rule {
-            name: "io",
+            lhs: NonTerminal {
+                name: "io",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {

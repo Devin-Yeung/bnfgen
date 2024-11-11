@@ -5,7 +5,10 @@ expression: grammar
 RawGrammar {
     rules: [
         Rule {
-            name: "E",
+            lhs: NonTerminal {
+                name: "E",
+                ty: Untyped,
+            },
             production: WeightedProduction {
                 alts: [
                     Alternative {

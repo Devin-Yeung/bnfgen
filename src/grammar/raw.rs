@@ -28,7 +28,7 @@ impl RawGrammar {
 
         let mut rules = HashMap::new();
         for rule in self.rules {
-            rules.insert(rule.name, rule.production);
+            rules.insert(rule.lhs, rule.production);
         }
 
         Ok(CheckedGrammar { rules })
@@ -39,14 +39,19 @@ impl RawGrammar {
         let nodes: HashMap<String, NodeIndex> = self
             .rules
             .iter()
-            .map(|rule| (rule.name.clone(), graph.add_node(rule.name.clone())))
+            .map(|rule| {
+                (
+                    rule.lhs.as_str().to_string(),
+                    graph.add_node(rule.lhs.as_str().to_string()),
+                )
+            })
             .collect();
         // setup the graph
         for rule in &self.rules {
             for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
                 match sym.non_terminal() {
                     Some(name) => {
-                        graph.add_edge(nodes[&rule.name], nodes[name], ());
+                        graph.add_edge(nodes[rule.lhs.as_str()], nodes[name], ());
                     }
                     None => { /* do nothing */ }
                 }
@@ -60,16 +65,7 @@ impl RawGrammar {
     }
 
     pub fn check_duplicate(&self) -> crate::error::Result<&Self> {
-        let mut seen: HashMap<String, Span> = HashMap::new();
-        for rule in &self.rules {
-            if let Some(prev) = seen.get(&rule.name) {
-                return Err(Error::DuplicatedRules {
-                    span: rule.span,
-                    prev: *prev,
-                });
-            }
-            seen.insert(rule.name.clone(), rule.span);
-        }
+        // TODO: need to rework
         Ok(self)
     }
 
@@ -88,7 +84,7 @@ impl RawGrammar {
 
     pub fn check_undefined(&self) -> crate::error::Result<&Self> {
         let defined: HashSet<String> =
-            HashSet::from_iter(self.rules.iter().map(|r| r.name.clone()));
+            HashSet::from_iter(self.rules.iter().map(|r| r.lhs.as_str().to_string()));
         for rule in &self.rules {
             for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
                 match &sym.kind {
