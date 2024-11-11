@@ -53,7 +53,7 @@ impl From<String> for Ty {
 impl Hash for Ty {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         match self {
-            Ty::Untyped => ().hash(state),
+            Ty::Untyped => { /* do nothing */ }
             Ty::Typed(s) => s.hash(state),
         }
     }
