@@ -103,8 +103,10 @@ mod test {
     #[test]
     fn test_typed_generator() {
         let text = r#"
-            <S> ::= <E: "int"> "+" <E: "int">
-                  | <E: "bool"> "&" <E: "bool"> ;
+            <S> ::= <Expr> | <S> <Expr> {3, 5};
+            <Expr> ::= <E>
+                   | <E: "int"> "+" <E: "int">
+                   | <E: "bool"> "&" <E: "bool"> ;
             <E: "int"> ::= "1" | "2" | "3" ;
             <E: "bool"> ::= "true" | "false" ;
         "#;

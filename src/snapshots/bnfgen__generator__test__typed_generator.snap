@@ -6,28 +6,158 @@ Branch {
     name: "S",
     children: [
         Branch {
-            name: "E",
+            name: "S",
             children: [
-                Leaf(
-                    Terminal(
-                        "false",
-                    ),
-                ),
+                Branch {
+                    name: "S",
+                    children: [
+                        Branch {
+                            name: "S",
+                            children: [
+                                Branch {
+                                    name: "S",
+                                    children: [
+                                        Branch {
+                                            name: "Expr",
+                                            children: [
+                                                Branch {
+                                                    name: "E",
+                                                    children: [
+                                                        Leaf(
+                                                            Terminal(
+                                                                "1",
+                                                            ),
+                                                        ),
+                                                    ],
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                                Branch {
+                                    name: "Expr",
+                                    children: [
+                                        Branch {
+                                            name: "E",
+                                            children: [
+                                                Leaf(
+                                                    Terminal(
+                                                        "1",
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                        Leaf(
+                                            Terminal(
+                                                "+",
+                                            ),
+                                        ),
+                                        Branch {
+                                            name: "E",
+                                            children: [
+                                                Leaf(
+                                                    Terminal(
+                                                        "2",
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        },
+                        Branch {
+                            name: "Expr",
+                            children: [
+                                Branch {
+                                    name: "E",
+                                    children: [
+                                        Leaf(
+                                            Terminal(
+                                                "3",
+                                            ),
+                                        ),
+                                    ],
+                                },
+                                Leaf(
+                                    Terminal(
+                                        "+",
+                                    ),
+                                ),
+                                Branch {
+                                    name: "E",
+                                    children: [
+                                        Leaf(
+                                            Terminal(
+                                                "2",
+                                            ),
+                                        ),
+                                    ],
+                                },
+                            ],
+                        },
+                    ],
+                },
+                Branch {
+                    name: "Expr",
+                    children: [
+                        Branch {
+                            name: "E",
+                            children: [
+                                Leaf(
+                                    Terminal(
+                                        "2",
+                                    ),
+                                ),
+                            ],
+                        },
+                        Leaf(
+                            Terminal(
+                                "+",
+                            ),
+                        ),
+                        Branch {
+                            name: "E",
+                            children: [
+                                Leaf(
+                                    Terminal(
+                                        "3",
+                                    ),
+                                ),
+                            ],
+                        },
+                    ],
+                },
             ],
         },
-        Leaf(
-            Terminal(
-                "&",
-            ),
-        ),
         Branch {
-            name: "E",
+            name: "Expr",
             children: [
+                Branch {
+                    name: "E",
+                    children: [
+                        Leaf(
+                            Terminal(
+                                "2",
+                            ),
+                        ),
+                    ],
+                },
                 Leaf(
                     Terminal(
-                        "false",
+                        "+",
                     ),
                 ),
+                Branch {
+                    name: "E",
+                    children: [
+                        Leaf(
+                            Terminal(
+                                "2",
+                            ),
+                        ),
+                    ],
+                },
             ],
         },
     ],
