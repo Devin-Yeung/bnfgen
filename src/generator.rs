@@ -103,17 +103,19 @@ mod test {
     #[test]
     fn test_typed_generator() {
         let text = r#"
-            <S> ::= <Expr> | <S> <Expr> {3, 5};
-            <Expr> ::= <E>
-                   | <E: "int"> "+" <E: "int">
-                   | <E: "bool"> "&" <E: "bool"> ;
-            <E: "int"> ::= "1" | "2" | "3" ;
-            <E: "bool"> ::= "true" | "false" ;
+            <S> ::= <Expr> | <S> "\n" <Expr> {10, 20};
+
+            <Expr> ::= <E> ;
+
+            <E: "int">  ::= "1" | "2" | "3"
+                            | <E: "int"> "+" <E: "int"> {3, } ;
+
+            <E: "bool"> ::= "true" | "false"
+                            | <E: "bool"> "&" <E: "bool"> {3, } ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let tree_gen = TreeGenerator { grammar };
+        let gen = Generator { grammar };
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
-        let tree = tree_gen.generate("S", &mut seeded_rng);
-        insta::assert_debug_snapshot!(&tree);
+        insta::assert_snapshot!(gen.generate("S", &mut seeded_rng));
     }
 }
