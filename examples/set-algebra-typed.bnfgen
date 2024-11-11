@@ -1,0 +1,50 @@
+<Num>        ::= re("[0-9]|[1-9][0-9]+") ;
+<Id>         ::= re("[a-z]+") ;
+
+<Program>    ::= <Decls> <CalcExpr> ".";
+
+<CalcExpr>   ::= "show" <Algebra>
+                 | "simplify" <Algebra> ;
+
+<Decls>      ::= <Decl>
+                 | <Decls> <Decl> {100} ;
+// For generation purposes, we generate exactly 100 Decls
+
+<Ty>         ::= "int"
+                 | "set" ;
+
+<Decl>       ::= "let" <Ty> <Id> "be" <Expr> "." <EOL> ;
+
+<Algebra>    ::= <Expr>
+                 | <Predicate> ;
+
+<Expr0>      ::= "{" <Id> ":" <Predicate> "}"
+                 | "(" <Expr> ")"
+                 | 2 <Num>
+                 | 2 <Id> ;
+
+<Expr1>      ::= 10 <Expr0>
+                 | <Expr1> "I" <Expr0>
+                 | <Expr1> "*" <Expr0> ;
+
+<Expr>       ::= 10 <Expr1>
+                 | <Expr> "U" <Expr1>
+                 | <Expr> "+" <Expr1>
+                 | <Expr> "-" <Expr1> ;
+
+<Predicate0> ::= <Expr> "<" <Expr>
+                 | <Expr> ">" <Expr>
+                 | <Expr> "=" <Expr>
+                 | <Expr> "@" <Expr> ;
+
+<Predicate1> ::= "(" <Predicate> ")"
+                 | "!" <Predicate0>
+                 | <Predicate0> ;
+
+<Predicate2>  ::= 10 <Predicate1>
+                 | <Predicate2> "&" <Predicate1> ;
+
+<Predicate>  ::= 10 <Predicate2>
+                 | <Predicate> "|" <Predicate2> ;
+
+<EOL>       ::= 1000 "\n" | "" ; // For generation purposes, make it looks better

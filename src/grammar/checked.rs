@@ -2,14 +2,14 @@ use crate::grammar::production::WeightedProduction;
 use crate::grammar::state::State;
 use crate::grammar::symbol::Ty::Untyped;
 use crate::grammar::symbol::{NonTerminal, SymbolKind, Ty};
+use indexmap::IndexMap;
 use rand::prelude::SliceRandom;
 use rand::Rng;
-use std::collections::HashMap;
 use std::rc::Rc;
 
 #[derive(Debug)]
 pub struct CheckedGrammar {
-    pub(crate) rules: HashMap<NonTerminal, WeightedProduction>,
+    pub(crate) rules: IndexMap<NonTerminal, WeightedProduction>,
 }
 
 pub enum ReduceOutput {
@@ -37,7 +37,11 @@ impl CheckedGrammar {
                             .filter(|k| k.name == s.name)
                             .collect::<Vec<_>>();
                         self.rules
-                            .get(candidates.choose(state.rng()).unwrap())
+                            .get(
+                                *candidates
+                                    .choose(state.rng())
+                                    .expect("No candidates available"),
+                            )
                             .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
                             .choose_by_state(state)
                     }
