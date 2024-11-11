@@ -18,8 +18,8 @@
 <Algebra>    ::= <Expr>
                  | <Predicate> ;
 
-// <Expr0: "set">   ::= "{" <Id> ":" <Predicate> "}" ;
-<Expr0: "set">   ::= "{" <Id> ":" "Predicate" "}" ;
+<Expr0: "set">   ::= "{" <Id> ":" <Predicate> "}" ;
+// <Expr0: "set">   ::= "{" <Id> ":" "Predicate" "}" ;
 
 <Expr0: "int">   ::= "(" <Expr: "int"> ")"
                      | 100 <Num>
@@ -38,21 +38,19 @@
 <Expr: "set">    ::= 2 <Expr1: "set">
                      | <Expr: "set"> "U" <Expr1: "set"> ;
 
-<Predicate0: "relation"> ::= <Expr: "int"> "<" <Expr: "int">
-                             | <Expr: "int"> ">" <Expr: "int">
-                             | <Expr: "int"> "=" <Expr: "int"> ;
-                 
-<Predicate0: "relation"> ::= <Expr: "int"> "@" <Expr: "set"> ;
-
+<Predicate0: "relation"> ::= 2 <Expr: "int"> "<" <Expr: "int">
+                             | 2 <Expr: "int"> ">" <Expr: "int">
+                             | 2 <Expr: "int"> "=" <Expr: "int"> 
+                             | <Expr: "int"> "@" <Expr: "set"> ;
 
 <Predicate1> ::= "(" <Predicate> ")"
                  | 2 "!" <Predicate0>
-                 | 2 <Predicate0> ;
+                 | 10 <Predicate0> ;
 
-<Predicate2>  ::= 10 <Predicate1>
-                 | <Predicate2> "&" <Predicate1> ;
+<Predicate2>  ::= 2 <Predicate1>
+                  | <Predicate2> "&" <Predicate1> ;
 
-<Predicate>  ::= 10 <Predicate2>
+<Predicate>  ::= 2 <Predicate2>
                  | <Predicate> "|" <Predicate2> ;
 
 <EOL>       ::= 1000 "\n" | "" ; // For generation purposes, make it looks better

@@ -1,6 +1,5 @@
 use crate::regex::Regex;
 use crate::span::Span;
-use std::borrow::Borrow;
 use std::hash::Hash;
 use std::rc::Rc;
 
