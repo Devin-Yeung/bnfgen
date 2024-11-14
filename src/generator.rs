@@ -120,7 +120,7 @@ mod test {
     }
 
     #[test]
-    fn test_typed_set_algebra() {
+    fn test_typed_set_algebra_expr() {
         let text = include_str!("../examples/set-algebra-typed.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator { grammar };
@@ -129,6 +129,16 @@ mod test {
             .map(|_| gen.generate("Expr", &mut seeded_rng))
             .collect::<Vec<_>>()
             .join("\n");
+        insta::assert_snapshot!(out);
+    }
+
+    #[test]
+    fn test_typed_set_algebra() {
+        let text = include_str!("../examples/set-algebra-typed.bnfgen");
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let gen = Generator { grammar };
+        let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
+        let out = gen.generate("Program", &mut seeded_rng);
         insta::assert_snapshot!(out);
     }
 }
