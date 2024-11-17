@@ -1,0 +1,149 @@
+---
+source: src/grammar/mod.rs
+expression: grammar
+---
+RawGrammar {
+    rules: [
+        Rule {
+            lhs: NonTerminal {
+                name: "id",
+                ty: Untyped,
+                action: None,
+            },
+            production: WeightedProduction {
+                alts: [
+                    Alternative {
+                        span: Span {
+                            start: 22,
+                            end: 25,
+                        },
+                        weight: 1,
+                        invoke_limit: Unlimited,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "x",
+                                ),
+                                span: Span {
+                                    start: 22,
+                                    end: 25,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            span: Span {
+                start: 13,
+                end: 27,
+            },
+        },
+        Rule {
+            lhs: NonTerminal {
+                name: "E",
+                ty: Untyped,
+                action: None,
+            },
+            production: WeightedProduction {
+                alts: [
+                    Alternative {
+                        span: Span {
+                            start: 48,
+                            end: 61,
+                        },
+                        weight: 1,
+                        invoke_limit: Unlimited,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "placeholder",
+                                ),
+                                span: Span {
+                                    start: 48,
+                                    end: 61,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            span: Span {
+                start: 40,
+                end: 63,
+            },
+        },
+        Rule {
+            lhs: NonTerminal {
+                name: "S",
+                ty: Untyped,
+                action: None,
+            },
+            production: WeightedProduction {
+                alts: [
+                    Alternative {
+                        span: Span {
+                            start: 84,
+                            end: 122,
+                        },
+                        weight: 1,
+                        invoke_limit: Unlimited,
+                        symbols: [
+                            Symbol {
+                                kind: Terminal(
+                                    "let",
+                                ),
+                                span: Span {
+                                    start: 84,
+                                    end: 89,
+                                },
+                            },
+                            Symbol {
+                                kind: NonTerminal(
+                                    NonTerminal {
+                                        name: "id",
+                                        ty: Typed(
+                                            "int",
+                                        ),
+                                        action: Some(
+                                            DeclDefer,
+                                        ),
+                                    },
+                                ),
+                                span: Span {
+                                    start: 90,
+                                    end: 113,
+                                },
+                            },
+                            Symbol {
+                                kind: Terminal(
+                                    "be",
+                                ),
+                                span: Span {
+                                    start: 114,
+                                    end: 118,
+                                },
+                            },
+                            Symbol {
+                                kind: NonTerminal(
+                                    NonTerminal {
+                                        name: "E",
+                                        ty: Untyped,
+                                        action: None,
+                                    },
+                                ),
+                                span: Span {
+                                    start: 119,
+                                    end: 122,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            span: Span {
+                start: 76,
+                end: 124,
+            },
+        },
+    ],
+}
