@@ -88,14 +88,14 @@ Alternative: Alternative = {
         }
     },
 
-    <l: @L> <symbols: Symbol+> "{" <lo: "int"> <comma: ","?> <hi: "int"?> "}" <r: @R> => {
+    <l: @L> <weight: "int"?> <symbols: Symbol+> "{" <lo: "int"> <comma: ","?> <hi: "int"?> "}" <r: @R> => {
         Alternative {
             span: Span::new(l, r),
             invoke_limit: Limit::Limited {
                 min: lo,
                 max: hi.unwrap_or(lo),
             },
-            weight: 1,
+            weight: weight.unwrap_or(1),
             symbols,
         }
     },
