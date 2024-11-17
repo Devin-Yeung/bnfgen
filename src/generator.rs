@@ -76,6 +76,19 @@ mod test {
     use rand::SeedableRng;
 
     #[test]
+    fn semantic_id_works() {
+        let text = r#"
+            <S> ::= <id: ref> ;
+            <rawtext> ::= "x" | "y" ;
+            <id> ::= <rawtext> ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let gen = Generator::builder().grammar(grammar).build();
+        let out = gen.generate("S", &mut rand::thread_rng());
+        insta::assert_snapshot!(out);
+    }
+
+    #[test]
     fn repeat_works() {
         let text = r#"
             <S> ::= <E> | <S> <E> {100};

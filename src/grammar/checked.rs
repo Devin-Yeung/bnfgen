@@ -54,6 +54,22 @@ impl CheckedGrammar {
                     }
                 };
 
+                // Non-terminal with action will be immediately reduced to non-terminal
+                // It may ruin the system if it has any side effects
+                let syms = syms
+                    .into_iter()
+                    .map(|sym| match sym {
+                        SymbolKind::NonTerminal(nt) => {
+                            if let Some(_) = &nt.action {
+                                self.reduce_to_terminal(SymbolKind::NonTerminal(nt), state)
+                            } else {
+                                SymbolKind::NonTerminal(nt)
+                            }
+                        }
+                        sym => sym,
+                    })
+                    .collect::<Vec<_>>();
+
                 ReduceOutput::NonTerminal { name: s.name, syms }
             }
             SymbolKind::Regex(re) => {
@@ -64,6 +80,20 @@ impl CheckedGrammar {
                     .collect::<Vec<_>>();
                 let s = re.generate(state.rng(), terminals.as_slice());
                 ReduceOutput::Terminal(Rc::new(s))
+            }
+        }
+    }
+
+    pub(crate) fn reduce_to_terminal<R: Rng>(
+        &self,
+        symbol: SymbolKind,
+        state: &mut State<R>,
+    ) -> SymbolKind {
+        match self.reduce(symbol, state) {
+            ReduceOutput::Terminal(s) => SymbolKind::Terminal(s),
+            ReduceOutput::NonTerminal { syms, .. } => {
+                debug_assert_eq!(syms.len(), 1);
+                self.reduce_to_terminal(syms.into_iter().next().unwrap(), state)
             }
         }
     }
