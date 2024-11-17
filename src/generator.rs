@@ -84,7 +84,8 @@ mod test {
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::builder().grammar(grammar).build();
-        let out = gen.generate("S", &mut rand::thread_rng());
+        let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
+        let out = gen.generate("S", &mut seeded_rng);
         insta::assert_snapshot!(out);
     }
 
