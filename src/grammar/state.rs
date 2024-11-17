@@ -1,8 +1,8 @@
 use crate::grammar::alt::AltId;
 use crate::grammar::symbol::Ty;
+use indexmap::IndexMap;
 use rand::Rng;
 use std::collections::HashMap;
-use std::rc::Rc;
 
 pub struct State<R: Rng> {
     rng: R,
@@ -10,9 +10,9 @@ pub struct State<R: Rng> {
     /// Notes: only those with invoke limits are tracked
     pub(crate) tracking: HashMap<AltId, usize>,
     /// tracking the declared variable and its type
-    pub(crate) vars: HashMap<String, Ty>,
+    pub(crate) vars: IndexMap<String, Ty>,
     /// tracking the post declared variable
-    pub(crate) waiting_to_declared: HashMap<String, Ty>,
+    pub(crate) waiting_to_declared: IndexMap<String, Ty>,
 }
 
 impl<R: Rng> State<R> {
@@ -20,8 +20,8 @@ impl<R: Rng> State<R> {
         Self {
             rng,
             tracking: HashMap::new(),
-            vars: HashMap::new(),
-            waiting_to_declared: HashMap::new(),
+            vars: IndexMap::new(),
+            waiting_to_declared: IndexMap::new(),
         }
     }
 
