@@ -10,9 +10,9 @@ pub struct State<R: Rng> {
     /// Notes: only those with invoke limits are tracked
     pub(crate) tracking: HashMap<AltId, usize>,
     /// tracking the declared variable and its type
-    pub(crate) vars: HashMap<Rc<String>, Ty>,
+    pub(crate) vars: HashMap<String, Ty>,
     /// tracking the post declared variable
-    pub(crate) waiting_to_declared: HashMap<Rc<String>, Ty>,
+    pub(crate) waiting_to_declared: HashMap<String, Ty>,
 }
 
 impl<R: Rng> State<R> {

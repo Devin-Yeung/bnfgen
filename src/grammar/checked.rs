@@ -1,7 +1,7 @@
 use crate::grammar::production::WeightedProduction;
 use crate::grammar::state::State;
 use crate::grammar::symbol::Ty::Untyped;
-use crate::grammar::symbol::{NonTerminal, SymbolKind, Ty};
+use crate::grammar::symbol::{Action, NonTerminal, SymbolKind, Ty};
 use indexmap::IndexMap;
 use rand::prelude::IndexedRandom;
 use rand::Rng;
@@ -59,9 +59,52 @@ impl CheckedGrammar {
                 let syms = syms
                     .into_iter()
                     .map(|sym| match sym {
-                        SymbolKind::NonTerminal(nt) => {
-                            if let Some(_) = &nt.action {
-                                self.reduce_to_terminal(SymbolKind::NonTerminal(nt), state)
+                        SymbolKind::NonTerminal(mut nt) => {
+                            if let Some(action) = &nt.action {
+                                match action {
+                                    Action::Decl => {
+                                        let ty = nt.ty.clone();
+                                        nt.ty = Ty::Untyped;
+                                        let terminal = self
+                                            .reduce_to_terminal(SymbolKind::NonTerminal(nt), state);
+                                        state.vars.insert(
+                                            terminal
+                                                .as_terminal()
+                                                .expect("precondition violated")
+                                                .to_string(),
+                                            ty,
+                                        );
+                                        terminal
+                                    }
+                                    Action::DeclDefer => {
+                                        let ty = nt.ty.clone();
+                                        let terminal = self
+                                            .reduce_to_terminal(SymbolKind::NonTerminal(nt), state);
+                                        state.waiting_to_declared.insert(
+                                            terminal
+                                                .name()
+                                                .expect("precondition violated")
+                                                .to_string(),
+                                            ty,
+                                        );
+                                        terminal
+                                    }
+                                    Action::Ref => {
+                                        let candidates = state
+                                            .vars
+                                            .iter()
+                                            .filter(|(_, ty)| match nt.ty {
+                                                Untyped => true,
+                                                ref expected => ty == &expected,
+                                            })
+                                            // FIXME: serious perf problem
+                                            .map(|(name, _)| name.to_string())
+                                            .collect::<Vec<_>>();
+                                        let terminal =
+                                            candidates.as_slice().choose(&mut state.rng()).unwrap();
+                                        SymbolKind::Terminal(Rc::new(terminal.clone()))
+                                    }
+                                }
                             } else {
                                 SymbolKind::NonTerminal(nt)
                             }

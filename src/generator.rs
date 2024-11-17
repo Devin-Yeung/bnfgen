@@ -78,9 +78,12 @@ mod test {
     #[test]
     fn semantic_id_works() {
         let text = r#"
-            <S> ::= <id: ref> ;
-            <rawtext> ::= "x" | "y" ;
+            <S> ::= <Decls> "\n" <Expr> ;
+            <Expr> ::= "show" <id: ref> ;
+            <Decls> ::= <Decl> | <Decls> "\n" <Decl> {3, } ;
+            <Decl> ::= "decl" <id: decl("int")>;
             <id> ::= <rawtext> ;
+            <rawtext> ::= "x" | "y" | "z" | "m" | "n" ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::builder().grammar(grammar).build();

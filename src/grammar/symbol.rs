@@ -115,6 +115,24 @@ impl Hash for SymbolKind {
 }
 
 impl SymbolKind {
+    /// return the name of current symbol
+    /// if it is a non-terminal symbol, return the name of the non-terminal symbol
+    /// else return non
+    pub fn name(&self) -> Option<&str> {
+        match self {
+            SymbolKind::Terminal(_) => None,
+            SymbolKind::Regex(_) => None,
+            SymbolKind::NonTerminal(s) => Some(s.as_str()),
+        }
+    }
+
+    pub fn as_terminal(&self) -> Option<&str> {
+        match self {
+            SymbolKind::Terminal(s) => Some(s.as_str()),
+            _ => None,
+        }
+    }
+
     pub fn non_re_terminal(&self) -> Option<&str> {
         match self {
             SymbolKind::Terminal(s) => Some(s.as_str()),
