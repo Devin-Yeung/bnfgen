@@ -126,6 +126,13 @@ impl SymbolKind {
         }
     }
 
+    pub fn as_terminal(&self) -> Option<&str> {
+        match self {
+            SymbolKind::Terminal(s) => Some(s.as_str()),
+            _ => None,
+        }
+    }
+
     pub fn non_re_terminal(&self) -> Option<&str> {
         match self {
             SymbolKind::Terminal(s) => Some(s.as_str()),
