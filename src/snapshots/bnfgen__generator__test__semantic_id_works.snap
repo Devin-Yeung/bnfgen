@@ -1,0 +1,5 @@
+---
+source: src/generator.rs
+expression: out
+---
+y
