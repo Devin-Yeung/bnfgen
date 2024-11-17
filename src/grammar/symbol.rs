@@ -9,6 +9,14 @@ pub type Terminal = Rc<String>;
 pub struct NonTerminal {
     pub(crate) name: Rc<String>,
     pub(crate) ty: Ty,
+    pub(crate) action: Option<Action>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Action {
+    Decl,
+    DeclDefer,
+    Ref,
 }
 
 impl Hash for NonTerminal {
@@ -23,6 +31,7 @@ impl NonTerminal {
         NonTerminal {
             name: Rc::new(name.into()),
             ty: Ty::Untyped,
+            action: None,
         }
     }
 
@@ -30,6 +39,7 @@ impl NonTerminal {
         NonTerminal {
             name: Rc::new(name.into()),
             ty,
+            action: None,
         }
     }
 
