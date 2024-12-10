@@ -44,6 +44,17 @@ mod test {
     }
 
     #[test]
+    fn action() {
+        let text = r#"
+            <id> ::= "x" ;
+            <E> ::= "placeholder" ;
+            <S> ::= "let" <id: decl_defer("int")> "be" <E> ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap();
+        insta::assert_debug_snapshot!(grammar);
+    }
+
+    #[test]
     fn repeat() {
         let text = r#"
             <E> ::= "a" {1, 10} | "b" {2, } | "c" {3} ;
