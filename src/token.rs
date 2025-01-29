@@ -30,6 +30,12 @@ pub enum Token {
     Semi,
     #[token("re")]
     Re,
+    #[token("decl")]
+    Decl,
+    #[token("decl_defer")]
+    DeclDefer,
+    #[token("ref")]
+    Ref,
     #[rustfmt::skip]
     #[regex("[0-9]|[1-9][0-9]*", |lex| {
         match lex.slice().parse::<usize>() {
