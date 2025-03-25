@@ -3,7 +3,7 @@ use crate::grammar::state::State;
 use crate::grammar::symbol::Ty::Untyped;
 use crate::grammar::symbol::{NonTerminal, SymbolKind, Ty};
 use indexmap::IndexMap;
-use rand::prelude::SliceRandom;
+use rand::prelude::IndexedRandom;
 use rand::Rng;
 use std::rc::Rc;
 
