@@ -50,27 +50,27 @@ impl Regex {
             HirKind::Repetition(rep) => {
                 let mut buf = Vec::new();
                 // todo: allow manually set the max reps
-                for _ in 0..rng.gen_range(rep.min..=rep.max.unwrap_or(5)) {
+                for _ in 0..rng.random_range(rep.min..=rep.max.unwrap_or(5)) {
                     buf.push(Self::helper(&rep.sub, rng));
                 }
                 buf.join("")
             }
             HirKind::Concat(cat) => cat.iter().map(|h| Self::helper(h, rng)).collect(),
             HirKind::Alternation(alt) => {
-                let idx = rng.gen_range(0..alt.len());
+                let idx = rng.random_range(0..alt.len());
                 Self::helper(&alt[idx], rng)
             }
             HirKind::Class(cls) => match cls {
                 Class::Unicode(unicode) => {
-                    let idx = rng.gen_range(0..unicode.iter().count());
+                    let idx = rng.random_range(0..unicode.iter().count());
                     let range = unicode.iter().nth(idx).unwrap();
-                    let pick = rng.gen_range(range.start()..=range.end());
+                    let pick = rng.random_range(range.start()..=range.end());
                     pick.to_string()
                 }
                 Class::Bytes(bytes) => {
-                    let idx = rng.gen_range(0..bytes.iter().count());
+                    let idx = rng.random_range(0..bytes.iter().count());
                     let range = bytes.iter().nth(idx).unwrap();
-                    let pick = rng.gen_range(range.start()..=range.end()) as char;
+                    let pick = rng.random_range(range.start()..=range.end()) as char;
                     pick.to_string()
                 }
             },

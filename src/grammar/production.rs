@@ -1,8 +1,8 @@
 use crate::grammar::alt::Alternative;
 use crate::grammar::state::State;
 use crate::grammar::symbol::SymbolKind;
-use rand::distributions::Distribution;
-use rand::distributions::WeightedIndex;
+use rand::distr::weighted::WeightedIndex;
+use rand::distr::Distribution;
 use rand::Rng;
 
 #[derive(Debug)]
