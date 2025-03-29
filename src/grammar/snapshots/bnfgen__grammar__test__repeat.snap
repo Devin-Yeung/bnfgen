@@ -8,6 +8,7 @@ RawGrammar {
             lhs: NonTerminal {
                 name: "E",
                 ty: Untyped,
+                action: None,
             },
             production: WeightedProduction {
                 alts: [
