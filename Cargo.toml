@@ -11,7 +11,7 @@ rand = "0.9.1"
 typed-builder = "0.21.0"
 regex-syntax = "0.8.5"
 thiserror = "2.0.12"
-miette = { version = "7.5.0", features = ["fancy"] }
+miette = { version = "7.6.0", features = ["fancy"] }
 petgraph = "0.8.1"
 clap = { version = "4.5.37", features = ["derive"] }
 
