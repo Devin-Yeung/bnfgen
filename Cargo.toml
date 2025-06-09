@@ -12,7 +12,7 @@ typed-builder = "0.21.0"
 regex-syntax = "0.8.5"
 thiserror = "2.0.12"
 miette = { version = "7.6.0", features = ["fancy"] }
-petgraph = "0.8.1"
+petgraph = "0.8.2"
 clap = { version = "4.5.39", features = ["derive"] }
 
 [[bin]]
