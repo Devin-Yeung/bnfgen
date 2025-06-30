@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 logos = "0.15.0"
 lalrpop-util = "0.22.2"
-indexmap = "2.9.0"
+indexmap = "2.10.0"
 rand = "0.9.1"
 typed-builder = "0.21.0"
 regex-syntax = "0.8.5"
