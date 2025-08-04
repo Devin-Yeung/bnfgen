@@ -13,7 +13,7 @@ regex-syntax = "0.8.5"
 thiserror = "2.0.12"
 miette = { version = "7.6.0", features = ["fancy"] }
 petgraph = "0.8.2"
-clap = { version = "4.5.41", features = ["derive"] }
+clap = { version = "4.5.42", features = ["derive"] }
 
 [[bin]]
 name = "bnfgen"
