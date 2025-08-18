@@ -49,10 +49,7 @@ impl Alternative {
     }
 
     pub(crate) fn has_invoke_limits(&self) -> bool {
-        match self.invoke_limit {
-            Limit::Unlimited => false,
-            _ => true,
-        }
+        !matches!(self.invoke_limit, Limit::Unlimited)
     }
 
     /// check if this alternative has exceeded its invoke limit base on the generator state

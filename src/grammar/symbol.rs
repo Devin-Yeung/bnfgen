@@ -98,7 +98,7 @@ impl Ty {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) enum SymbolKind {
+pub enum SymbolKind {
     Terminal(Terminal),
     NonTerminal(NonTerminal),
     Regex(Rc<Regex>),
@@ -141,10 +141,7 @@ impl SymbolKind {
     }
 
     pub fn is_terminal(&self) -> bool {
-        match self {
-            SymbolKind::Terminal(_) | SymbolKind::Regex(_) => true,
-            _ => false,
-        }
+        matches!(self, SymbolKind::Terminal(_) | SymbolKind::Regex(_))
     }
 
     // get the non-terminal symbol if it is a non-terminal symbol, else none
