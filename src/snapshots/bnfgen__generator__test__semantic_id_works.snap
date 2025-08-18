@@ -2,8 +2,8 @@
 source: src/generator.rs
 expression: out
 ---
-decl z 
- decl z 
- decl z 
+decl n 
  decl n 
+ decl x 
+ decl x 
  show n
