@@ -9,6 +9,14 @@ pub type Terminal = Rc<String>;
 pub struct NonTerminal {
     pub(crate) name: Rc<String>,
     pub(crate) ty: Ty,
+    pub(crate) action: Option<Action>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Action {
+    Decl,
+    DeclDefer,
+    Ref,
 }
 
 impl Hash for NonTerminal {
@@ -23,6 +31,7 @@ impl NonTerminal {
         NonTerminal {
             name: Rc::new(name.into()),
             ty: Ty::Untyped,
+            action: None,
         }
     }
 
@@ -30,6 +39,7 @@ impl NonTerminal {
         NonTerminal {
             name: Rc::new(name.into()),
             ty,
+            action: None,
         }
     }
 
@@ -88,7 +98,7 @@ impl Ty {
 }
 
 #[derive(Debug, Clone)]
-pub(crate) enum SymbolKind {
+pub enum SymbolKind {
     Terminal(Terminal),
     NonTerminal(NonTerminal),
     Regex(Rc<Regex>),
@@ -116,6 +126,13 @@ impl SymbolKind {
         }
     }
 
+    pub fn as_terminal(&self) -> Option<&str> {
+        match self {
+            SymbolKind::Terminal(s) => Some(s.as_str()),
+            _ => None,
+        }
+    }
+
     pub fn non_re_terminal(&self) -> Option<&str> {
         match self {
             SymbolKind::Terminal(s) => Some(s.as_str()),
@@ -124,10 +141,7 @@ impl SymbolKind {
     }
 
     pub fn is_terminal(&self) -> bool {
-        match self {
-            SymbolKind::Terminal(_) | SymbolKind::Regex(_) => true,
-            _ => false,
-        }
+        matches!(self, SymbolKind::Terminal(_) | SymbolKind::Regex(_))
     }
 
     // get the non-terminal symbol if it is a non-terminal symbol, else none

@@ -1,0 +1,9 @@
+---
+source: src/generator.rs
+expression: out
+---
+decl n 
+ decl n 
+ decl x 
+ decl x 
+ show n
