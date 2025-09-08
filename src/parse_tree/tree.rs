@@ -17,13 +17,6 @@ impl<T> ParseTree<T> {
     pub(crate) fn branch(name: String, children: Vec<ParseTree<T>>) -> ParseTree<T> {
         ParseTree::Branch { name, children }
     }
-
-    pub(crate) fn children_len(&self) -> usize {
-        match self {
-            ParseTree::Leaf(_) => 1, // TODO: 0 or 1 ?
-            ParseTree::Branch { children, .. } => children.len(),
-        }
-    }
 }
 
 // derive debug if T: Debug
