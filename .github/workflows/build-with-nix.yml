@@ -1,12 +1,10 @@
 name: Build with Nix
-
 on:
   workflow_dispatch:
   pull_request:
   push:
     branches:
       - master
-
 jobs:
   build-binary:
     strategy:
@@ -17,14 +15,11 @@ jobs:
           - ubuntu-24.04-arm
           - macos-latest
     runs-on: ${{ matrix.os }}
-
     steps:
       - name: Checkout tree
         uses: actions/checkout@v5
-
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@main
-
       - name: Restore and cache Nix store
         uses: nix-community/cache-nix-action@v6
         with:
@@ -43,10 +38,8 @@ jobs:
           purge-created: 0
           # except the version with the `primary-key`, if it exists
           purge-primary-key: never
-
       - name: Build Packages (binary) / ${{ matrix.os }}
         run: nix build .#bnfgen
-
   build-static-binary:
     name: Build Static Binary (${{ matrix.target }})
     strategy:
@@ -58,14 +51,11 @@ jobs:
           - x86_64
           - aarch64
     runs-on: ${{ matrix.os }}
-
     steps:
       - name: Checkout tree
         uses: actions/checkout@v5
-
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@main
-
       - name: Restore and cache Nix store
         uses: nix-community/cache-nix-action@v6
         with:
@@ -84,6 +74,5 @@ jobs:
           purge-created: 0
           # except the version with the `primary-key`, if it exists
           purge-primary-key: never
-
       - name: Build Packages (static)
         run: nix build .#bnfgen-static-${{ matrix.target }}
