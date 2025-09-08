@@ -6,7 +6,7 @@
   target,
 }:
 let
-  inherit (import ./.) mkCrossCraneLib mkFormula mkCrossPkgs;
+  inherit (import ./.) mkCrossCraneLib mkShared mkCrossPkgs;
 
   pkgs = mkCrossPkgs {
     inherit
@@ -22,13 +22,15 @@ let
     inherit pkgs target;
   };
 
-  formula = mkFormula {
+  shared = mkShared {
     inherit pkgs craneLib;
   };
 
+  inherit (shared) commonArgs;
+
 in
 craneLib.buildPackage (
-  formula
+  commonArgs
   // {
     CARGO_BUILD_TARGET = target;
     CARGO_BUILD_RUSTFLAGS = "-C target-feature=+crt-static";
