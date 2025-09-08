@@ -22,11 +22,14 @@ let
 in
 {
   inherit src;
-  strictDeps = true;
-  buildInputs = [
-    # Add extra build inputs if needed
-  ]
-  ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
-    pkgs.libiconv
-  ];
+  commonArgs = {
+    inherit src;
+    strictDeps = true;
+    buildInputs = [
+      # Add extra build inputs if needed
+    ]
+    ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+      pkgs.libiconv
+    ];
+  };
 }

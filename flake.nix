@@ -24,6 +24,7 @@
       imports = [
         ./flakes/build-static.nix
         ./flakes/build.nix
+        ./flakes/checks.nix
       ];
     };
 }

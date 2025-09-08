@@ -7,23 +7,28 @@
       ...
     }:
     let
-      inherit (import ../nix) mkFormula;
+      inherit (import ../nix) mkShared;
 
       craneLib = inputs.crane.mkLib pkgs;
 
       # Common arguments for building
-      formula = mkFormula {
+      shared = mkShared {
         inherit pkgs craneLib;
       };
 
+      inherit (shared) commonArgs;
+
       bnfgen = craneLib.buildPackage (
-        formula
+        commonArgs
         // {
-          cargoArtifacts = craneLib.buildDepsOnly formula;
+          cargoArtifacts = craneLib.buildDepsOnly commonArgs;
         }
       );
     in
     {
+      checks = {
+        inherit bnfgen;
+      };
       packages.bnfgen = bnfgen;
       packages.default = bnfgen;
     };
