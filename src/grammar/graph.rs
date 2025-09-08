@@ -63,7 +63,7 @@ impl<'rule> GrammarGraph<'rule> {
         Ok(self)
     }
 
-    fn is_trap_loop(&self, scc: &Vec<NodeIndex>) -> bool {
+    fn is_trap_loop(&self, scc: &[NodeIndex]) -> bool {
         let produce_t = scc.iter().map(|nx| self.graph[*nx].as_str()).any(|name| {
             // check if rule produce a terminal
             self.rules

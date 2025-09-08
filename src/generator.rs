@@ -83,7 +83,7 @@ mod test {
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::builder().grammar(grammar).build();
-        let out = gen.generate("S", &mut rand::thread_rng());
+        let out = gen.generate("S", &mut rand::rng());
         assert!(out.split(" ").count() >= 100);
     }
 

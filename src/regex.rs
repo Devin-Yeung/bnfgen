@@ -17,6 +17,7 @@ impl Hash for Regex {
 }
 
 impl Regex {
+    #[cfg(test)]
     fn new(input: &str) -> Self {
         let lit = input.to_string();
         let hir = regex_syntax::Parser::new().parse(input).unwrap();
