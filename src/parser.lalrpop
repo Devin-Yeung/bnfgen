@@ -136,7 +136,7 @@ Symbol: Symbol = {
         Symbol {
             kind: SymbolKind::NonTerminal(
                 NonTerminal {
-                    name: Rc::new(nt.into()),
+                    name: Rc::new(nt),
                     action: Some(action.0),
                     ty: action.1
                 },
