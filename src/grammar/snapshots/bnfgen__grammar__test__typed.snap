@@ -8,6 +8,7 @@ RawGrammar {
             lhs: NonTerminal {
                 name: "E",
                 ty: Untyped,
+                action: None,
             },
             production: WeightedProduction {
                 alts: [
@@ -26,6 +27,7 @@ RawGrammar {
                                         ty: Typed(
                                             "int",
                                         ),
+                                        action: None,
                                     },
                                 ),
                                 span: Span {
@@ -49,6 +51,7 @@ RawGrammar {
                                         ty: Typed(
                                             "int",
                                         ),
+                                        action: None,
                                     },
                                 ),
                                 span: Span {
@@ -71,6 +74,7 @@ RawGrammar {
                 ty: Typed(
                     "int",
                 ),
+                action: None,
             },
             production: WeightedProduction {
                 alts: [
@@ -87,6 +91,7 @@ RawGrammar {
                                     NonTerminal {
                                         name: "E",
                                         ty: Untyped,
+                                        action: None,
                                     },
                                 ),
                                 span: Span {
