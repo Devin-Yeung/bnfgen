@@ -1,7 +1,17 @@
 # 📚 Bnfgen
 
+[![Built with devenv][devenv-badge]][devenv-url]
+[![Built with Nix][nix-badge]][nix-url]
 [![Build Status][actions-badge]][actions-url]
 [![MIT Licensed][mit-badge]][mit-url]
+
+[devenv-badge]: https://devenv.sh/assets/devenv-badge.svg
+
+[devenv-url]: https://devenv.sh
+
+[nix-badge]: https://img.shields.io/static/v1?logo=nixos&logoColor=white&label=&message=Built%20with%20Nix&color=41439a
+
+[nix-url]: https://builtwithnix.org
 
 [actions-badge]: https://github.com/Devin-Yeung/bnfgen/actions/workflows/ci.yml/badge.svg?branch=master
 
