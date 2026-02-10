@@ -29,7 +29,7 @@
 //!     let mut gen = Generator::new(checked);
 //!
 //!     // Generate a random string
-//!     let output = gen.generate("S", &mut rand::rng());
+//!     let output = gen.generate("S", &mut rand::rng())?;
 //!     println!("{}", output);
 //!
 //!     Ok(())

@@ -144,4 +144,18 @@ pub enum Error {
     #[error(transparent)]
     #[diagnostic(transparent)]
     LexicalError(#[from] crate::token::LexicalError),
+
+    /// No valid candidates available for expansion.
+    ///
+    /// This error occurs during generation when all alternatives for a
+    /// non-terminal have exceeded their invoke limits, leaving no valid
+    /// options to continue generation.
+    #[error("No candidates available for non-terminal `{name}`")]
+    NoCandidatesAvailable {
+        /// The name of the non-terminal that has no available candidates
+        name: String,
+        /// A helpful hint for the user
+        #[help]
+        help: Option<String>,
+    },
 }

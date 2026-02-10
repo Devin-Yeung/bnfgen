@@ -1,6 +1,8 @@
+use crate::error::Error;
 use crate::grammar::alt::Alternative;
 use crate::grammar::state::State;
 use crate::grammar::symbol::SymbolKind;
+use crate::Result;
 use rand::distr::weighted::WeightedIndex;
 use rand::distr::Distribution;
 use rand::Rng;
@@ -12,7 +14,11 @@ pub struct WeightedProduction {
 }
 
 impl WeightedProduction {
-    pub(crate) fn choose_by_state<R: Rng>(&self, state: &mut State<R>) -> Vec<SymbolKind> {
+    pub(crate) fn choose_by_state<R: Rng>(
+        &self,
+        state: &mut State<R>,
+        nt_name: &str,
+    ) -> Result<Vec<SymbolKind>> {
         let candidates = match self.alts.iter().any(|alt| alt.lose_invoke_limit(state)) {
             true => self
                 .alts
@@ -26,7 +32,23 @@ impl WeightedProduction {
                 .collect::<Vec<_>>(),
         };
 
-        let dist = WeightedIndex::new(candidates.iter().map(|a| a.weight)).unwrap();
+        if candidates.is_empty() {
+            return Err(Error::NoCandidatesAvailable {
+                name: nt_name.to_string(),
+                help: Some(
+                    "All alternatives for this non-terminal have exceeded their invoke limits. \
+                     Consider increasing the limits or adding a fallback alternative without limits."
+                        .to_string(),
+                ),
+            });
+        }
+
+        let dist = WeightedIndex::new(candidates.iter().map(|a| a.weight)).map_err(|_| {
+            Error::NoCandidatesAvailable {
+                name: nt_name.to_string(),
+                help: Some("Failed to create weighted distribution for candidates.".to_string()),
+            }
+        })?;
         let idx = dist.sample(state.rng());
 
         // tracking the selected alternative
@@ -34,11 +56,11 @@ impl WeightedProduction {
             state.track(candidates[idx].id());
         }
 
-        candidates[idx]
+        Ok(candidates[idx]
             .symbols
             .iter()
             .map(|s| s.kind.clone())
-            .collect()
+            .collect())
     }
 
     pub fn non_re_terminals(&self) -> Vec<&str> {

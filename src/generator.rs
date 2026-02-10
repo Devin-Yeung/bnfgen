@@ -3,6 +3,7 @@ use crate::grammar::state::State;
 use crate::grammar::symbol::SymbolKind::Terminal;
 use crate::grammar::symbol::{NonTerminal, SymbolKind};
 use crate::parse_tree::tree::ParseTree;
+use crate::Result;
 use rand::Rng;
 
 /// Stack-based iterative string generator.
@@ -21,7 +22,7 @@ use rand::Rng;
 /// let grammar = RawGrammar::parse("<S> ::= \"hello\" | \"world\";")?;
 /// let checked = grammar.to_checked()?;
 /// let mut gen = Generator::new(checked);
-/// let output = gen.generate("S", &mut rand::rng());
+/// let output = gen.generate("S", &mut rand::rng())?;
 /// # Ok(())
 /// # }
 /// ```
@@ -48,7 +49,8 @@ impl Generator {
     ///
     /// # Returns
     ///
-    /// A space-separated string of terminals.
+    /// A space-separated string of terminals, or an error if generation fails
+    /// (e.g., all alternatives for a non-terminal have exceeded their invoke limits).
     ///
     /// # Example
     ///
@@ -61,11 +63,11 @@ impl Generator {
     /// let checked = grammar.to_checked()?;
     /// let gen = Generator::new(checked);
     /// let mut rng = rand::rngs::StdRng::seed_from_u64(42);
-    /// let output = gen.generate("S", &mut rng);
+    /// let output = gen.generate("S", &mut rng)?;
     /// # Ok(())
     /// # }
     /// ```
-    pub fn generate<R: Rng, S: Into<String>>(&self, start: S, rng: &mut R) -> String {
+    pub fn generate<R: Rng, S: Into<String>>(&self, start: S, rng: &mut R) -> Result<String> {
         let mut buf = Vec::new();
         let mut state = State::new(rng);
 
@@ -74,7 +76,7 @@ impl Generator {
 
         while !stack.is_empty() {
             // pop out the first symbol
-            match self.grammar.reduce(stack.remove(0), &mut state) {
+            match self.grammar.reduce(stack.remove(0), &mut state)? {
                 ReduceOutput::Terminal(s) => {
                     buf.push(s);
                 }
@@ -86,7 +88,7 @@ impl Generator {
             }
         }
 
-        buf.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(" ")
+        Ok(buf.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(" "))
     }
 }
 
@@ -134,7 +136,7 @@ impl TreeGenerator {
     ///
     /// # Returns
     ///
-    /// A [`ParseTree`] representing the generated structure.
+    /// A [`ParseTree`] representing the generated structure, or an error if generation fails.
     ///
     /// # Example
     ///
@@ -147,7 +149,7 @@ impl TreeGenerator {
     /// let checked = grammar.to_checked()?;
     /// let gen = TreeGenerator::new(checked);
     /// let mut rng = rand::rngs::StdRng::seed_from_u64(42);
-    /// let tree = gen.generate("S", &mut rng);
+    /// let tree = gen.generate("S", &mut rng)?;
     /// # Ok(())
     /// # }
     /// ```
@@ -155,7 +157,7 @@ impl TreeGenerator {
         &self,
         start: S,
         rng: &mut R,
-    ) -> ParseTree<SymbolKind> {
+    ) -> Result<ParseTree<SymbolKind>> {
         let start = SymbolKind::NonTerminal(NonTerminal::untyped(start));
         let mut state = State::new(rng);
         self.generate_tree(start, &mut state)
@@ -165,15 +167,15 @@ impl TreeGenerator {
         &self,
         symbol: SymbolKind,
         state: &mut State<R>,
-    ) -> ParseTree<SymbolKind> {
-        match self.grammar.reduce(symbol, state) {
-            ReduceOutput::Terminal(s) => ParseTree::leaf(Terminal(s)),
+    ) -> Result<ParseTree<SymbolKind>> {
+        match self.grammar.reduce(symbol, state)? {
+            ReduceOutput::Terminal(s) => Ok(ParseTree::leaf(Terminal(s))),
             ReduceOutput::NonTerminal { name, syms } => {
                 let subtrees = syms
                     .into_iter()
                     .map(|sym| self.generate_tree(sym, state))
-                    .collect::<Vec<_>>();
-                ParseTree::branch(name.to_string(), subtrees)
+                    .collect::<Result<Vec<_>>>()?;
+                Ok(ParseTree::branch(name.to_string(), subtrees))
             }
         }
     }
@@ -193,7 +195,7 @@ mod test {
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::new(grammar);
-        let out = gen.generate("S", &mut rand::rng());
+        let out = gen.generate("S", &mut rand::rng()).unwrap();
         assert!(out.split(" ").count() >= 100);
     }
 
@@ -206,7 +208,7 @@ mod test {
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let tree_gen = TreeGenerator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
-        let tree = tree_gen.generate("S", &mut seeded_rng);
+        let tree = tree_gen.generate("S", &mut seeded_rng).unwrap();
         insta::assert_debug_snapshot!(&tree);
     }
 
@@ -226,7 +228,7 @@ mod test {
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
-        insta::assert_snapshot!(gen.generate("S", &mut seeded_rng));
+        insta::assert_snapshot!(gen.generate("S", &mut seeded_rng).unwrap());
     }
 
     #[test]
@@ -236,7 +238,7 @@ mod test {
         let gen = Generator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let out = (0..100)
-            .map(|_| gen.generate("Expr", &mut seeded_rng))
+            .map(|_| gen.generate("Expr", &mut seeded_rng).unwrap())
             .collect::<Vec<_>>()
             .join("\n");
         insta::assert_snapshot!(out);
@@ -248,7 +250,49 @@ mod test {
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
-        let out = gen.generate("Program", &mut seeded_rng);
+        let out = gen.generate("Program", &mut seeded_rng).unwrap();
         insta::assert_snapshot!(out);
+    }
+
+    #[test]
+    fn test_no_candidates_error() {
+        // This grammar demonstrates when all alternatives for a non-terminal
+        // exceed their invoke limits during generation:
+        // <S> must expand to <A> <A> <A> (exactly 3 times),
+        // but <A> has only 2 alternatives, each with a limit of {0} (max 0).
+        // After 2 invocations of <A>, no candidates remain for the third.
+        let text = r#"
+            <S> ::= <A> <A> <A> ;
+            <A> ::= "a" {0} | "b" {0} ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let gen = Generator::new(grammar);
+
+        // This generation will always fail because <S> requires 3 invocations of <A>,
+        // but <A> can only be invoked twice total (once for each alternative with max 0).
+        // With max=0:
+        // - count=0: 0 > 0 is false, not exceeded
+        // - count=1: 1 > 0 is true, exceeded
+        // So each alternative can only be selected once.
+        // Try multiple seeds to find one that triggers the error
+        let mut found_error = false;
+        for seed in 0..100 {
+            let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
+            match gen.generate("S", &mut rng) {
+                Ok(_) => {}
+                Err(err) => match &err {
+                    crate::Error::NoCandidatesAvailable { name, .. } => {
+                        assert_eq!(name, "A");
+                        found_error = true;
+                        break;
+                    }
+                    _ => {}
+                },
+            }
+        }
+        assert!(
+            found_error,
+            "Expected to find at least one seed that triggers NoCandidatesAvailable error"
+        );
     }
 }

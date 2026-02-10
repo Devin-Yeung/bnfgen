@@ -146,12 +146,24 @@ fn generate(grammar: CheckedGrammar, start: &str, count: usize, seed: Option<u64
     if let Some(s) = seed {
         let mut rng = rand::rngs::StdRng::seed_from_u64(s);
         for _ in 0..count {
-            println!("{}", generator.generate(start, &mut rng));
+            match generator.generate(start, &mut rng) {
+                Ok(output) => println!("{}", output),
+                Err(e) => {
+                    eprintln!("Error during generation: {}", e);
+                    std::process::exit(1);
+                }
+            }
         }
     } else {
         let mut rng = rand::rng();
         for _ in 0..count {
-            println!("{}", generator.generate(start, &mut rng));
+            match generator.generate(start, &mut rng) {
+                Ok(output) => println!("{}", output),
+                Err(e) => {
+                    eprintln!("Error during generation: {}", e);
+                    std::process::exit(1);
+                }
+            }
         }
     }
 }

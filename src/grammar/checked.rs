@@ -4,10 +4,12 @@
 //! suitable for use with generators. Obtain a `CheckedGrammar` by calling
 //! [`RawGrammar::to_checked()`](super::raw::RawGrammar::to_checked).
 
+use crate::error::Error;
 use crate::grammar::production::WeightedProduction;
 use crate::grammar::state::State;
 use crate::grammar::symbol::Ty::Untyped;
 use crate::grammar::symbol::{NonTerminal, SymbolKind, Ty};
+use crate::Result;
 use indexmap::IndexMap;
 use rand::prelude::IndexedRandom;
 use rand::Rng;
@@ -48,9 +50,13 @@ impl CheckedGrammar {
     ///
     /// E   --reduce--> E, remaining: ['+', E]
     /// if E -> E '+' E
-    pub(crate) fn reduce<R: Rng>(&self, symbol: SymbolKind, state: &mut State<R>) -> ReduceOutput {
+    pub(crate) fn reduce<R: Rng>(
+        &self,
+        symbol: SymbolKind,
+        state: &mut State<R>,
+    ) -> Result<ReduceOutput> {
         match symbol {
-            SymbolKind::Terminal(s) => ReduceOutput::Terminal(s),
+            SymbolKind::Terminal(s) => Ok(ReduceOutput::Terminal(s)),
             SymbolKind::NonTerminal(s) => {
                 let syms = match s.ty {
                     Untyped => {
@@ -59,25 +65,31 @@ impl CheckedGrammar {
                             .keys()
                             .filter(|k| k.name == s.name)
                             .collect::<Vec<_>>();
+                        let chosen = candidates.choose(state.rng()).ok_or_else(|| {
+                            Error::NoCandidatesAvailable {
+                                name: s.name.to_string(),
+                                help: Some(
+                                    "All alternatives for this non-terminal have exceeded their invoke limits. \
+                                     Consider increasing the limits or adding a fallback alternative without limits."
+                                        .to_string(),
+                                ),
+                            }
+                        })?;
                         self.rules
-                            .get(
-                                *candidates
-                                    .choose(state.rng())
-                                    .expect("No candidates available"),
-                            )
+                            .get(*chosen)
                             .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
-                            .choose_by_state(state)
+                            .choose_by_state(state, &s.name)?
                     }
                     Ty::Typed(_) => {
                         // require an exact match
                         self.rules
                             .get(&s)
                             .unwrap_or_else(|| panic!("Fail to find rule of {:?}", s))
-                            .choose_by_state(state)
+                            .choose_by_state(state, &s.name)?
                     }
                 };
 
-                ReduceOutput::NonTerminal { name: s.name, syms }
+                Ok(ReduceOutput::NonTerminal { name: s.name, syms })
             }
             SymbolKind::Regex(re) => {
                 let terminals = self
@@ -86,7 +98,7 @@ impl CheckedGrammar {
                     .flat_map(|r| r.non_re_terminals())
                     .collect::<Vec<_>>();
                 let s = re.generate(state.rng(), terminals.as_slice());
-                ReduceOutput::Terminal(Rc::new(s))
+                Ok(ReduceOutput::Terminal(Rc::new(s)))
             }
         }
     }
