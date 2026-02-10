@@ -17,7 +17,7 @@ clap = { version = "4.5.56", features = ["derive"] }
 
 [[bin]]
 name = "bnfgen"
-path = "src/bin/bnfgen.rs"
+path = "src/bin/cli/main.rs"
 
 # Add a build-time dependency on the lalrpop library:
 [build-dependencies]

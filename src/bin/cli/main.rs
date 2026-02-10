@@ -1,19 +1,12 @@
+mod cli;
+
 use bnfgen::grammar::raw::RawGrammar;
 use bnfgen::report::{Reporter, Style};
 use clap::Parser;
 use miette::Report;
-use std::path::PathBuf;
 use std::sync::Arc;
 
-#[derive(Parser, Debug, Clone)]
-pub struct Cli {
-    #[arg(short, long)]
-    /// Path to the BNF grammar file
-    grammar: PathBuf,
-    #[arg(long)]
-    /// Check for unreachable rules (need to give the starting rule)
-    check_unused: Option<String>,
-}
+use crate::cli::Cli;
 
 fn main() {
     let args = Cli::parse();
