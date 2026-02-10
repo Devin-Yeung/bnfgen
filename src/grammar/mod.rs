@@ -1,11 +1,28 @@
-pub mod alt;
-pub mod checked;
+//! Grammar module for BNF grammar parsing and validation.
+//!
+//! This module provides types for parsing raw BNF grammars, validating them,
+//! and converting them to a form suitable for generation.
+//!
+//! # Public API
+//!
+//! - [`raw::RawGrammar`] - Entry point for parsing BNF grammar text
+//! - [`checked::CheckedGrammar`] - Validated grammar ready for generation
+//! - [`graph::GrammarGraph`] - Graph representation for static analysis
+//! - [`symbol::Terminal`], [`symbol::NonTerminal`], [`symbol::Ty`], [`symbol::SymbolKind`] - Symbol types
+
+// Public: Main user-facing types
+pub mod checked; // CheckedGrammar - validated grammar
 pub mod graph;
-pub mod production;
-pub mod raw;
-pub mod rule;
-pub mod state;
-pub mod symbol;
+pub mod raw; // RawGrammar - entry point for parsing // GrammarGraph - advanced static analysis
+
+// Private (but pub(crate) for LALRPOP parser): Implementation details
+pub(crate) mod alt; // Limit, Alternative, AltId
+pub(crate) mod production; // WeightedProduction
+pub(crate) mod rule; // Rule
+pub(crate) mod state; // State
+
+// Public: Symbol types users may need
+pub mod symbol; // Terminal, NonTerminal, Ty, SymbolKind (Symbol is internal)
 
 #[cfg(test)]
 mod test {

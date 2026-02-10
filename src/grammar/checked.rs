@@ -1,3 +1,9 @@
+//! Validated grammar ready for generation.
+//!
+//! This module provides [`CheckedGrammar`], a validated grammar representation
+//! suitable for use with generators. Obtain a `CheckedGrammar` by calling
+//! [`RawGrammar::to_checked()`](super::raw::RawGrammar::to_checked).
+
 use crate::grammar::production::WeightedProduction;
 use crate::grammar::state::State;
 use crate::grammar::symbol::Ty::Untyped;
@@ -7,12 +13,29 @@ use rand::prelude::IndexedRandom;
 use rand::Rng;
 use std::rc::Rc;
 
+/// A validated BNF grammar ready for generation.
+///
+/// `CheckedGrammar` is the output of validation checks performed by
+/// [`RawGrammar::to_checked()`](super::raw::RawGrammar::to_checked).
+/// It contains validated rules indexed by non-terminal and is used by
+/// [`Generator`](crate::Generator) and [`TreeGenerator`](crate::TreeGenerator)
+/// to produce random strings.
+///
+/// # Example
+///
+/// ```rust
+/// use bnfgen::RawGrammar;
+///
+/// let grammar = RawGrammar::parse("<S> ::= \"a\" | \"b\";").unwrap();
+/// let checked = grammar.to_checked().unwrap();
+/// // checked is now ready for use with Generator
+/// ```
 #[derive(Debug)]
 pub struct CheckedGrammar {
     pub(crate) rules: IndexMap<NonTerminal, WeightedProduction>,
 }
 
-pub enum ReduceOutput {
+pub(crate) enum ReduceOutput {
     Terminal(Rc<String>),
     NonTerminal {
         name: Rc<String>,

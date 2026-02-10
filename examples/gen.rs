@@ -19,7 +19,7 @@ fn main() {
 
 fn run(input: &str) -> Result<()> {
     let grammar = RawGrammar::parse(input)?.to_checked()?;
-    let gen = Generator::builder().grammar(grammar).build();
+    let gen = Generator::new(grammar);
     let out = gen.generate("Program", &mut rand::rng());
     println!("{}", out);
     Ok(())

@@ -5,12 +5,66 @@ use crate::grammar::symbol::{NonTerminal, SymbolKind};
 use crate::parse_tree::tree::ParseTree;
 use rand::Rng;
 
-#[derive(typed_builder::TypedBuilder)]
+/// Stack-based iterative string generator.
+///
+/// Generates random strings from a validated BNF grammar using an iterative
+/// stack-based approach. The generator processes symbols by maintaining a stack
+/// of symbols to expand, popping symbols and reducing them until only terminals
+/// remain.
+///
+/// # Example
+///
+/// ```rust
+/// use bnfgen::{RawGrammar, Generator, Result};
+///
+/// # fn main() -> Result<()> {
+/// let grammar = RawGrammar::parse("<S> ::= \"hello\" | \"world\";")?;
+/// let checked = grammar.to_checked()?;
+/// let mut gen = Generator::new(checked);
+/// let output = gen.generate("S", &mut rand::rng());
+/// # Ok(())
+/// # }
+/// ```
 pub struct Generator {
-    pub grammar: CheckedGrammar,
+    grammar: CheckedGrammar,
 }
 
 impl Generator {
+    /// Creates a new generator from a validated grammar.
+    ///
+    /// # Arguments
+    ///
+    /// * `grammar` - A validated `CheckedGrammar` obtained from `RawGrammar::to_checked()`
+    pub fn new(grammar: CheckedGrammar) -> Self {
+        Self { grammar }
+    }
+
+    /// Generates a random string starting from the given non-terminal.
+    ///
+    /// # Arguments
+    ///
+    /// * `start` - The name of the non-terminal to start generation from (e.g., "S")
+    /// * `rng` - A random number generator implementing `rand::Rng`
+    ///
+    /// # Returns
+    ///
+    /// A space-separated string of terminals.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use bnfgen::{RawGrammar, Generator, Result};
+    /// use rand::SeedableRng;
+    ///
+    /// # fn main() -> Result<()> {
+    /// let grammar = RawGrammar::parse("<S> ::= \"a\" | \"b\";")?;
+    /// let checked = grammar.to_checked()?;
+    /// let gen = Generator::new(checked);
+    /// let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+    /// let output = gen.generate("S", &mut rng);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn generate<R: Rng, S: Into<String>>(&self, start: S, rng: &mut R) -> String {
         let mut buf = Vec::new();
         let mut state = State::new(rng);
@@ -36,11 +90,67 @@ impl Generator {
     }
 }
 
+/// Recursive tree-based generator that produces parse trees.
+///
+/// Unlike [`Generator`], which produces a flat string output, `TreeGenerator`
+/// builds a full parse tree structure that can be used for analysis or
+/// transformation of the generated output.
+///
+/// # Example
+///
+/// ```rust
+/// use bnfgen::{RawGrammar, TreeGenerator, Result};
+/// use rand::SeedableRng;
+///
+/// # fn main() -> Result<()> {
+/// let grammar = RawGrammar::parse("<S> ::= \"hello\";")?;
+/// let checked = grammar.to_checked()?;
+/// let gen = TreeGenerator::new(checked);
+/// let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+/// let tree = gen.generate("S", &mut rng);
+/// # Ok(())
+/// # }
+/// ```
 pub struct TreeGenerator {
-    pub grammar: CheckedGrammar,
+    grammar: CheckedGrammar,
 }
 
 impl TreeGenerator {
+    /// Creates a new tree generator from a validated grammar.
+    ///
+    /// # Arguments
+    ///
+    /// * `grammar` - A validated `CheckedGrammar` obtained from `RawGrammar::to_checked()`
+    pub fn new(grammar: CheckedGrammar) -> Self {
+        Self { grammar }
+    }
+
+    /// Generates a random parse tree starting from the given non-terminal.
+    ///
+    /// # Arguments
+    ///
+    /// * `start` - The name of the non-terminal to start generation from (e.g., "S")
+    /// * `rng` - A random number generator implementing `rand::Rng`
+    ///
+    /// # Returns
+    ///
+    /// A [`ParseTree`] representing the generated structure.
+    ///
+    /// # Example
+    ///
+    /// ```rust
+    /// use bnfgen::{RawGrammar, TreeGenerator, Result};
+    /// use rand::SeedableRng;
+    ///
+    /// # fn main() -> Result<()> {
+    /// let grammar = RawGrammar::parse("<S> ::= \"a\" | \"b\";")?;
+    /// let checked = grammar.to_checked()?;
+    /// let gen = TreeGenerator::new(checked);
+    /// let mut rng = rand::rngs::StdRng::seed_from_u64(42);
+    /// let tree = gen.generate("S", &mut rng);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn generate<R: Rng, S: Into<String>>(
         &self,
         start: S,
@@ -82,7 +192,7 @@ mod test {
             <E> ::= "a" {1, 10} | "b" {2, } | "c" {3} | "fallback" ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator::builder().grammar(grammar).build();
+        let gen = Generator::new(grammar);
         let out = gen.generate("S", &mut rand::rng());
         assert!(out.split(" ").count() >= 100);
     }
@@ -94,7 +204,7 @@ mod test {
             <E> ::= "a" {1, 10} | "b" {2, } | "c" {3} | "fallback" ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let tree_gen = TreeGenerator { grammar };
+        let tree_gen = TreeGenerator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let tree = tree_gen.generate("S", &mut seeded_rng);
         insta::assert_debug_snapshot!(&tree);
@@ -114,7 +224,7 @@ mod test {
                             | <E: "bool"> "&" <E: "bool"> {3, } ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator { grammar };
+        let gen = Generator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         insta::assert_snapshot!(gen.generate("S", &mut seeded_rng));
     }
@@ -123,7 +233,7 @@ mod test {
     fn test_typed_set_algebra_expr() {
         let text = include_str!("../examples/set-algebra-typed.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator { grammar };
+        let gen = Generator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let out = (0..100)
             .map(|_| gen.generate("Expr", &mut seeded_rng))
@@ -136,7 +246,7 @@ mod test {
     fn test_typed_set_algebra() {
         let text = include_str!("../examples/set-algebra-typed.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator { grammar };
+        let gen = Generator::new(grammar);
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let out = gen.generate("Program", &mut seeded_rng);
         insta::assert_snapshot!(out);
