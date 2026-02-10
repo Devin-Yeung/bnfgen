@@ -1,0 +1,9 @@
+---
+source: src/generator.rs
+expression: out
+---
+( y ) let y = 59 in fun y -> let y = let y = true in let y = true * 9 + z * x + let z = [] in true <= let z = [] [] in false + false in [] [] in [] ^ [] + [] :: [] 1728
+827 <= if true then false else z <= x + 12 3288
+9
+514358
+fun y -> false []

@@ -185,6 +185,7 @@ impl TreeGenerator {
 mod test {
     use crate::generator::{Generator, TreeGenerator};
     use crate::grammar::raw::RawGrammar;
+    use crate::Result;
     use rand::SeedableRng;
 
     #[test]
@@ -293,5 +294,19 @@ mod test {
             found_error,
             "Expected to find at least one seed that triggers NoCandidatesAvailable error"
         );
+    }
+
+    #[test]
+    fn test_core_ocaml() {
+        let text = include_str!("../examples/core-ocaml.bnfgen");
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let gen = Generator { grammar };
+        let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
+        let out = (0..5)
+            .map(|_| gen.generate("Expr", &mut seeded_rng))
+            .collect::<Result<Vec<_>>>()
+            .unwrap()
+            .join("\n");
+        insta::assert_snapshot!(out);
     }
 }

@@ -1,0 +1,23 @@
+<Num>        ::= re("[0-9]|[1-9][0-9]+") ;
+<Bool>       ::= "true" | "false" ;
+<Id>         ::= "x" | "y" | "z" ;
+
+<Program>    ::= <Expr> ;
+
+<Expr>      ::= "let" <Id> "=" <Expr> "in" <Expr>
+             | "if" <Expr> "then" <Expr> "else" <Expr>
+             | "fun" <Id> "->" <Expr>
+             | <Expr> "^" <Expr>
+             | <Expr> "<=" <Expr>
+             | <Expr> "::" <Expr>
+             | <Expr> "+" <Expr>
+             | <Expr> "*" <Expr>
+             | <Expr> <Expr>
+             | "(" <Expr> ")"
+             | <Id>
+             | 2 <Num>
+             | 2 <Bool>
+             | 2 "[]"
+             ;
+
+
