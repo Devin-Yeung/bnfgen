@@ -68,11 +68,6 @@ impl CheckedGrammar {
                         let chosen = candidates.choose(state.rng()).ok_or_else(|| {
                             Error::NoCandidatesAvailable {
                                 name: s.name.to_string(),
-                                help: Some(
-                                    "All alternatives for this non-terminal have exceeded their invoke limits. \
-                                     Consider increasing the limits or adding a fallback alternative without limits."
-                                        .to_string(),
-                                ),
                             }
                         })?;
                         self.rules

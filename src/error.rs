@@ -154,8 +154,5 @@ pub enum Error {
     NoCandidatesAvailable {
         /// The name of the non-terminal that has no available candidates
         name: String,
-        /// A helpful hint for the user
-        #[help]
-        help: Option<String>,
     },
 }

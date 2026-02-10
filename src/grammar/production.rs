@@ -35,18 +35,12 @@ impl WeightedProduction {
         if candidates.is_empty() {
             return Err(Error::NoCandidatesAvailable {
                 name: nt_name.to_string(),
-                help: Some(
-                    "All alternatives for this non-terminal have exceeded their invoke limits. \
-                     Consider increasing the limits or adding a fallback alternative without limits."
-                        .to_string(),
-                ),
             });
         }
 
         let dist = WeightedIndex::new(candidates.iter().map(|a| a.weight)).map_err(|_| {
             Error::NoCandidatesAvailable {
                 name: nt_name.to_string(),
-                help: Some("Failed to create weighted distribution for candidates.".to_string()),
             }
         })?;
         let idx = dist.sample(state.rng());
