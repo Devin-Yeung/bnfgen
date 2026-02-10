@@ -1,4 +1,6 @@
 use crate::grammar::alt::AltId;
+use crate::grammar::symbol::Ty;
+use indexmap::IndexMap;
 use rand::Rng;
 use std::collections::HashMap;
 
@@ -7,6 +9,10 @@ pub struct State<R: Rng> {
     /// tracking the number of times an alternative has been selected
     /// Notes: only those with invoke limits are tracked
     pub(crate) tracking: HashMap<AltId, usize>,
+    /// tracking the declared variable and its type
+    pub(crate) vars: IndexMap<String, Ty>,
+    /// tracking the post declared variable
+    pub(crate) waiting_to_declared: IndexMap<String, Ty>,
 }
 
 impl<R: Rng> State<R> {
@@ -14,6 +20,8 @@ impl<R: Rng> State<R> {
         Self {
             rng,
             tracking: HashMap::new(),
+            vars: IndexMap::new(),
+            waiting_to_declared: IndexMap::new(),
         }
     }
 

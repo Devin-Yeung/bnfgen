@@ -1,7 +1,7 @@
 use crate::grammar::production::WeightedProduction;
 use crate::grammar::state::State;
 use crate::grammar::symbol::Ty::Untyped;
-use crate::grammar::symbol::{NonTerminal, SymbolKind, Ty};
+use crate::grammar::symbol::{Action, NonTerminal, SymbolKind, Ty};
 use indexmap::IndexMap;
 use rand::prelude::IndexedRandom;
 use rand::Rng;
@@ -54,6 +54,65 @@ impl CheckedGrammar {
                     }
                 };
 
+                // Non-terminal with action will be immediately reduced to non-terminal
+                // It may ruin the system if it has any side effects
+                let syms = syms
+                    .into_iter()
+                    .map(|sym| match sym {
+                        SymbolKind::NonTerminal(mut nt) => {
+                            if let Some(action) = &nt.action {
+                                match action {
+                                    Action::Decl => {
+                                        let ty = nt.ty.clone();
+                                        nt.ty = Ty::Untyped;
+                                        let terminal = self
+                                            .reduce_to_terminal(SymbolKind::NonTerminal(nt), state);
+                                        state.vars.insert(
+                                            terminal
+                                                .as_terminal()
+                                                .expect("precondition violated")
+                                                .to_string(),
+                                            ty,
+                                        );
+                                        terminal
+                                    }
+                                    Action::DeclDefer => {
+                                        let ty = nt.ty.clone();
+                                        let terminal = self
+                                            .reduce_to_terminal(SymbolKind::NonTerminal(nt), state);
+                                        state.waiting_to_declared.insert(
+                                            terminal
+                                                .name()
+                                                .expect("precondition violated")
+                                                .to_string(),
+                                            ty,
+                                        );
+                                        terminal
+                                    }
+                                    Action::Ref => {
+                                        let candidates = state
+                                            .vars
+                                            .iter()
+                                            .filter(|(_, ty)| match nt.ty {
+                                                Untyped => true,
+                                                ref expected => ty == &expected,
+                                            })
+                                            // FIXME: serious perf problem
+                                            .map(|(name, _)| name.to_string())
+                                            .collect::<Vec<_>>();
+                                        let terminal =
+                                            candidates.as_slice().choose(&mut state.rng()).unwrap();
+                                        SymbolKind::Terminal(Rc::new(terminal.clone()))
+                                    }
+                                }
+                            } else {
+                                SymbolKind::NonTerminal(nt)
+                            }
+                        }
+                        sym => sym,
+                    })
+                    .collect::<Vec<_>>();
+
                 ReduceOutput::NonTerminal { name: s.name, syms }
             }
             SymbolKind::Regex(re) => {
@@ -64,6 +123,20 @@ impl CheckedGrammar {
                     .collect::<Vec<_>>();
                 let s = re.generate(state.rng(), terminals.as_slice());
                 ReduceOutput::Terminal(Rc::new(s))
+            }
+        }
+    }
+
+    pub(crate) fn reduce_to_terminal<R: Rng>(
+        &self,
+        symbol: SymbolKind,
+        state: &mut State<R>,
+    ) -> SymbolKind {
+        match self.reduce(symbol, state) {
+            ReduceOutput::Terminal(s) => SymbolKind::Terminal(s),
+            ReduceOutput::NonTerminal { syms, .. } => {
+                debug_assert_eq!(syms.len(), 1);
+                self.reduce_to_terminal(syms.into_iter().next().unwrap(), state)
             }
         }
     }

@@ -4,7 +4,7 @@ use crate::grammar::{
     raw::RawGrammar,
     rule::Rule,
     alt::{Alternative, Limit},
-    symbol::{Symbol, SymbolKind, NonTerminal},
+    symbol::{Symbol, SymbolKind, NonTerminal, Ty, Action},
     production::WeightedProduction
 };
 use crate::regex::Regex;
@@ -34,6 +34,9 @@ extern {
     "str" => Token::Str(<String>),
     "id" => Token::Id(<String>),
     "int" => Token::Int(<usize>),
+    "decl" => Token::Decl,
+    "decl_defer" => Token::DeclDefer,
+    "ref" => Token::Ref,
   }
 }
 
@@ -43,6 +46,13 @@ pub RawGrammar: RawGrammar = {
             rules,
         }
     }
+};
+
+Action: (Action, Ty) = {
+    "decl" "(" <ty: "str"> ")" => (Action::Decl, ty.into()),
+    "decl_defer" "(" <ty: "str"> ")" => (Action::DeclDefer, ty.into()),
+    "ref" "(" <ty: "str"> ")" => (Action::Ref, ty.into()),
+    "ref" => (Action::Ref, Ty::Untyped),
 };
 
 Rule: Rule = {
@@ -118,6 +128,19 @@ Symbol: Symbol = {
     <l: @L> "<" <nt: "id"> ":" <ty: "str"> ">" <r: @R> => {
         Symbol {
             kind: SymbolKind::NonTerminal(NonTerminal::typed(nt, ty.into())),
+            span: Span::new(l, r),
+        }
+    },
+    // with action
+    <l: @L> "<" <nt: "id"> ":" <action: Action> ">" <r: @R> => {
+        Symbol {
+            kind: SymbolKind::NonTerminal(
+                NonTerminal {
+                    name: Rc::new(nt),
+                    action: Some(action.0),
+                    ty: action.1
+                },
+            ),
             span: Span::new(l, r),
         }
     },
