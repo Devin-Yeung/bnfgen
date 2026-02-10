@@ -210,6 +210,6 @@ impl<'rule> GrammarGraph<'rule> {
         }
 
         // It's a trap loop if NO rule in the SCC can escape
-        scc_rules.len() > 0 && can_escape.is_empty()
+        !scc_rules.is_empty() && can_escape.is_empty()
     }
 }

@@ -280,14 +280,13 @@ mod test {
             let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
             match gen.generate("S", &mut rng) {
                 Ok(_) => {}
-                Err(err) => match &err {
-                    crate::Error::NoCandidatesAvailable { name, .. } => {
+                Err(err) => {
+                    if let crate::Error::NoCandidatesAvailable { name, .. } = &err {
                         assert_eq!(name, "A");
                         found_error = true;
                         break;
                     }
-                    _ => {}
-                },
+                }
             }
         }
         assert!(
