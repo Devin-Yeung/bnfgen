@@ -155,21 +155,61 @@ impl<'rule> GrammarGraph<'rule> {
     }
 
     fn is_trap_loop(&self, scc: &[NodeIndex]) -> bool {
-        let produce_t = scc.iter().map(|nx| self.graph[*nx].as_str()).any(|name| {
-            // check if rule produce a terminal
-            self.rules
-                .iter()
-                .find(|rule| rule.lhs.as_str() == name)
-                .unwrap()
-                .produce_terminals()
-        });
-        if produce_t {
-            return false;
-        }
-        let out_deg: HashSet<NodeIndex> = scc
+        // Convert SCC node indices to a set of rule names for quick lookup
+        let scc_names: HashSet<&str> = scc.iter().map(|nx| self.graph[*nx].as_str()).collect();
+
+        // Get the rules in this SCC
+        let scc_rules: Vec<&Rule> = self
+            .rules
             .iter()
-            .flat_map(|nx| self.graph.neighbors(*nx))
+            .filter(|r| scc_names.contains(r.lhs.as_str()))
             .collect();
-        out_deg == scc.iter().copied().collect()
+
+        // Use fixpoint computation to find which rules in the SCC can escape
+        // A rule can escape if it has an alternative that can escape
+        // An alternative can escape if its first symbol can escape
+        // A terminal/regex symbol can always escape
+        // A non-terminal symbol can escape if it's NOT in the SCC, or if it can escape
+        let mut can_escape: HashSet<&str> = HashSet::new();
+
+        // Iteratively find rules that can escape until no more changes
+        loop {
+            let prev_len = can_escape.len();
+
+            for rule in &scc_rules {
+                if can_escape.contains(rule.lhs.as_str()) {
+                    continue; // Already known to be escapable
+                }
+
+                // Check if any alternative can escape
+                let rule_can_escape = rule.rhs().iter().any(|alt| {
+                    // An alternative can escape if all its symbols can escape
+                    // (for generation to make progress through this alternative)
+                    alt.symbols.iter().all(|sym| {
+                        if sym.kind.is_terminal() {
+                            // Terminals can always escape
+                            true
+                        } else if let Some(nt_name) = sym.kind.non_terminal() {
+                            // Non-terminal: can escape if not in SCC or known to escape
+                            !scc_names.contains(nt_name) || can_escape.contains(nt_name)
+                        } else {
+                            false
+                        }
+                    })
+                });
+
+                if rule_can_escape {
+                    can_escape.insert(rule.lhs.as_str());
+                }
+            }
+
+            // If no new rules were found to escape, we're done
+            if can_escape.len() == prev_len {
+                break;
+            }
+        }
+
+        // It's a trap loop if NO rule in the SCC can escape
+        scc_rules.len() > 0 && can_escape.is_empty()
     }
 }

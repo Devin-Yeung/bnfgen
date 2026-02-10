@@ -14,11 +14,4 @@ impl Rule {
     pub fn rhs(&self) -> &[Alternative] {
         self.production.alts.as_slice()
     }
-
-    pub fn produce_terminals(&self) -> bool {
-        self.production
-            .alts
-            .iter()
-            .any(|a| a.symbols.iter().all(|s| s.kind.is_terminal()))
-    }
 }

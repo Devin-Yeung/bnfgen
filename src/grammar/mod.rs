@@ -142,22 +142,21 @@ mod test {
         insta::assert_snapshot!(ui);
     }
 
-    // TODO: bug, this is also a dead loop
-    // #[test]
-    // fn common_dead_loop() {
-    //     let text = r#"
-    //         <S> ::= <S> | <S> <E> ;
-    //         <E> ::= "Terminal" ;
-    //     "#;
-    //     let err = RawGrammar::parse(text)
-    //         .unwrap()
-    //         .graph()
-    //         .check_trap_loop()
-    //         .err()
-    //         .unwrap();
-    //     let ui = report_with_unnamed_source(err, text);
-    //     insta::assert_snapshot!(ui);
-    // }
+    #[test]
+    fn common_dead_loop() {
+        let text = r#"
+            <S> ::= <S> | <S> <E> ;
+            <E> ::= "Terminal" ;
+        "#;
+        let err = RawGrammar::parse(text)
+            .unwrap()
+            .graph()
+            .check_trap_loop()
+            .err()
+            .unwrap();
+        let ui = report_with_unnamed_source(err, text);
+        insta::assert_snapshot!(ui);
+    }
 
     #[test]
     fn trap_loop() {

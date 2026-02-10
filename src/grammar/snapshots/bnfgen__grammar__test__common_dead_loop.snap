@@ -1,0 +1,13 @@
+---
+source: src/grammar/mod.rs
+expression: ui
+snapshot_kind: text
+---
+  × May be trapped in a dead loop
+   ╭─[2:13]
+ 1 │ 
+ 2 │             <S> ::= <S> | <S> <E> ;
+   ·             ───────────┬───────────
+   ·                        ╰── this rule may be trapped in a dead loop
+ 3 │             <E> ::= "Terminal" ;
+   ╰────
