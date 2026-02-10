@@ -11,6 +11,7 @@ use crate::grammar::graph::GrammarGraph;
 use crate::grammar::rule::Rule;
 use crate::grammar::symbol::SymbolKind;
 use crate::lexer;
+use crate::span::Span;
 use crate::utils::convert_parse_error;
 use indexmap::IndexMap;
 use petgraph::graph::{DiGraph, NodeIndex};
@@ -158,14 +159,32 @@ impl RawGrammar {
 
     /// Checks for duplicate rule definitions.
     ///
-    /// **Note**: This check is currently unimplemented and always returns `Ok(())`.
+    /// Detects when the same non-terminal is defined multiple times.
+    /// Both typed and untyped non-terminals cannot be duplicated.
+    /// Typed non-terminals with different types are considered different
+    /// and can coexist. For example:
+    /// - `<E> ::= "a"; <E> ::= "b";` is an error (duplicate untyped)
+    /// - `<E: "int"> ::= "1"; <E: "int"> ::= "2";` is an error (duplicate typed)
+    /// - `<E: "int"> ::= "1"; <E: "str"> ::= "2";` is allowed (different types)
     ///
-    /// # TODO
+    /// # Errors
     ///
-    /// This check needs to be reworked to properly detect duplicate definitions
-    /// of the same non-terminal (including typed non-terminals).
+    /// Returns `Error::DuplicatedRules` if a duplicate definition is found.
     pub fn check_duplicate(&self) -> crate::error::Result<&Self> {
-        // TODO: need to rework
+        use crate::grammar::symbol::NonTerminal;
+        use std::collections::HashMap;
+
+        // Track seen non-terminals by their full representation (name + type)
+        let mut seen: HashMap<&NonTerminal, Span> = HashMap::new();
+        for rule in &self.rules {
+            if let Some(&prev_span) = seen.get(&rule.lhs) {
+                return Err(Error::DuplicatedRules {
+                    span: rule.span,
+                    prev: prev_span,
+                });
+            }
+            seen.insert(&rule.lhs, rule.span);
+        }
         Ok(self)
     }
 

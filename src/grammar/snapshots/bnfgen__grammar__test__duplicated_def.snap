@@ -1,6 +1,7 @@
 ---
 source: src/grammar/mod.rs
 expression: ui
+snapshot_kind: text
 ---
   × Duplicated rules found
    ╭─[2:13]

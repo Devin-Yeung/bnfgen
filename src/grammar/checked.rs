@@ -98,9 +98,9 @@ mod test {
 
     #[test]
     fn it_can_merge() {
+        // Typed non-terminals with different types can coexist (merge in the grammar)
         let text = r#"
-            <E> ::= <E: "int"> "+" <E: "int"> ;
-            <E> ::= <E: "str"> "+" <E: "str"> ;
+            <E: "int"> ::= <E: "int"> "+" <E: "int"> ;
             <E: "str"> ::= <E: "str"> "+" <E: "str"> ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap();
