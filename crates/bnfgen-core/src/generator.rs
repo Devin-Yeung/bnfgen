@@ -355,10 +355,7 @@ mod test {
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::builder()
             .grammar(grammar)
-            .settings(GeneratorSettings {
-                max_steps: Some(5),
-                ..Default::default()
-            })
+            .settings(GeneratorSettings { max_steps: Some(5) })
             .build();
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let result = gen.generate("S", &mut seeded_rng);
