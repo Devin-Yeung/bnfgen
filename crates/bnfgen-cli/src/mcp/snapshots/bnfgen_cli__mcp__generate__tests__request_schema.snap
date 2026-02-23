@@ -39,7 +39,7 @@ snapshot_kind: text
       "minimum": 0
     },
     "start_symbol": {
-      "description": "This defines the starting symbol for generation, which is typically the main non-terminal in\nthe grammar. For example, if your grammar defines a language with a starting symbol \"S\",\nyou would set this field to \"S\". The generator will then use this symbol as the entry point\nto produce random strings based on the production rules defined in the grammar.",
+      "description": "This defines the starting symbol for generation, which is typically the main non-terminal in\nthe grammar. For example, if your grammar defines a language with a starting symbol \"S\",\nyou would set this field to \"S\". (Note: DO NOT use < and > around the symbol, just the raw name).\nThe generator will then use this symbol as the entry point to produce random strings.",
       "type": "string"
     }
   },
