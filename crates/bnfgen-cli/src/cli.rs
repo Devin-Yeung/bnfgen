@@ -15,8 +15,11 @@ pub enum Command {
         /// Path to the BNF grammar file
         grammar: PathBuf,
         #[arg(long)]
-        /// Check for unreachable rules (need to give the starting rule)
-        check_unused: Option<String>,
+        /// Check for unused rules and trap loops
+        strict: bool,
+        #[arg(short, long, required_if_eq("strict", "true"))]
+        /// The starting non-terminal to check for unused rules (required if --strict is set)
+        start: Option<String>,
     },
     /// Generate random strings from the grammar (includes checking phase)
     Gen {

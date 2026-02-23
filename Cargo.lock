@@ -203,6 +203,7 @@ dependencies = [
 name = "bnfgen-cli"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "bnfgen",
  "clap",
  "insta",

@@ -24,7 +24,7 @@ impl BnfgenMCP {
     )]
     async fn generate(
         &self,
-        params: Parameters<GenerationRequest>,
+        _params: Parameters<GenerationRequest>,
     ) -> Result<CallToolResult, McpError> {
         todo!()
     }
