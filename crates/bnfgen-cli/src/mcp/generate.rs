@@ -13,8 +13,8 @@ fn default_max_steps() -> Option<usize> {
 pub struct GenerationRequest {
     /// This defines the starting symbol for generation, which is typically the main non-terminal in
     /// the grammar. For example, if your grammar defines a language with a starting symbol "S",
-    /// you would set this field to "S". The generator will then use this symbol as the entry point
-    /// to produce random strings based on the production rules defined in the grammar.
+    /// you would set this field to "S". (Note: DO NOT use < and > around the symbol, just the raw name).
+    /// The generator will then use this symbol as the entry point to produce random strings.
     pub start_symbol: String,
     /// The BNF grammar itself, provided as a string. This should be a valid BNF grammar that defines
     /// the structure of the language you want to generate strings from.
