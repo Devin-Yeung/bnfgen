@@ -10,6 +10,7 @@
   # https://devenv.sh/packages/
   packages = with pkgs; [
     cargo-deny
+    cargo-modules
     cargo-machete
   ];
 
