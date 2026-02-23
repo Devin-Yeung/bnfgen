@@ -39,7 +39,7 @@ impl<'input> Iterator for Lexer<'input> {
 mod test {
     #[test]
     fn it_works() {
-        let input = include_str!("../examples/bnf.bnfgen");
+        let input = include_str!("../../../examples/bnf.bnfgen");
         let lexer = super::Lexer::new(input);
         let tokens: Vec<_> = lexer.collect();
         insta::assert_debug_snapshot!(tokens);

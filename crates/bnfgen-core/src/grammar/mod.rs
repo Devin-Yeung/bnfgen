@@ -45,7 +45,7 @@ mod test {
 
     #[test]
     fn brainfuck() {
-        let text = include_str!("../../examples/brainfuck.bnfgen");
+        let text = include_str!("../../../../examples/brainfuck.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap();
         insta::assert_debug_snapshot!(grammar);
     }

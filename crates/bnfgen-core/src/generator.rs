@@ -258,7 +258,7 @@ mod test {
 
     #[test]
     fn test_typed_set_algebra_expr() {
-        let text = include_str!("../examples/set-algebra-typed.bnfgen");
+        let text = include_str!("../../../examples/set-algebra-typed.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::builder()
             .grammar(grammar)
@@ -274,7 +274,7 @@ mod test {
 
     #[test]
     fn test_typed_set_algebra() {
-        let text = include_str!("../examples/set-algebra-typed.bnfgen");
+        let text = include_str!("../../../examples/set-algebra-typed.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::builder()
             .grammar(grammar)
@@ -331,7 +331,7 @@ mod test {
 
     #[test]
     fn test_core_ocaml() {
-        let text = include_str!("../examples/core-ocaml.bnfgen");
+        let text = include_str!("../../../examples/core-ocaml.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
         let gen = Generator::builder()
             .grammar(grammar)
