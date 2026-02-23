@@ -8,17 +8,11 @@ license.workspace = true
 logos = "0.15.1"
 lalrpop-util = "0.23.0"
 indexmap = "2.13.0"
-rand = "0.9.2"
-typed-builder = "0.23.2"
 regex-syntax = "0.8.9"
 thiserror = "2.0.18"
-miette = { version = "7.6.0", features = ["fancy"] }
 petgraph = "0.8.3"
-clap = { version = "4.5.59", features = ["derive"] }
-
-[[bin]]
-name = "bnfgen"
-path = "src/bin/cli/main.rs"
+miette = { workspace = true, features = ["fancy"] }
+rand = { workspace = true }
 
 # Add a build-time dependency on the lalrpop library:
 [build-dependencies]

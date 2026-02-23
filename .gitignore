@@ -13,3 +13,6 @@ devenv.local.nix
 
 # nix build result
 /result
+
+# macOS
+.DS_Store
