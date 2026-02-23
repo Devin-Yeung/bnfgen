@@ -37,9 +37,9 @@ pub struct Generator {
 
 #[derive(Clone, Debug, TypedBuilder, Default)]
 pub struct GeneratorSettings {
-    /// Maximum depth of the generated parse tree. If `None`, there is no limit.
+    /// Maximum steps (symbol expansions) allowed during generation
     #[builder(default)]
-    max_depth: Option<usize>,
+    max_steps: Option<usize>,
 }
 
 impl Generator {
@@ -86,8 +86,8 @@ impl Generator {
         let mut stack = vec![start];
 
         while !stack.is_empty() {
-            if let Some(max_depth) = self.settings.max_depth {
-                if state.total_attempts() > max_depth {
+            if let Some(max_steps) = self.settings.max_steps {
+                if state.total_attempts() > max_steps {
                     return Err(Error::MaxDepthExceeded);
                 }
             }
@@ -356,7 +356,7 @@ mod test {
         let gen = Generator::builder()
             .grammar(grammar)
             .settings(GeneratorSettings {
-                max_depth: Some(5),
+                max_steps: Some(5),
                 ..Default::default()
             })
             .build();

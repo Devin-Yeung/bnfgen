@@ -1,10 +1,11 @@
 mod generate;
 
-use crate::mcp::generate::GenerationRequest;
+use crate::app::App;
+use crate::mcp::generate::{GenerationRequest, GenerationResponse};
 use rmcp::handler::server::tool::ToolRouter;
 use rmcp::handler::server::wrapper::Parameters;
-use rmcp::model::{CallToolResult, ServerCapabilities, ServerInfo};
-use rmcp::{tool, tool_handler, tool_router, ErrorData as McpError, ServerHandler};
+use rmcp::model::{ServerCapabilities, ServerInfo};
+use rmcp::{tool, tool_handler, tool_router, Json, ServerHandler};
 
 #[derive(Clone)]
 pub struct BnfgenMCP {
@@ -24,9 +25,26 @@ impl BnfgenMCP {
     )]
     async fn generate(
         &self,
-        _params: Parameters<GenerationRequest>,
-    ) -> Result<CallToolResult, McpError> {
-        todo!()
+        Parameters(req): Parameters<GenerationRequest>,
+    ) -> Result<Json<GenerationResponse>, String> {
+        let app = App::new(req.grammar);
+
+        let raw = app.parse().map_err(|e| e.to_string())?;
+        let checked = app.lint(raw).map_err(|e| e.to_string())?;
+
+        let outputs = app
+            .generate(
+                checked,
+                req.start_symbol,
+                req.count,
+                req.seed,
+                req.max_depth,
+            )
+            .map_err(|e| e.to_string())?;
+
+        Ok(Json(GenerationResponse {
+            generated_strings: outputs,
+        }))
     }
 }
 

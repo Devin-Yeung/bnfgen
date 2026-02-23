@@ -4,14 +4,14 @@ mod mcp;
 
 use crate::app::App;
 use crate::cli::{Cli, Command};
+use crate::mcp::BnfgenMCP;
 use anyhow::Result;
-use bnfgen::generator::GeneratorSettings;
-use bnfgen::{Error, Generator};
 use clap::Parser;
-use rand::rngs::StdRng;
-use rand::SeedableRng;
+use rmcp::transport::stdio;
+use rmcp::ServiceExt;
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     let args = Cli::parse();
 
     match args.command {
@@ -21,7 +21,7 @@ fn main() -> Result<()> {
             strict,
         } => {
             let grammar = std::fs::read_to_string(grammar)?;
-            let app = App::new(grammar)?;
+            let app = App::new(grammar);
             let raw = app.parse()?;
 
             let mut pass = true;
@@ -47,49 +47,26 @@ fn main() -> Result<()> {
             start,
             count,
             seed,
-            max_attempts,
+            max_steps,
         } => {
             let grammar = std::fs::read_to_string(grammar)?;
+            let app = App::new(grammar);
 
-            let app = App::new(grammar)?;
-
+            // perform parsing and linting
             let raw = app.parse()?;
             let checked = app.lint(raw)?;
 
-            let settings = GeneratorSettings::builder()
-                .max_depth(Some(max_attempts))
-                .build();
-            let generator = Generator::builder()
-                .grammar(checked)
-                .settings(settings)
-                .build();
-
-            let mut outputs = Vec::with_capacity(count);
-
-            let mut rng = match seed {
-                Some(s) => StdRng::seed_from_u64(s),
-                None => StdRng::from_rng(&mut rand::rng()),
-            };
-
-            for _ in 0..count {
-                loop {
-                    match generator.generate(start.clone(), &mut rng) {
-                        Ok(line) => {
-                            outputs.push(line);
-                            break;
-                        }
-                        Err(Error::MaxDepthExceeded) => {
-                            continue;
-                        }
-                        Err(err) => return Err(err.into()),
-                    }
-                }
-            }
-
+            // generate output
+            let outputs = app.generate(checked, start, count, seed, max_steps)?;
             for output in outputs {
                 println!("{}", output);
             }
+            Ok(())
+        }
 
+        Command::MCP {} => {
+            let service = BnfgenMCP::new().serve(stdio()).await?;
+            service.waiting().await?;
             Ok(())
         }
     }

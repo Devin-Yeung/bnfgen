@@ -1,8 +1,10 @@
 use anyhow::Result;
+use bnfgen::generator::GeneratorSettings;
 use bnfgen::grammar::raw::RawGrammar;
 use bnfgen::report::{Reporter, Style};
 use bnfgen::CheckedGrammar;
 use miette::Report;
+use rand::SeedableRng;
 use std::cell::RefCell;
 use std::sync::Arc;
 
@@ -12,13 +14,13 @@ pub struct App {
 }
 
 impl App {
-    pub fn new<T: Into<String>>(grammar: T) -> Result<Self> {
+    pub fn new<T: Into<String>>(grammar: T) -> Self {
         let reporter = Reporter::new(Style::NoColor);
 
-        Ok(Self {
+        Self {
             grammar: Arc::new(grammar.into()),
             reporter: RefCell::new(reporter),
-        })
+        }
     }
 
     pub fn parse(&self) -> Result<RawGrammar> {
@@ -66,6 +68,38 @@ impl App {
                 Err(self.diagnostics())
             }
         }
+    }
+
+    pub fn generate(
+        &self,
+        grammar: CheckedGrammar,
+        start: String,
+        count: usize,
+        seed: Option<u64>,
+        max_steps: Option<usize>,
+    ) -> Result<Vec<String>> {
+        let settings = GeneratorSettings::builder().max_steps(max_steps).build();
+
+        let generator = bnfgen::Generator::builder()
+            .grammar(grammar)
+            .settings(settings)
+            .build();
+
+        let mut outputs = Vec::with_capacity(count);
+
+        let mut rng = match seed {
+            Some(s) => rand::rngs::StdRng::seed_from_u64(s),
+            None => rand::rngs::StdRng::from_rng(&mut rand::rng()),
+        };
+
+        for _ in 0..count {
+            match generator.generate(&start, &mut rng) {
+                Ok(output) => outputs.push(output),
+                Err(_) => continue,
+            }
+        }
+
+        Ok(outputs)
     }
 
     /// early exit with an error, reporting it to the user

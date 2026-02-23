@@ -19,6 +19,25 @@ snapshot_kind: text
       "description": "The BNF grammar itself, provided as a string. This should be a valid BNF grammar that defines\nthe structure of the language you want to generate strings from.",
       "type": "string"
     },
+    "max_depth": {
+      "description": "An optional maximum depth for generation attempts. This limits the number of steps the generator\nwill take when trying to generate a string before it gives up and retries with a fresh attempt.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint",
+      "default": 1000,
+      "minimum": 0
+    },
+    "seed": {
+      "description": "An optional random seed for reproducible generation. If provided, the generator will produce\nthe same set of random strings for the same input grammar and starting symbol across different runs",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    },
     "start_symbol": {
       "description": "This defines the starting symbol for generation, which is typically the main non-terminal in\nthe grammar. For example, if your grammar defines a language with a starting symbol \"S\",\nyou would set this field to \"S\". The generator will then use this symbol as the entry point\nto produce random strings based on the production rules defined in the grammar.",
       "type": "string"
