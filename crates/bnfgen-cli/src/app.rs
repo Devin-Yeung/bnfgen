@@ -98,7 +98,7 @@ impl App {
         let max_attempts = max_attempts.unwrap_or(usize::MAX);
 
         loop {
-            if attempts >= max_attempts {
+            if attempts >= max_attempts || outputs.len() >= count {
                 break;
             }
 
