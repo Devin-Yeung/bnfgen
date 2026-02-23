@@ -35,5 +35,8 @@ pub enum Command {
         #[arg(long)]
         /// Random seed for reproducible output
         seed: Option<u64>,
+        #[arg(long, default_value = "10000")]
+        /// Maximum generation steps per attempt before retrying with a fresh attempt
+        max_attempts: usize,
     },
 }
