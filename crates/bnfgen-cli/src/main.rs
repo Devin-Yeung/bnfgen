@@ -4,7 +4,7 @@ mod mcp;
 
 use crate::app::App;
 use crate::cli::{Cli, Command};
-use crate::mcp::BnfgenMCP;
+use crate::mcp::{BnfgenMCP, BnfgenSettings};
 use anyhow::Result;
 use clap::Parser;
 use rmcp::transport::stdio;
@@ -48,6 +48,7 @@ async fn main() -> Result<()> {
             count,
             seed,
             max_steps,
+            max_attempts,
         } => {
             let grammar = std::fs::read_to_string(grammar)?;
             let app = App::new(grammar);
@@ -57,15 +58,17 @@ async fn main() -> Result<()> {
             let checked = app.lint(raw)?;
 
             // generate output
-            let outputs = app.generate(checked, start, count, seed, max_steps)?;
+            let outputs = app.generate(checked, start, count, seed, max_steps, max_attempts)?;
             for output in outputs {
                 println!("{}", output);
             }
             Ok(())
         }
 
-        Command::MCP {} => {
-            let service = BnfgenMCP::new().serve(stdio()).await?;
+        Command::Mcp {} => {
+            let service = BnfgenMCP::new(BnfgenSettings::builder().build())
+                .serve(stdio())
+                .await?;
             service.waiting().await?;
             Ok(())
         }

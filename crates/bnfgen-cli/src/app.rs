@@ -77,6 +77,7 @@ impl App {
         count: usize,
         seed: Option<u64>,
         max_steps: Option<usize>,
+        max_attempts: Option<usize>,
     ) -> Result<Vec<String>> {
         let settings = GeneratorSettings::builder().max_steps(max_steps).build();
 
@@ -92,7 +93,15 @@ impl App {
             None => rand::rngs::StdRng::from_rng(&mut rand::rng()),
         };
 
-        for _ in 0..count {
+        let mut attempts = 0;
+        // warn: this might lead to an infinite loop
+        let max_attempts = max_attempts.unwrap_or(usize::MAX);
+
+        loop {
+            if attempts >= max_attempts {
+                break;
+            }
+
             match generator.generate(&start, &mut rng) {
                 Ok(output) => outputs.push(output),
                 Err(e) => match e {
@@ -100,6 +109,7 @@ impl App {
                     e => return Err(self.fail_fast(e)),
                 },
             }
+            attempts += 1;
         }
 
         Ok(outputs)

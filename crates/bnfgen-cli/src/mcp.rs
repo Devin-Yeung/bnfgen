@@ -6,17 +6,27 @@ use rmcp::handler::server::tool::ToolRouter;
 use rmcp::handler::server::wrapper::Parameters;
 use rmcp::model::{ServerCapabilities, ServerInfo};
 use rmcp::{tool, tool_handler, tool_router, Json, ServerHandler};
+use typed_builder::TypedBuilder;
 
 #[derive(Clone)]
 pub struct BnfgenMCP {
     tool_router: ToolRouter<Self>,
+    settings: BnfgenSettings,
+}
+
+#[derive(TypedBuilder, Clone)]
+pub struct BnfgenSettings {
+    /// The maximum number of generation attempts before giving up (default: 100)
+    #[builder(default=Some(100))]
+    pub max_attempts: Option<usize>,
 }
 
 #[tool_router]
 impl BnfgenMCP {
-    pub fn new() -> Self {
+    pub fn new(settings: BnfgenSettings) -> Self {
         Self {
             tool_router: Self::tool_router(),
+            settings,
         }
     }
 
@@ -39,6 +49,7 @@ impl BnfgenMCP {
                 req.count,
                 req.seed,
                 req.max_depth,
+                self.settings.max_attempts,
             )
             .map_err(|e| e.to_string())?;
 

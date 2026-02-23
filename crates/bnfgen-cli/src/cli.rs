@@ -38,7 +38,10 @@ pub enum Command {
         #[arg(long)]
         /// Maximum generation steps per attempt before retrying with a fresh attempt
         max_steps: Option<usize>,
+        /// Maximum generation attempts before giving up (default: 100)
+        #[arg(long, default_value = "100")]
+        max_attempts: Option<usize>,
     },
     /// MCP server
-    MCP {},
+    Mcp {},
 }
