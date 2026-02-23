@@ -63,7 +63,7 @@ impl App {
             Ok(g) => Ok(g),
             Err(_) => {
                 // we have already reported all the errors, so we can just return a generic error here
-                Err(self.diagnotics())
+                Err(self.diagnostics())
             }
         }
     }
@@ -71,7 +71,7 @@ impl App {
     /// early exit with an error, reporting it to the user
     pub fn fail_fast(&self, e: impl Into<Report>) -> anyhow::Error {
         self.report(e);
-        self.diagnotics()
+        self.diagnostics()
     }
 
     pub fn report(&self, e: impl Into<Report>) {
@@ -80,7 +80,7 @@ impl App {
         reporter.push(diagnostic);
     }
 
-    pub fn diagnotics(&self) -> anyhow::Error {
+    pub fn diagnostics(&self) -> anyhow::Error {
         let reporter = self.reporter.borrow();
         let diagnostics = reporter.report_to_string();
         anyhow::anyhow!(diagnostics)

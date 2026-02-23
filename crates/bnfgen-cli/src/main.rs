@@ -32,7 +32,7 @@ fn main() -> Result<()> {
             let _checked = app.lint(raw)?;
 
             if !pass {
-                return Err(app.diagnotics());
+                return Err(app.diagnostics());
             }
 
             Ok(())
