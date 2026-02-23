@@ -35,15 +35,18 @@
         src = lib.fileset.toSource {
           root = unfilteredRoot;
           fileset = lib.fileset.unions [
+            ./Cargo.toml
+            ./Cargo.lock
             (craneLib.fileset.commonCargoSources unfilteredRoot)
             (lib.fileset.fileFilter (file: file.hasExt "snap") unfilteredRoot)
             (lib.fileset.fileFilter (file: file.hasExt "lalrpop") unfilteredRoot)
-            (lib.fileset.maybeMissing ./examples)
+            (lib.fileset.fileFilter (file: file.hasExt "bnfgen") unfilteredRoot)
           ];
         };
 
         commonArgs = {
           inherit src;
+          pname = "bnfgen";
           strictDeps = true;
           buildInputs = lib.optionals pkgs.stdenv.isDarwin [
             pkgs.libiconv
@@ -52,16 +55,18 @@
 
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
 
-        bnfgen = craneLib.buildPackage (
+        bnfgen-cli = craneLib.buildPackage (
           commonArgs
           // {
             inherit cargoArtifacts;
+            pname = "bnfgen-cli";
+            cargoExtraArgs = "-p bnfgen-cli";
           }
         );
       in
       {
         checks = {
-          inherit bnfgen;
+          bnfgen = bnfgen-cli;
 
           bnfgen-clippy = craneLib.cargoClippy (
             commonArgs
@@ -99,8 +104,9 @@
         };
 
         packages = {
-          inherit bnfgen;
-          default = bnfgen;
+          bnfgen = bnfgen-cli;
+          bnfgen-cli = bnfgen-cli;
+          default = bnfgen-cli;
         };
       }
     );

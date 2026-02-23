@@ -1,29 +1,16 @@
-[package]
-name = "bnfgen"
+[workspace.package]
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
 
-[dependencies]
-logos = "0.15.1"
-lalrpop-util = "0.23.0"
-indexmap = "2.13.0"
-rand = "0.9.2"
-typed-builder = "0.23.2"
-regex-syntax = "0.8.9"
-thiserror = "2.0.18"
-miette = { version = "7.6.0", features = ["fancy"] }
-petgraph = "0.8.3"
-clap = { version = "4.5.59", features = ["derive"] }
+[workspace]
+resolver = "2"
+members = ["crates/*"]
 
-[[bin]]
-name = "bnfgen"
-path = "src/bin/cli/main.rs"
+[workspace.dependencies]
+# workspace members
+bnfgen = { path = "crates/bnfgen-core" }
 
-# Add a build-time dependency on the lalrpop library:
-[build-dependencies]
-# If you are supplying your own external lexer you can disable default features so that the
-# built-in lexer feature is not included
-lalrpop = { version = "0.23.0", default-features = false }
-
-[dev-dependencies]
-insta = { version = "1.41.1" }
+# shared dependencies
+miette = { version = "7.6.0" }
+rand = { version = "0.10.0" }

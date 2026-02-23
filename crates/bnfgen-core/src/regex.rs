@@ -1,6 +1,6 @@
 use crate::error::{Error, Result};
 use crate::span::Span;
-use rand::Rng;
+use rand::{Rng, RngExt};
 use regex_syntax::hir::{Class, Hir, HirKind};
 use std::hash::Hash;
 
