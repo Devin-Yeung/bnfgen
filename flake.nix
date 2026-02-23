@@ -40,7 +40,7 @@
             (craneLib.fileset.commonCargoSources unfilteredRoot)
             (lib.fileset.fileFilter (file: file.hasExt "snap") unfilteredRoot)
             (lib.fileset.fileFilter (file: file.hasExt "lalrpop") unfilteredRoot)
-            (lib.fileset.maybeMissing ./examples)
+            (lib.fileset.fileFilter (file: file.hasExt "bnfgen") unfilteredRoot)
           ];
         };
 
