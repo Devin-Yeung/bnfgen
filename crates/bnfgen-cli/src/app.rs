@@ -2,7 +2,7 @@ use anyhow::Result;
 use bnfgen::generator::GeneratorSettings;
 use bnfgen::grammar::raw::RawGrammar;
 use bnfgen::report::{Reporter, Style};
-use bnfgen::CheckedGrammar;
+use bnfgen::{CheckedGrammar, Error};
 use miette::Report;
 use rand::SeedableRng;
 use std::cell::RefCell;
@@ -95,7 +95,10 @@ impl App {
         for _ in 0..count {
             match generator.generate(&start, &mut rng) {
                 Ok(output) => outputs.push(output),
-                Err(_) => continue,
+                Err(e) => match e {
+                    Error::MaxDepthExceeded => continue,
+                    e => return Err(self.fail_fast(e)),
+                },
             }
         }
 
