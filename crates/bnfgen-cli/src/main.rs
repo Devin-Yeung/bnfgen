@@ -1,4 +1,5 @@
 mod cli;
+mod mcp;
 
 use bnfgen::generator::Generator;
 use bnfgen::grammar::checked::CheckedGrammar;

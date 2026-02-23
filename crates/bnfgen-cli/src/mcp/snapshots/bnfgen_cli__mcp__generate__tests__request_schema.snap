@@ -1,0 +1,31 @@
+---
+source: crates/bnfgen-cli/src/mcp/generate.rs
+expression: schema
+snapshot_kind: text
+---
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GenerationRequest",
+  "type": "object",
+  "properties": {
+    "count": {
+      "description": "The number of random strings to generate from the grammar. This field specifies how many\nunique strings the generator should produce based on the provided grammar and starting symbol.",
+      "type": "integer",
+      "format": "uint",
+      "default": 1,
+      "minimum": 0
+    },
+    "grammar": {
+      "description": "The BNF grammar itself, provided as a string. This should be a valid BNF grammar that defines\nthe structure of the language you want to generate strings from.",
+      "type": "string"
+    },
+    "start_symbol": {
+      "description": "This defines the starting symbol for generation, which is typically the main non-terminal in\nthe grammar. For example, if your grammar defines a language with a starting symbol \"S\",\nyou would set this field to \"S\". The generator will then use this symbol as the entry point\nto produce random strings based on the production rules defined in the grammar.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "start_symbol",
+    "grammar"
+  ]
+}

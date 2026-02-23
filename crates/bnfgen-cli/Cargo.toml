@@ -9,3 +9,10 @@ bnfgen = { workspace = true }
 clap = { version = "4.5.59", features = ["derive"] }
 miette = { workspace = true, features = ["fancy"] }
 rand = { workspace = true }
+rmcp = { version = "0.16.0", features = ["transport-io", "schemars"] }
+tokio = { version = "1.49.0" }
+serde = { version = "1.0.188", features = ["derive"] }
+schemars = { version = "1.2.1", features = ["derive"] }
+
+[dev-dependencies]
+insta = { version = "1.41.1", features = ["json"] }
