@@ -3,8 +3,9 @@ use crate::grammar::state::State;
 use crate::grammar::symbol::SymbolKind::Terminal;
 use crate::grammar::symbol::{NonTerminal, SymbolKind};
 use crate::parse_tree::tree::ParseTree;
-use crate::Result;
+use crate::{Error, Result};
 use rand::Rng;
+use typed_builder::TypedBuilder;
 
 /// Stack-based iterative string generator.
 ///
@@ -26,18 +27,28 @@ use rand::Rng;
 /// # Ok(())
 /// # }
 /// ```
+#[derive(TypedBuilder)]
 pub struct Generator {
+    #[builder]
     grammar: CheckedGrammar,
+    #[builder]
+    settings: GeneratorSettings,
+}
+
+#[derive(Clone, Debug, TypedBuilder, Default)]
+pub struct GeneratorSettings {
+    /// Maximum depth of the generated parse tree. If `None`, there is no limit.
+    #[builder(default)]
+    max_depth: Option<usize>,
 }
 
 impl Generator {
-    /// Creates a new generator from a validated grammar.
-    ///
-    /// # Arguments
-    ///
-    /// * `grammar` - A validated `CheckedGrammar` obtained from `RawGrammar::to_checked()`
+    /// Creates a new generator with default settings.
     pub fn new(grammar: CheckedGrammar) -> Self {
-        Self { grammar }
+        Self::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings::default())
+            .build()
     }
 
     /// Generates a random string starting from the given non-terminal.
@@ -75,6 +86,12 @@ impl Generator {
         let mut stack = vec![start];
 
         while !stack.is_empty() {
+            if let Some(max_depth) = self.settings.max_depth {
+                if state.total_attempts() > max_depth {
+                    return Err(Error::MaxDepthExceeded);
+                }
+            }
+
             // pop out the first symbol
             match self.grammar.reduce(stack.remove(0), &mut state)? {
                 ReduceOutput::Terminal(s) => {
@@ -86,6 +103,7 @@ impl Generator {
                     stack = syms;
                 }
             }
+            state.make_attempt()
         }
 
         Ok(buf.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(" "))
@@ -183,7 +201,7 @@ impl TreeGenerator {
 
 #[cfg(test)]
 mod test {
-    use crate::generator::{Generator, TreeGenerator};
+    use crate::generator::{Generator, GeneratorSettings, TreeGenerator};
     use crate::grammar::raw::RawGrammar;
     use crate::Result;
     use rand::SeedableRng;
@@ -195,7 +213,10 @@ mod test {
             <E> ::= "a" {1, 10} | "b" {2, } | "c" {3} | "fallback" ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator::new(grammar);
+        let gen = Generator::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings::default())
+            .build();
         let out = gen.generate("S", &mut rand::rng()).unwrap();
         assert!(out.split(" ").count() >= 100);
     }
@@ -227,7 +248,10 @@ mod test {
                             | <E: "bool"> "&" <E: "bool"> {3, } ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator::new(grammar);
+        let gen = Generator::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings::default())
+            .build();
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         insta::assert_snapshot!(gen.generate("S", &mut seeded_rng).unwrap());
     }
@@ -236,7 +260,10 @@ mod test {
     fn test_typed_set_algebra_expr() {
         let text = include_str!("../examples/set-algebra-typed.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator::new(grammar);
+        let gen = Generator::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings::default())
+            .build();
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let out = (0..100)
             .map(|_| gen.generate("Expr", &mut seeded_rng).unwrap())
@@ -249,7 +276,10 @@ mod test {
     fn test_typed_set_algebra() {
         let text = include_str!("../examples/set-algebra-typed.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator::new(grammar);
+        let gen = Generator::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings::default())
+            .build();
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let out = gen.generate("Program", &mut seeded_rng).unwrap();
         insta::assert_snapshot!(out);
@@ -267,7 +297,10 @@ mod test {
             <A> ::= "a" {0} | "b" {0} ;
         "#;
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator::new(grammar);
+        let gen = Generator::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings::default())
+            .build();
 
         // This generation will always fail because <S> requires 3 invocations of <A>,
         // but <A> can only be invoked twice total (once for each alternative with max 0).
@@ -300,7 +333,10 @@ mod test {
     fn test_core_ocaml() {
         let text = include_str!("../examples/core-ocaml.bnfgen");
         let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
-        let gen = Generator { grammar };
+        let gen = Generator::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings::default())
+            .build();
         let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
         let out = (0..5)
             .map(|_| gen.generate("Expr", &mut seeded_rng))
@@ -308,5 +344,24 @@ mod test {
             .unwrap()
             .join("\n");
         insta::assert_snapshot!(out);
+    }
+
+    #[test]
+    fn test_max_attempts_exceeded() {
+        let text = r#"
+            <S> ::= <A> | <S> <A> {10};
+            <A> ::= "a" {1, 10} | "b" {2, } | "c" {3} | "fallback" ;
+        "#;
+        let grammar = RawGrammar::parse(text).unwrap().to_checked().unwrap();
+        let gen = Generator::builder()
+            .grammar(grammar)
+            .settings(GeneratorSettings {
+                max_depth: Some(5),
+                ..Default::default()
+            })
+            .build();
+        let mut seeded_rng = rand::rngs::StdRng::seed_from_u64(42);
+        let result = gen.generate("S", &mut seeded_rng);
+        assert!(matches!(result, Err(crate::Error::MaxDepthExceeded)));
     }
 }

@@ -155,4 +155,8 @@ pub enum Error {
         /// The name of the non-terminal that has no available candidates
         name: String,
     },
+
+    /// Maximum generation depth exceeded.
+    #[error("Maximum generation depth exceeded")]
+    MaxDepthExceeded,
 }
