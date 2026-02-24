@@ -1,10 +1,17 @@
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use std::path::PathBuf;
 
 #[derive(Parser, Debug, Clone)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Command,
+}
+
+#[derive(Debug, Clone, ValueEnum)]
+pub enum TransportType {
+    Stdio,
+    #[value(name = "http")]
+    StreamableHttp,
 }
 
 #[derive(Subcommand, Debug, Clone)]
@@ -43,5 +50,14 @@ pub enum Command {
         max_attempts: Option<usize>,
     },
     /// MCP server
-    Mcp {},
+    Mcp {
+        #[arg(long, short, default_value = "stdio")]
+        transport: TransportType,
+        #[arg(long, short, default_value = "2493")]
+        /// Port to listen on for HTTP transport (required if --transport is set to http)
+        port: Option<u16>,
+        #[arg(long, default_value = "localhost")]
+        /// Host to bind for HTTP transport (required if --transport is set to http)
+        host: Option<String>,
+    },
 }
