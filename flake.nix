@@ -29,6 +29,9 @@
         craneLib = (crane.mkLib pkgs).overrideToolchain (
           p: p.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml
         );
+        craneLibStatic = (crane.mkLib pkgs.pkgsStatic).overrideToolchain (
+          p: p.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml
+        );
         inherit (pkgs) lib;
 
         unfilteredRoot = ./.;
@@ -54,11 +57,21 @@
         };
 
         cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+        cargoArtifactsStatic = craneLibStatic.buildDepsOnly commonArgs;
 
         bnfgen-cli = craneLib.buildPackage (
           commonArgs
           // {
             inherit cargoArtifacts;
+            pname = "bnfgen-cli";
+            cargoExtraArgs = "-p bnfgen-cli";
+          }
+        );
+
+        bnfgen-cli-static = craneLib.buildPackage (
+          commonArgs
+          // {
+            cargoArtifacts = cargoArtifactsStatic;
             pname = "bnfgen-cli";
             cargoExtraArgs = "-p bnfgen-cli";
           }
@@ -105,7 +118,7 @@
 
         packages = {
           bnfgen = bnfgen-cli;
-          bnfgen-cli = bnfgen-cli;
+          bnfgen-static = bnfgen-cli-static;
           default = bnfgen-cli;
         };
       }
