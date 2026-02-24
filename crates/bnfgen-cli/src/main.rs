@@ -104,6 +104,7 @@ async fn main() -> Result<()> {
                     LocalSessionManager::default().into(),
                     StreamableHttpServerConfig {
                         cancellation_token: ct.child_token(),
+                        stateful_mode: false,
                         ..Default::default()
                     },
                 );
