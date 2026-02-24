@@ -48,6 +48,9 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
+        pkg:
+          - bnfgen
+          - bnfgen-static
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout tree
@@ -72,5 +75,5 @@ jobs:
           purge-created: 0
           # except the version with the `primary-key`, if it exists
           purge-primary-key: never
-      - name: Build Packages (binary) / ${{ matrix.os }}
-        run: nix build .#bnfgen
+      - name: Build Packages (binary) / ${{ matrix.os }} / ${{ matrix.pkg }}
+        run: nix build .#${{ matrix.pkg }}
