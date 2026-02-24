@@ -4,7 +4,7 @@ use crate::span::Span;
 use logos::Logos;
 
 #[derive(Logos, Debug, PartialEq, Clone)]
-#[logos(skip r"[ \t\n\f]+", skip r"//.*\n?", error = LexicalError)]
+#[logos(skip r"[ \t\n\f]+", skip r"//[^\n]*?\n", error = LexicalError)]
 pub enum Token {
     #[token("{")]
     LBrace,
@@ -31,17 +31,17 @@ pub enum Token {
     #[token("re")]
     Re,
     #[rustfmt::skip]
-    #[regex("[0-9]|[1-9][0-9]*", |lex| {
+    #[regex(r"[0-9]|[1-9][0-9]*", priority = 2, callback = |lex| {
         match lex.slice().parse::<usize>() {
             Ok(t) => Ok(t),
             Err(e) => Err(LexicalError::InvalidInteger(e, lex.span().into()))
         }
     })]
     Int(usize),
-    #[regex("[a-zA-Z-_0-9]*", |lex| lex.slice().to_string())]
+    #[regex(r"[a-zA-Z-_0-9]+", priority = 1, callback = |lex| lex.slice().to_string())]
     Id(String),
     #[rustfmt::skip]
-    #[regex(r#""(\\["nrt\\]|[^"\\])*""#, |lex| {
+    #[regex(r#""(\\["nrt\\]|[^"\\])*""#, callback = |lex| {
         let text = &lex.slice()[1..lex.slice().len() - 1];
         text.replace("\\\"", "\"")
             .replace("\\n", "\n")
