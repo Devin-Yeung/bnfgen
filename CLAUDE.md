@@ -6,17 +6,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Bnfgen is a BNF grammar-based random string/fuzzy test generator written in Rust. It extends standard BNF with regex support (`re("[a-zA-Z]")`), invoke limits (`{min, max}`), weighted branches, and typed non-terminals (`<E: "int">`). It performs semantic analysis (dead loops, unreachable rules, undefined symbols, invalid ranges) with rich error diagnostics via miette.
 
+## Project Structure
+
+This is a Cargo workspace with two crates:
+- `crates/bnfgen-core`: Core library (lexer, parser, grammar, generator)
+- `crates/bnfgen-cli`: CLI application with MCP server support
+
 ## Build & Development Commands
 
 ```bash
-cargo build                    # Build (LALRPOP runs via build.rs to generate src/parser.rs)
-cargo test                     # Run all tests
+cargo build -p bnfgen-cli         # Build CLI binary
+cargo test -p bnfgen-core         # Test core library
+cargo test -p bnfgen-cli          # Test CLI
+cargo test --workspace             # Test all crates
 cargo test --locked --all-features --all-targets  # CI-style test run
-cargo test <test_name>         # Run a single test by name
-cargo clippy                   # Lint
-cargo fmt --check              # Check formatting
-cargo fmt                      # Format code
-cargo run -- -g <grammar.bnf>  # Run the CLI checker tool
+cargo test <test_name>             # Run a single test by name
+cargo clippy --workspace           # Lint all crates
+cargo fmt --check                  # Check formatting
+cargo fmt                          # Format code
+```
+
+CLI commands:
+```bash
+cargo run -p bnfgen-cli -- check -g <grammar.bnf>     # Check grammar for errors
+cargo run -p bnfgen-cli -- gen -g <grammar.bnf>        # Generate strings from grammar
+cargo run -p bnfgen-cli -- mcp                         # Start MCP server (stdio transport)
 ```
 
 Snapshot tests use [insta](https://insta.rs/). To update snapshots after intentional changes:
@@ -31,29 +45,29 @@ Nix-based development (optional): `devenv` provides the Rust toolchain, `cargo-d
 
 The pipeline follows: **Input text -> Lexer -> Parser -> RawGrammar -> CheckedGrammar -> Generator -> Output**
 
-- **Lexer** (`src/lexer.rs`, `src/token.rs`): Tokenization via [logos](https://github.com/maciejhirsz/logos). `Token` enum defines all grammar tokens with logos derive macros. The `Lexer` wraps the logos `SpannedIter` to produce LALRPOP-compatible `(Loc, Token, Loc)` triples.
+- **Lexer** (`crates/bnfgen-core/src/lexer.rs`, `crates/bnfgen-core/src/token.rs`): Tokenization via [logos](https://github.com/maciejhirsz/logos). `Token` enum defines all grammar tokens with logos derive macros. The `Lexer` wraps the logos `SpannedIter` to produce LALRPOP-compatible `(Loc, Token, Loc)` triples.
 
-- **Parser** (`src/parser.lalrpop`): LALRPOP grammar definition. Built at compile time by `build.rs` calling `lalrpop::process_src()`, which generates `target/.../parser.rs`. Defines the grammar syntax: rules, alternatives, symbols (terminals, non-terminals, typed non-terminals, regex).
+- **Parser** (`crates/bnfgen-core/src/parser.lalrpop`): LALRPOP grammar definition. Built at compile time by a build script calling `lalrpop::process_src()`, which generates the parser. Defines the grammar syntax: rules, alternatives, symbols (terminals, non-terminals, typed non-terminals, regex).
 
-- **RawGrammar** (`src/grammar/raw.rs`): Unvalidated parse result — a `Vec<Rule>`. Entry point is `RawGrammar::parse()`. Provides validation methods: `check_undefined()`, `check_duplicate()`, `check_repeats()`. Converts to `CheckedGrammar` via `to_checked()` (which runs all checks first). Can also build a `GrammarGraph` via `.graph()` for graph-based analysis.
+- **RawGrammar** (`crates/bnfgen-core/src/grammar/raw.rs`): Unvalidated parse result — a `Vec<Rule>`. Entry point is `RawGrammar::parse()`. Provides validation methods: `check_undefined()`, `check_duplicate()`, `check_repeats()`. Converts to `CheckedGrammar` via `to_checked()` (which runs all checks first). Can also build a `GrammarGraph` via `.graph()` for graph-based analysis.
 
-- **GrammarGraph** (`src/grammar/graph.rs`): petgraph `DiGraph` over grammar rules. Uses Tarjan's SCC for dead-loop detection (`check_trap_loop()`) and DFS for unreachable rule detection (`check_unused(start)`).
+- **GrammarGraph** (`crates/bnfgen-core/src/grammar/graph.rs`): petgraph `DiGraph` over grammar rules. Uses Tarjan's SCC for dead-loop detection (`check_trap_loop()`) and DFS for unreachable rule detection (`check_unused(start)`).
 
-- **CheckedGrammar** (`src/grammar/checked.rs`): Validated grammar stored as `IndexMap<NonTerminal, WeightedProduction>`. Core method is `reduce()` which resolves a symbol: terminals pass through, non-terminals pick from candidates (exact match for typed, any matching name for untyped), regex generates via `Regex::generate()`.
+- **CheckedGrammar** (`crates/bnfgen-core/src/grammar/checked.rs`): Validated grammar stored as `IndexMap<NonTerminal, WeightedProduction>`. Core method is `reduce()` which resolves a symbol: terminals pass through, non-terminals pick from candidates (exact match for typed, any matching name for untyped), regex generates via `Regex::generate()`.
 
-- **Generator** (`src/generator.rs`): Stack-based iterative generation (`Generator`) and recursive tree generation (`TreeGenerator`). Both use `CheckedGrammar::reduce()` with a `State` that tracks RNG and invoke counts.
+- **Generator** (`crates/bnfgen-core/src/generator.rs`): Stack-based iterative generation (`Generator`) and recursive tree generation (`TreeGenerator`). Both use `CheckedGrammar::reduce()` with a `State` that tracks RNG and invoke counts.
 
-- **Grammar types** (`src/grammar/`): `symbol.rs` defines `SymbolKind` (Terminal, NonTerminal, Regex) and typed non-terminals. `alt.rs` defines `Alternative` with `Limit` (Unlimited, Limited{min,max}) and weight. `production.rs` defines `WeightedProduction` which selects alternatives respecting invoke limits and weights. `state.rs` tracks per-alternative invocation counts.
+- **Grammar types** (`crates/bnfgen-core/src/grammar/`): `symbol.rs` defines `SymbolKind` (Terminal, NonTerminal, Regex) and typed non-terminals. `alt.rs` defines `Alternative` with `Limit` (Unlimited, Limited{min,max}) and weight. `production.rs` defines `WeightedProduction` which selects alternatives respecting invoke limits and weights. `state.rs` tracks per-alternative invocation counts.
 
-- **Error reporting** (`src/error.rs`, `src/report.rs`): All errors are `thiserror` + `miette::Diagnostic` for rich source-annotated diagnostics. `Reporter` collects multiple diagnostics and renders them.
+- **Error reporting** (`crates/bnfgen-core/src/error.rs`, `crates/bnfgen-core/src/report.rs`): All errors are `thiserror` + `miette::Diagnostic` for rich source-annotated diagnostics. `Reporter` collects multiple diagnostics and renders them.
 
-- **Regex** (`src/regex.rs`): Parses regex via `regex_syntax` into HIR, then generates random matching strings. Avoids generating strings that collide with existing grammar terminals.
+- **Regex** (`crates/bnfgen-core/src/regex.rs`): Parses regex via `regex_syntax` into HIR, then generates random matching strings. Avoids generating strings that collide with existing grammar terminals.
 
-- **CLI** (`src/bin/cli/`): clap-based CLI that parses a grammar file and runs semantic checks (not generation). Accepts `-g <file>` and optional `--check-unused <start_rule>`.
+- **CLI** (`crates/bnfgen-cli/src/cli.rs`): clap-based CLI with three commands: `check` (semantic analysis), `gen` (string generation), and `mcp` (MCP server for AI integration).
 
 ## Key Patterns
 
 - The LALRPOP parser uses an external lexer (logos-based) rather than LALRPOP's built-in lexer. The `extern` block in `parser.lalrpop` bridges them.
-- Snapshot testing with insta is used extensively. Snapshots live in `src/snapshots/` and `src/grammar/snapshots/`.
+- Snapshot testing with insta is used extensively. Snapshots live in `crates/bnfgen-core/src/snapshots/` and `crates/bnfgen-core/src/grammar/snapshots/`.
 - `Span` is the project's source span type, convertible from `Range<usize>` and used throughout for error reporting positions.
 - `Rc<String>` is used for terminal values to enable cheap cloning during generation.
