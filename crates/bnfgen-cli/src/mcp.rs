@@ -1,17 +1,24 @@
 mod generate;
+mod resource;
 
 use crate::app::App;
 use crate::mcp::generate::{GenerationRequest, GenerationResponse};
+use crate::mcp::resource::BnfgenResources;
 use rmcp::handler::server::tool::ToolRouter;
 use rmcp::handler::server::wrapper::Parameters;
-use rmcp::model::{ServerCapabilities, ServerInfo};
-use rmcp::{tool, tool_handler, tool_router, Json, ServerHandler};
+use rmcp::model::{
+    ErrorCode, ListResourcesResult, PaginatedRequestParams, ReadResourceRequestParams,
+    ReadResourceResult, ServerCapabilities, ServerInfo,
+};
+use rmcp::service::RequestContext;
+use rmcp::ErrorData as McpError;
+use rmcp::{tool, tool_handler, tool_router, Json, RoleServer, ServerHandler};
 use typed_builder::TypedBuilder;
 
-#[derive(Clone)]
 pub struct BnfgenMCP {
     tool_router: ToolRouter<Self>,
     settings: BnfgenSettings,
+    resource: BnfgenResources,
 }
 
 #[derive(TypedBuilder, Clone)]
@@ -27,6 +34,7 @@ impl BnfgenMCP {
         Self {
             tool_router: Self::tool_router(),
             settings,
+            resource: BnfgenResources::new(),
         }
     }
 
@@ -67,5 +75,34 @@ impl ServerHandler for BnfgenMCP {
             capabilities: ServerCapabilities::builder().enable_tools().build(),
             ..Default::default()
         }
+    }
+
+    async fn list_resources(
+        &self,
+        _request: Option<PaginatedRequestParams>,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ListResourcesResult, McpError> {
+        Ok(self.resource.list_resources())
+    }
+
+    async fn read_resource(
+        &self,
+        request: ReadResourceRequestParams,
+        _context: RequestContext<RoleServer>,
+    ) -> Result<ReadResourceResult, McpError> {
+        let content = match self.resource.get_resource_contents(&request.uri) {
+            Some(content) => content,
+            None => {
+                return Err(McpError::new(
+                    ErrorCode::RESOURCE_NOT_FOUND,
+                    format!("Resource not found: '{}'", request.uri),
+                    None,
+                ))
+            }
+        };
+
+        Ok(ReadResourceResult {
+            contents: vec![content],
+        })
     }
 }
