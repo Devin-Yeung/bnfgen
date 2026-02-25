@@ -3,10 +3,6 @@ uri: bnfgen://syntax/core
 name: Core Syntax
 ---
 
-## When to read this
-
-Use this resource first. It defines the structural backbone of the DSL: grammar, rules, alternatives, symbols, terminals, and non-terminals.
-
 ## Core grammar
 
 ```bnf
@@ -18,3 +14,49 @@ Use this resource first. It defines the structural backbone of the DSL: grammar,
 <Symbol>  ::= <str> | <NonTerm>             ;
 <NonTerm> ::= "<" <id> ">"                  ;
 ```
+
+## Valid examples
+
+```bnf
+<S> ::= "hello" ;
+```
+
+```bnf
+<Start> ::= <Greeting> <Name> ;
+<Greeting> ::= "hello" | "hi" ;
+<Name> ::= "world" ;
+```
+
+## Invalid examples
+
+```bnf
+<S> := "hello" ;
+```
+
+Reason: `<Rule>` uses `::=` for definition.
+
+```bnf
+<S> ::= "hello"
+```
+
+Reason: each rule must end with `;`.
+
+```bnf
+<S> ::= ;
+```
+
+Reason: `<Alt>` requires `<Symbols>` and cannot be empty.
+
+## Common mistakes
+
+- Missing `;` at the end of a rule.
+- Using `:=` instead of `::=`.
+- Referencing non-terminals without angle brackets.
+- Passing start symbol as `<S>` instead of `S` in tool input.
+
+## Next resources
+
+- Routing guide: `bnfgen://syntax/index`
+- Regex symbol form: `bnfgen://syntax/regex`
+- Invoke limits on alternatives: `bnfgen://syntax/limit`
+- Alternative weights: `bnfgen://syntax/weight`
