@@ -1,5 +1,5 @@
 ---
-uri: bnfgen://syntax/regex
+uri: file:///bnfgen/syntax/regex
 name: Regex Syntax
 ---
 
@@ -42,7 +42,7 @@ Reason: `re` must follow `"re" "(" <str> ")"`.
 
 ## Next resources
 
-- Routing guide: `bnfgen://syntax/index`
-- Core structure: `bnfgen://syntax/core`
-- Invoke limits on alternatives: `bnfgen://syntax/limit`
-- Alternative weights: `bnfgen://syntax/weight`
+- Routing guide: `file:///bnfgen/syntax/index`
+- Core structure: `file:///bnfgen/syntax/core`
+- Invoke limits on alternatives: `file:///bnfgen/syntax/limit`
+- Alternative weights: `file:///bnfgen/syntax/weight`

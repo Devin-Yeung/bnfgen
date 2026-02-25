@@ -4,6 +4,7 @@ mod resource;
 use crate::app::App;
 use crate::mcp::generate::{GenerationRequest, GenerationResponse};
 use crate::mcp::resource::BnfgenResources;
+use indoc::indoc;
 use rmcp::handler::server::tool::ToolRouter;
 use rmcp::handler::server::wrapper::Parameters;
 use rmcp::model::{
@@ -39,7 +40,7 @@ impl BnfgenMCP {
     }
 
     #[tool(
-        description = "Generates random strings based on a provided BNF grammar and a starting symbol."
+        description = "Generates random strings based on a provided BNF grammar and a starting symbol. Read file:///bnfgen/onboard for instructions on how to use this tool"
     )]
     async fn generate(
         &self,
@@ -70,9 +71,17 @@ impl BnfgenMCP {
 #[tool_handler]
 impl ServerHandler for BnfgenMCP {
     fn get_info(&self) -> ServerInfo {
+        let instructions = indoc! {"
+            This server provides tools for generating random strings based on BNF grammars.
+            Read file:///bnfgen/onboard for instructions on how to use the server
+        "};
+
         ServerInfo {
-            instructions: Some("This server provides tools for generating random strings based on BNF grammars. Use the 'generate' tool to create strings from a specified grammar and starting symbol.".to_string()),
-            capabilities: ServerCapabilities::builder().enable_tools().build(),
+            instructions: Some(instructions.to_string()),
+            capabilities: ServerCapabilities::builder()
+                .enable_tools()
+                .enable_resources()
+                .build(),
             ..Default::default()
         }
     }

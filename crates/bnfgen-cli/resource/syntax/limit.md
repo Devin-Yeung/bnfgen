@@ -1,5 +1,5 @@
 ---
-uri: bnfgen://syntax/limit
+uri: file:///bnfgen/syntax/limit
 name: Invoke Limits Syntax
 ---
 
@@ -58,7 +58,7 @@ Reason: this shape matches syntax, but `min > max` is invalid.
 
 ## Next resources
 
-- Routing guide: `bnfgen://syntax/index`
-- Core structure: `bnfgen://syntax/core`
-- Regex symbol form: `bnfgen://syntax/regex`
-- Alternative weights: `bnfgen://syntax/weight`
+- Routing guide: `file:///bnfgen/syntax/index`
+- Core structure: `file:///bnfgen/syntax/core`
+- Regex symbol form: `file:///bnfgen/syntax/regex`
+- Alternative weights: `file:///bnfgen/syntax/weight`

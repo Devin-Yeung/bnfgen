@@ -24,7 +24,8 @@ axum = "0.8.8"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 tracing = "0.1.44"
 gray_matter = "0.3.2"
-include_dir = "0.7.4"
+include_dir = { version = "0.7.4", features = ["glob"] }
+indoc = "2.0.7"
 
 [dev-dependencies]
 insta = { version = "1.41.1", features = ["json"] }

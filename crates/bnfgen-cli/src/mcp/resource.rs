@@ -16,18 +16,17 @@ impl BnfgenResources {
     pub fn new() -> Self {
         let mut resources = HashMap::new();
 
-        for dir in RESOURCE_DIR.dirs() {
-            for file in dir.files() {
-                let path = file.path().to_str().unwrap();
+        for file in RESOURCE_DIR.find("**/*.md").unwrap() {
+            tracing::info!("Loading resource: {}", file.path().display());
 
-                if path.ends_with(".md") {
-                    let markdown_content = file
-                        .contents_utf8()
-                        .expect("Failed to read markdown resource as UTF-8");
-                    let resource = BnfgenResource::from_markdown(markdown_content);
-                    resources.insert(resource.meta.uri.clone(), resource);
-                }
-            }
+            let markdown_content = file
+                .as_file()
+                .expect("Failed to read markdown resource")
+                .contents_utf8()
+                .expect("Failed to read markdown resource as UTF-8");
+            let resource = BnfgenResource::from_markdown(markdown_content);
+
+            resources.insert(resource.meta.uri.clone(), resource);
         }
 
         BnfgenResources { resources }

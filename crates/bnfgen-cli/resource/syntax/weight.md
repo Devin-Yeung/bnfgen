@@ -1,5 +1,5 @@
 ---
-uri: bnfgen://syntax/weight
+uri: file:///bnfgen/syntax/weight
 name: Weight Syntax
 ---
 
@@ -46,6 +46,6 @@ Reason: `<num>` must be followed by `<Symbols>`.
 
 ## Next resources
 
-- Routing guide: `bnfgen://syntax/index`
-- Core structure: `bnfgen://syntax/core`
-- Invoke limits on alternatives: `bnfgen://syntax/limit`
+- Routing guide: `file:///bnfgen/syntax/index`
+- Core structure: `file:///bnfgen/syntax/core`
+- Invoke limits on alternatives: `file:///bnfgen/syntax/limit`

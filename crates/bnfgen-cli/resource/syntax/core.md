@@ -1,5 +1,5 @@
 ---
-uri: bnfgen://syntax/core
+uri: file:///bnfgen/syntax/core
 name: Core Syntax
 ---
 
@@ -56,7 +56,7 @@ Reason: `<Alt>` requires `<Symbols>` and cannot be empty.
 
 ## Next resources
 
-- Routing guide: `bnfgen://syntax/index`
-- Regex symbol form: `bnfgen://syntax/regex`
-- Invoke limits on alternatives: `bnfgen://syntax/limit`
-- Alternative weights: `bnfgen://syntax/weight`
+- Getting started guide: `file:///bnfgen/onboard`
+- Regex symbol form: `file:///bnfgen/syntax/regex`
+- Invoke limits on alternatives: `file:///bnfgen/syntax/limit`
+- Alternative weights: `file:///bnfgen/syntax/weight`
