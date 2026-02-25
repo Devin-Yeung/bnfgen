@@ -10,6 +10,7 @@ use clap::Parser;
 use rmcp::transport::streamable_http_server::session::local::LocalSessionManager;
 use rmcp::transport::{stdio, StreamableHttpServerConfig, StreamableHttpService};
 use rmcp::ServiceExt;
+use std::sync::Arc;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
@@ -96,11 +97,10 @@ async fn main() -> Result<()> {
                     port.expect("port is required when --transport is set to http")
                 );
 
+                let mcp = Arc::new(BnfgenMCP::new(BnfgenSettings::builder().build()));
+
                 let service = StreamableHttpService::new(
-                    || {
-                        let service = BnfgenMCP::new(BnfgenSettings::builder().build());
-                        Ok(service)
-                    },
+                    move || Ok(mcp.clone()),
                     LocalSessionManager::default().into(),
                     StreamableHttpServerConfig {
                         cancellation_token: ct.child_token(),
