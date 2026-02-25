@@ -41,6 +41,7 @@
             (lib.fileset.fileFilter (file: file.hasExt "snap") unfilteredRoot)
             (lib.fileset.fileFilter (file: file.hasExt "lalrpop") unfilteredRoot)
             (lib.fileset.fileFilter (file: file.hasExt "bnfgen") unfilteredRoot)
+            (lib.fileset.fileFilter (file: file.hasExt "md") ./crates/bnfgen-cli/resource)
           ];
         };
 
