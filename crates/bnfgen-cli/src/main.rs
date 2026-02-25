@@ -86,7 +86,7 @@ async fn main() -> Result<()> {
                         tracing_subscriber::EnvFilter::try_from_default_env()
                             .unwrap_or_else(|_| "debug".to_string().into()),
                     )
-                    .with(tracing_subscriber::fmt::layer())
+                    .with(tracing_subscriber::fmt::layer().json())
                     .init();
 
                 let ct = tokio_util::sync::CancellationToken::new();
