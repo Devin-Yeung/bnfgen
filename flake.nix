@@ -64,6 +64,20 @@
             cargoExtraArgs = "-p bnfgen-cli";
           }
         );
+
+        image = pkgs.dockerTools.buildLayeredImage {
+          name = "bnfgen-image";
+          tag = "latest";
+
+          contents = [
+            bnfgen-cli
+          ];
+
+          config = {
+            Cmd = [ "${bnfgen-cli}/bin/bnfgen-cli" ];
+            WorkingDir = "/tmp";
+          };
+        };
       in
       {
         checks = {
@@ -106,7 +120,7 @@
 
         packages = {
           bnfgen = bnfgen-cli;
-          bnfgen-cli = bnfgen-cli;
+          inherit image bnfgen-cli;
           default = bnfgen-cli;
         };
       }
