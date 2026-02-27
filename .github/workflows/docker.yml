@@ -19,19 +19,38 @@ jobs:
     strategy:
       matrix:
         include:
-          - platform: linux/amd64
-            runner: ubuntu-latest
-          - platform: linux/arm64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.runner }}
+          - os: ubuntu-latest
+            arch: amd64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
 
+      - name: Install Nix
+        uses: DeterminateSystems/determinate-nix-action@main
+
+      - name: Restore and cache Nix store
+        uses: nix-community/cache-nix-action@v7
+        with:
+          # restore and save a cache using this key
+          primary-key: nix-${{ matrix.os }}-docker-${{ hashFiles('**/*.nix', 'Cargo.lock') }}
+          # if there's no cache hit, restore a cache by this prefix
+          restore-prefixes-first-match: nix-${{ matrix.os }}-
+          # collect garbage until Nix store size (in bytes) is at most this number
+          # before trying to save a new cache
+          gc-max-store-size-linux: 3221225472 # 3 GiB
+          # do purge caches
+          purge: false
+          # purge all versions of the cache
+          purge-prefixes: nix-${{ matrix.os }}-docker-
+          # created more than this number of seconds ago relative to the start of the `Post Restore` phase
+          purge-created: 0
+          # except the version with the `primary-key`, if it exists
+          purge-primary-key: never
+
       - name: Compute image name
         run: echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Login to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
@@ -41,51 +60,26 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Docker Meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=latest
+      - name: Build image with Nix
+        run: nix build .#image
 
-      - name: Build and push by digest
-        id: build
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: ${{ matrix.platform }}
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-          provenance: false
-          sbom: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Load image into Docker
+        run: docker load < result
 
-      - name: Export digest
+      - name: Tag for push
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: |
-          mkdir -p "$RUNNER_TEMP/digests"
-          digest="${{ steps.build.outputs.digest }}"
-          touch "$RUNNER_TEMP/digests/${digest#sha256:}"
+        # Tag with arch-specific tag for manifest creation
+        run: docker tag "bnfgen:latest" "${{ env.IMAGE_NAME }}:${{ matrix.arch }}"
 
-      - name: Upload digest
+      - name: Push image
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-${{ matrix.runner }}
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
+        run: docker push "${{ env.IMAGE_NAME }}:${{ matrix.arch }}"
 
   merge:
     needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Compute image name
         run: echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
 
@@ -96,19 +90,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download digests
-        uses: actions/download-artifact@v5
-        with:
-          path: ${{ runner.temp }}/digests
-          pattern: digests-*
-          merge-multiple: true
+      - name: Pull images
+        run: |
+          docker pull "${{ env.IMAGE_NAME }}:amd64"
+          docker pull "${{ env.IMAGE_NAME }}:arm64"
 
       - name: Create manifest list and push
-        working-directory: ${{ runner.temp }}/digests
         run: |
           docker buildx imagetools create \
             -t ${{ env.IMAGE_NAME }}:latest \
-            $(printf '${{ env.IMAGE_NAME }}@sha256:%s ' *)
+            ${{ env.IMAGE_NAME }}:amd64 \
+            ${{ env.IMAGE_NAME }}:arm64
 
       - name: Inspect merged image
         run: docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:latest
