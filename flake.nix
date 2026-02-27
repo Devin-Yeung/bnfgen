@@ -66,7 +66,7 @@
         );
 
         image = pkgs.dockerTools.buildLayeredImage {
-          name = "bnfgen-image";
+          name = "bnfgen";
           tag = "latest";
 
           contents = [

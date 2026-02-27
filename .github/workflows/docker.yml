@@ -30,6 +30,25 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/determinate-nix-action@main
 
+      - name: Restore and cache Nix store
+        uses: nix-community/cache-nix-action@v7
+        with:
+          # restore and save a cache using this key
+          primary-key: nix-${{ matrix.os }}-docker-${{ hashFiles('**/*.nix', 'Cargo.lock') }}
+          # if there's no cache hit, restore a cache by this prefix
+          restore-prefixes-first-match: nix-${{ matrix.os }}-
+          # collect garbage until Nix store size (in bytes) is at most this number
+          # before trying to save a new cache
+          gc-max-store-size-linux: 2147483648 # 2 GiB
+          # do purge caches
+          purge: true
+          # purge all versions of the cache
+          purge-prefixes: nix-${{ matrix.os }}-docker-
+          # created more than this number of seconds ago relative to the start of the `Post Restore` phase
+          purge-created: 0
+          # except the version with the `primary-key`, if it exists
+          purge-primary-key: never
+
       - name: Compute image name
         run: echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
 
@@ -50,7 +69,7 @@ jobs:
       - name: Tag for push
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         # Tag with arch-specific tag for manifest creation
-        run: docker tag "bnfgen-image:latest" "${{ env.IMAGE_NAME }}:${{ matrix.arch }}"
+        run: docker tag "bnfgen:latest" "${{ env.IMAGE_NAME }}:${{ matrix.arch }}"
 
       - name: Push image
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
