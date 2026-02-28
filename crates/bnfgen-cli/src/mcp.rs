@@ -1,8 +1,12 @@
 mod generate;
+mod query_syntax;
 mod resource;
 
 use crate::app::App;
 use crate::mcp::generate::{GenerationRequest, GenerationResponse};
+use crate::mcp::query_syntax::{
+    get_syntax_content, list_available_topics, QuerySyntaxRequest, QuerySyntaxResponse,
+};
 use crate::mcp::resource::BnfgenResources;
 use indoc::indoc;
 use rmcp::handler::server::tool::ToolRouter;
@@ -40,7 +44,8 @@ impl BnfgenMCP {
     }
 
     #[tool(
-        description = "Generates random strings based on a provided BNF grammar and a starting symbol. Read file:///bnfgen/onboard for instructions on how to use this tool"
+        description = "Generates random strings based on a provided BNF grammar and a starting symbol. \
+        use 'query_syntax' tool to get documentation on the BNF syntax before writing your grammar."
     )]
     async fn generate(
         &self,
@@ -66,6 +71,29 @@ impl BnfgenMCP {
             generated_strings: outputs,
         }))
     }
+
+    #[tool(
+        description = "Query BNF syntax documentation. Returns documentation about BNF grammar syntax \
+         including core grammar, regex symbols, invoke limits, and weights. Use this to understand the syntax when writing grammars"
+    )]
+    async fn query_syntax(
+        &self,
+        Parameters(req): Parameters<QuerySyntaxRequest>,
+    ) -> Result<Json<QuerySyntaxResponse>, String> {
+        let content = get_syntax_content(&req.topic).ok_or_else(|| {
+            format!(
+                "Unknown topic '{}'. Available topics: {}",
+                req.topic,
+                list_available_topics().join(", ")
+            )
+        })?;
+
+        Ok(Json(QuerySyntaxResponse {
+            content,
+            topic: req.topic.clone(),
+            available_topics: list_available_topics(),
+        }))
+    }
 }
 
 #[tool_handler]
@@ -73,7 +101,7 @@ impl ServerHandler for BnfgenMCP {
     fn get_info(&self) -> ServerInfo {
         let instructions = indoc! {"
             This server provides tools for generating random strings based on BNF grammars.
-            Read file:///bnfgen/onboard for instructions on how to use the server
+            Use 'query_syntax' to get documentation on the BNF syntax supported by the generator.
         "};
 
         ServerInfo {

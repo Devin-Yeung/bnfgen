@@ -43,9 +43,3 @@ Reason: `<num>` must be followed by `<Symbols>`.
 - Treating weight as a rule-level value instead of an alternative-level prefix.
 - Writing weight after symbols instead of before symbols.
 - Confusing weight (`<num> <Symbols>`) with invoke limits (`<Limit>`).
-
-## Next resources
-
-- Routing guide: `file:///bnfgen/syntax/index`
-- Core structure: `file:///bnfgen/syntax/core`
-- Invoke limits on alternatives: `file:///bnfgen/syntax/limit`
