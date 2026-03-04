@@ -8,7 +8,7 @@ license.workspace = true
 logos = "0.16.1"
 lalrpop-util = "0.23.0"
 indexmap = "2.13.0"
-regex-syntax = "0.8.9"
+regex-syntax = "0.8.10"
 thiserror = "2.0.18"
 petgraph = "0.8.3"
 miette = { workspace = true, features = ["fancy"] }
