@@ -7,6 +7,11 @@ license = "MIT OR Apache-2.0"
 resolver = "2"
 members = ["crates/*"]
 
+# Required by crane for workspace-only Cargo.toml (no root package)
+# Individual packages are built via pname override in flake.nix
+[workspace.metadata.crane]
+name = "wormhole"
+
 [workspace.dependencies]
 # workspace members
 bnfgen = { path = "crates/bnfgen-core" }
