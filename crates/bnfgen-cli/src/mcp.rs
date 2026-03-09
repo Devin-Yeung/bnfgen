@@ -104,14 +104,16 @@ impl ServerHandler for BnfgenMCP {
             Use 'query_syntax' to get documentation on the BNF syntax supported by the generator.
         "};
 
-        ServerInfo {
-            instructions: Some(instructions.to_string()),
-            capabilities: ServerCapabilities::builder()
-                .enable_tools()
-                .enable_resources()
-                .build(),
-            ..Default::default()
-        }
+        // `rmcp` marks `ServerInfo` as non-exhaustive, so we start from the
+        // crate's default handshake payload and override the fields we own.
+        let mut info = ServerInfo::default();
+        info.instructions = Some(instructions.to_string());
+        info.capabilities = ServerCapabilities::builder()
+            .enable_tools()
+            .enable_resources()
+            .build();
+
+        info
     }
 
     async fn list_resources(
@@ -138,8 +140,6 @@ impl ServerHandler for BnfgenMCP {
             }
         };
 
-        Ok(ReadResourceResult {
-            contents: vec![content],
-        })
+        Ok(ReadResourceResult::new(vec![content]))
     }
 }
