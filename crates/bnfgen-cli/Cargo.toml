@@ -6,10 +6,10 @@ license.workspace = true
 
 [dependencies]
 bnfgen = { workspace = true }
-clap = { version = "4.5.59", features = ["derive"] }
+clap = { version = "4.6.0", features = ["derive"] }
 miette = { workspace = true, features = ["fancy"] }
 rand = { workspace = true }
-rmcp = { version = "1.1.1", features = [
+rmcp = { version = "1.2.0", features = [
   "transport-io",
   "schemars",
   "transport-streamable-http-server",
@@ -21,7 +21,7 @@ anyhow = { version = "1.0.71" }
 typed-builder = { workspace = true }
 tokio-util = "0.7.18"
 axum = "0.8.8"
-tracing-subscriber = { version = "0.3.22", features = ["env-filter", "json"] }
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "json"] }
 tracing = "0.1.44"
 gray_matter = "0.3.2"
 include_dir = { version = "0.7.4", features = ["glob"] }
