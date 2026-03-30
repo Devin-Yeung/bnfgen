@@ -4,6 +4,7 @@
 [![Built with Nix][nix-badge]][nix-url]
 [![Build Status][actions-badge]][actions-url]
 [![MIT Licensed][mit-badge]][mit-url]
+[![Ask DeepWiki][deepwiki-badge]][deepwiki-url]
 
 [devenv-badge]: https://devenv.sh/assets/devenv-badge.svg
 
@@ -20,6 +21,10 @@
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 
 [mit-url]: https://github.com/Devin-Yeung/bnfgen/blob/master/LICENSE-MIT
+
+[deepwiki-badge]: https://deepwiki.com/badge.svg
+
+[deepwiki-url]: https://deepwiki.com/Devin-Yeung/bnfgen
 
 Bnfgen is a general purposed BNF grammar based random string generator ⚙️,
 with a powerful grammar extension to make it more 🪑 ergonomic to use.
