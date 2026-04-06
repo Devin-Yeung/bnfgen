@@ -7,7 +7,7 @@ license.workspace = true
 [dependencies]
 logos = "0.16.1"
 lalrpop-util = "0.23.1"
-indexmap = "2.13.0"
+indexmap = "2.13.1"
 regex-syntax = "0.8.10"
 thiserror = "2.0.18"
 petgraph = "0.8.3"
@@ -22,4 +22,4 @@ typed-builder = { workspace = true }
 lalrpop = { version = "0.23.1", default-features = false }
 
 [dev-dependencies]
-insta = { version = "1.47.1" }
+insta = { version = "1.47.2" }
