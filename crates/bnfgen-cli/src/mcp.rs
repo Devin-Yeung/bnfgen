@@ -21,6 +21,7 @@ use rmcp::{tool, tool_handler, tool_router, Json, RoleServer, ServerHandler};
 use typed_builder::TypedBuilder;
 
 pub struct BnfgenMCP {
+    #[allow(dead_code)]
     tool_router: ToolRouter<Self>,
     settings: BnfgenSettings,
     resource: BnfgenResources,
