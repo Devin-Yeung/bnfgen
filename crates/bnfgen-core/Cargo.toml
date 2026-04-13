@@ -7,7 +7,7 @@ license.workspace = true
 [dependencies]
 logos = "0.16.1"
 lalrpop-util = "0.23.1"
-indexmap = "2.13.1"
+indexmap = "2.14.0"
 regex-syntax = "0.8.10"
 thiserror = "2.0.18"
 petgraph = "0.8.3"

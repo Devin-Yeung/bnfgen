@@ -18,5 +18,5 @@ bnfgen = { path = "crates/bnfgen-core" }
 
 # shared dependencies
 miette = { version = "7.6.0" }
-rand = { version = "0.10.0" }
+rand = { version = "0.10.1" }
 typed-builder = { version = "0.23.2" }
