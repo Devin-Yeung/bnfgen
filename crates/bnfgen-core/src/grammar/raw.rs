@@ -224,10 +224,8 @@ impl RawGrammar {
         for rule in &self.rules {
             for sym in rule.rhs().iter().flat_map(|a| a.symbols.iter()) {
                 match &sym.kind {
-                    SymbolKind::NonTerminal(s) => {
-                        if !defined.contains(s.as_str()) {
-                            return Err(Error::UndefinedNonTerminal { span: sym.span });
-                        }
+                    SymbolKind::NonTerminal(s) if !defined.contains(s.as_str()) => {
+                        return Err(Error::UndefinedNonTerminal { span: sym.span });
                     }
                     _ => { /* do nothing */ }
                 }
