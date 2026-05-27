@@ -45,7 +45,7 @@ jobs:
           purge-primary-key: never
 
       - name: Install devenv.sh
-        run: nix profile add github:cachix/devenv/v2.0.6 -L --accept-flake-config
+        run: nix profile add github:cachix/devenv/v2.1.2 -L --accept-flake-config
 
       - name: Devenv test
         run: devenv test
