@@ -1,7 +1,7 @@
 use gray_matter::engine::YAML;
 use gray_matter::Matter;
 use include_dir::{include_dir, Dir};
-use rmcp::model::{ListResourcesResult, RawResource, Resource, ResourceContents};
+use rmcp::model::{ListResourcesResult, Resource, ResourceContents};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -61,19 +61,8 @@ pub struct BnfgenResource {
 
 impl BnfgenResource {
     pub fn mcp_resource(&self) -> Resource {
-        Resource {
-            raw: RawResource {
-                uri: self.meta.uri.clone(),
-                name: self.meta.name.clone(),
-                title: None,
-                description: None,
-                mime_type: Some("text".to_string()),
-                size: None,
-                icons: None,
-                meta: None,
-            },
-            annotations: None,
-        }
+        Resource::new(self.meta.uri.clone(), self.meta.name.clone())
+            .with_mime_type("text".to_string())
     }
 }
 
