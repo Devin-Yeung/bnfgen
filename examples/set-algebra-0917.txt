@@ -1,0 +1,47 @@
+<Num>        ::= re("[0-9]|[1-9][0-9]+") ;
+<Id>         ::= re("[[a-zA-Z]&&[^UI]]|[a-zA-Z][a-zA-Z]+") ;
+
+<Program>    ::= <Decls> <CalcExpr> ".";
+
+<CalcExpr>   ::= "show" <Algebra>
+                 | "simplify" <Algebra> ;
+
+<Decls>      ::= <Decl>
+                 | <Decls> <Decl>;
+
+<Ty>         ::= "int"
+                 | "set" ;
+
+<Decl>       ::= "let" <Ty> <Id> "be" <Expr> "." ;
+
+<Algebra>    ::= <Expr>
+                 | <Predicate> ;
+
+<Expr0>      ::= "{" <Id> ":" <Predicate> "}"
+                 | "(" <Expr> ")"
+                 | <Num>
+                 | <Id> ;
+
+<Expr1>      ::= <Expr0>
+                 | <Expr1> "I" <Expr0>
+                 | <Expr1> "*" <Expr0> ;
+
+<Expr>       ::= <Expr1>
+                 | <Expr> "U" <Expr1>
+                 | <Expr> "+" <Expr1>
+                 | <Expr> "-" <Expr1> ;
+
+<Predicate0> ::= <Expr> "<" <Expr>
+                 | <Expr> ">" <Expr>
+                 | <Expr> "=" <Expr>
+                 | <Expr> "@" <Expr> ;
+
+<Predicate1> ::= "(" <Predicate> ")"
+                 | "!" <Predicate0>
+                 | <Predicate0> ;
+
+<Predicate2>  ::= <Predicate1>
+                 | <Predicate2> "&" <Predicate1> ;
+
+<Predicate>  ::= <Predicate2>
+                 | <Predicate> "|" <Predicate2> ;
