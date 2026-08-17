@@ -126,6 +126,39 @@ impl ParsedDocument {
         self.tokens.iter().cloned()
     }
 
+    /// The token at `offset`, searched over the complete buffer.
+    ///
+    /// Total over `0..=source.len()` and never panics. The token whose
+    /// `start <= offset < end` contains `offset`; an offset where two
+    /// tokens meet resolves to the token that starts there;
+    /// `offset == source.len()` resolves to the final token. Returns
+    /// `None` past the end of the source and for an empty document.
+    ///
+    /// These boundary rules are the ones cursor-context classification
+    /// (ticket 06) builds on; keep them this simple.
+    pub fn token_at(&self, offset: usize) -> Option<SyntaxToken> {
+        if offset > self.source.len() {
+            return None;
+        }
+        // Token starts are non-decreasing (the buffer tiles the source in
+        // order), so `partition_point` finds the first token starting
+        // after `offset`; the token before it is the containment
+        // candidate.
+        let next = self
+            .tokens
+            .partition_point(|token| token.range().start <= offset);
+        if next > 0 && offset < self.tokens[next - 1].range().end {
+            return Some(self.tokens[next - 1].clone());
+        }
+        if next < self.tokens.len() && self.tokens[next].range().start == offset {
+            return Some(self.tokens[next].clone());
+        }
+        // Not inside any token: reachable only at end of source (the
+        // buffer tiles the source, so genuine gaps do not exist), where
+        // the final token is the answer.
+        self.tokens.last().cloned()
+    }
+
     /// The recognized rules, in source order.
     pub fn rules(&self) -> impl Iterator<Item = RuleSyntax<'_>> + '_ {
         self.rules
