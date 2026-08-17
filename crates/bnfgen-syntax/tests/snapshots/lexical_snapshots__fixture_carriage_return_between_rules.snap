@@ -1,7 +1,10 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-expression: render(&doc)
 ---
+input:
+<a> ::= "x";\r
+<b> ::= "y";\r
+
 000..001 LAngle "<"
 001..002 Id "a"
 002..003 RAngle ">"
@@ -25,4 +28,10 @@ expression: render(&doc)
 errors:
 012..013 UnrecognizedInput
 026..027 UnrecognizedInput
-rules: 2
+rules:
+000..012 a
+  alt 008..011
+    008..011 Terminal "\"x\""
+014..026 b
+  alt 022..025
+    022..025 Terminal "\"y\""

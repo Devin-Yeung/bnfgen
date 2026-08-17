@@ -1,7 +1,9 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-expression: render(&doc)
 ---
+input:
+<greeting> ::= "hello" <name> | "bye";
+
 000..001 LAngle "<"
 001..009 Id "greeting"
 009..010 RAngle ">"
@@ -20,4 +22,10 @@ expression: render(&doc)
 037..038 Semi ";"
 038..039 Whitespace "\n"
 errors:
-rules: 1
+rules:
+000..038 greeting
+  alt 015..029
+    015..022 Terminal "\"hello\""
+    023..029 NonTerminal name
+  alt 032..037
+    032..037 Terminal "\"bye\""

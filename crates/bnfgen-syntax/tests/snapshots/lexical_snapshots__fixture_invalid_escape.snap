@@ -1,0 +1,22 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+input:
+<a> ::= "bad \x escape";
+
+000..001 LAngle "<"
+001..002 Id "a"
+002..003 RAngle ">"
+003..004 Whitespace " "
+004..007 Def "::="
+007..008 Whitespace " "
+008..014 UnterminatedStr "\"bad \\"
+014..015 Id "x"
+015..016 Whitespace " "
+016..022 Id "escape"
+022..025 UnterminatedStr "\";\n"
+errors:
+008..014 UnterminatedString
+022..025 UnterminatedString
+014..015 UnexpectedToken
+rules:

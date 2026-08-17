@@ -2,8 +2,8 @@
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
 input:
- \t
 
-000..003 Whitespace " \t\n"
+[no trailing newline]
+
 errors:
 rules:

@@ -1,0 +1,2 @@
+* text eol=lf
+carriage_return_between_rules.bnfgen text eol=crlf
