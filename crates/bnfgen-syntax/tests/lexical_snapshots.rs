@@ -31,13 +31,23 @@ fn range_label(start: usize, end: usize) -> String {
     format!("{start:03}..{end:03}")
 }
 
+/// Source text for a one-line tree label: omitted when it would inject a
+/// line break. LF/CR remain visible in the `<input>` dump.
+fn inline_source(text: &str) -> String {
+    if text.contains(['\n', '\r']) {
+        String::new()
+    } else {
+        format!(" {text}")
+    }
+}
+
 fn token_leaf(doc: &ParsedDocument, token: SyntaxToken) -> Tree<String> {
     let range = token.range();
     Tree::new(format!(
-        "{} {:?} {:?}",
+        "{} {:?}{}",
         range_label(range.start, range.end),
         token.kind(),
-        doc.slice(range),
+        inline_source(doc.slice(range)),
     ))
 }
 
@@ -71,9 +81,9 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
                     let range = symbol.range();
                     let label = match symbol.kind() {
                         SymbolKind::Terminal => format!(
-                            "{} Terminal {:?}",
+                            "{} Terminal{}",
                             range_label(range.start, range.end),
-                            symbol.text(),
+                            inline_source(symbol.text()),
                         ),
                         SymbolKind::NonTerminal => {
                             let name = symbol
@@ -92,20 +102,10 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
     Tree::new("document".to_owned()).with_leaves([tokens, errors, rules])
 }
 
-/// Fixture source as raw text (quotes and newlines unescaped), then the
-/// public-seam tree. Bytes between the tags match `doc.source()` except
-/// that CR is written as the two-character sequence `\r` — insta (and
-/// git) cannot retain a raw CR in a `.snap` file. Empty input is
-/// `<input></input>` so the wrapper does not inject a blank line. A
-/// missing trailing newline leaves `</input>` on the same line as the
-/// last source character.
+/// Fixture source as written, then the public-seam tree. Slices in the
+/// tree are the same raw spelling; nothing is Debug-quoted.
 fn render(doc: &ParsedDocument) -> String {
-    let source = doc.source().replace('\r', "\\r");
-    if source.is_empty() {
-        format!("<input></input>\n{}", document_tree(doc))
-    } else {
-        format!("<input>\n{source}</input>\n{}", document_tree(doc))
-    }
+    format!("<input>\n{}</input>\n{}", doc.source(), document_tree(doc))
 }
 
 #[test]

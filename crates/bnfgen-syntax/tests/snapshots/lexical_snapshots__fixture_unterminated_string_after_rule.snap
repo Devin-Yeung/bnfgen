@@ -6,22 +6,22 @@ source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 <b> ::= "open</input>
 document
 ├── tokens
-│   ├── 000..001 LAngle "<"
-│   ├── 001..002 Id "a"
-│   ├── 002..003 RAngle ">"
-│   ├── 003..004 Whitespace " "
-│   ├── 004..007 Def "::="
-│   ├── 007..008 Whitespace " "
-│   ├── 008..011 Str "\"x\""
-│   ├── 011..012 Semi ";"
-│   ├── 012..013 Whitespace "\n"
-│   ├── 013..014 LAngle "<"
-│   ├── 014..015 Id "b"
-│   ├── 015..016 RAngle ">"
-│   ├── 016..017 Whitespace " "
-│   ├── 017..020 Def "::="
-│   ├── 020..021 Whitespace " "
-│   └── 021..026 UnterminatedStr "\"open"
+│   ├── 000..001 LAngle <
+│   ├── 001..002 Id a
+│   ├── 002..003 RAngle >
+│   ├── 003..004 Whitespace  
+│   ├── 004..007 Def ::=
+│   ├── 007..008 Whitespace  
+│   ├── 008..011 Str "x"
+│   ├── 011..012 Semi ;
+│   ├── 012..013 Whitespace
+│   ├── 013..014 LAngle <
+│   ├── 014..015 Id b
+│   ├── 015..016 RAngle >
+│   ├── 016..017 Whitespace  
+│   ├── 017..020 Def ::=
+│   ├── 020..021 Whitespace  
+│   └── 021..026 UnterminatedStr "open
 ├── errors
 │   ├── 021..026 UnterminatedString
 │   └── 020..020 UnexpectedEof

@@ -5,18 +5,18 @@ source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 <a> ::= "x"; // trailing note</input>
 document
 ├── tokens
-│   ├── 000..001 LAngle "<"
-│   ├── 001..002 Id "a"
-│   ├── 002..003 RAngle ">"
-│   ├── 003..004 Whitespace " "
-│   ├── 004..007 Def "::="
-│   ├── 007..008 Whitespace " "
-│   ├── 008..011 Str "\"x\""
-│   ├── 011..012 Semi ";"
-│   ├── 012..013 Whitespace " "
-│   └── 013..029 Comment "// trailing note"
+│   ├── 000..001 LAngle <
+│   ├── 001..002 Id a
+│   ├── 002..003 RAngle >
+│   ├── 003..004 Whitespace  
+│   ├── 004..007 Def ::=
+│   ├── 007..008 Whitespace  
+│   ├── 008..011 Str "x"
+│   ├── 011..012 Semi ;
+│   ├── 012..013 Whitespace  
+│   └── 013..029 Comment // trailing note
 ├── errors
 └── rules
     └── 000..012 a
         └── alt 008..011
-            └── 008..011 Terminal "\"x\""
+            └── 008..011 Terminal "x"

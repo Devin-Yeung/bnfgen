@@ -6,11 +6,11 @@ re "[a-z]+";
 </input>
 document
 ├── tokens
-│   ├── 000..002 Re "re"
-│   ├── 002..003 Whitespace " "
-│   ├── 003..011 Str "\"[a-z]+\""
-│   ├── 011..012 Semi ";"
-│   └── 012..013 Whitespace "\n"
+│   ├── 000..002 Re re
+│   ├── 002..003 Whitespace  
+│   ├── 003..011 Str "[a-z]+"
+│   ├── 011..012 Semi ;
+│   └── 012..013 Whitespace
 ├── errors
 │   └── 000..002 UnexpectedToken
 └── rules

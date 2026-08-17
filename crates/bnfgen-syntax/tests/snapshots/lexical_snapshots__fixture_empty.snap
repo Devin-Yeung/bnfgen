@@ -1,7 +1,8 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
-<input></input>
+<input>
+</input>
 document
 ├── tokens
 ├── errors

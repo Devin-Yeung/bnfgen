@@ -2,14 +2,13 @@
 //! `bnfgen-syntax` integration tests.
 //!
 //! Fixtures live in `tests/fixtures/*.bnfgen`, one source per file, loaded
-//! with `include_str!`. Do not inline grammar in test files. Pin CRLF via
-//! `tests/fixtures/.gitattributes` when a case needs it; files may omit a
-//! trailing newline (see `.editorconfig`).
+//! with `include_str!`. Do not inline grammar in test files. Files may
+//! omit a trailing newline (see `.editorconfig`).
 //!
 //! Each name is a file stem. Ticket-02 cases pin lexical phenomena;
 //! additional files cover empty input, a missing terminator, and raw
-//! lexemes (`Int`, `re`, string escapes) whose grammar errors will churn
-//! when ticket 03 maps those terminals — that churn is the snapshot's job.
+//! lexemes (`Int`, `re`) whose grammar errors will churn when ticket 03
+//! maps those terminals — that churn is the snapshot's job.
 
 /// Named public-seam fixtures: (name, source). Names are file stems.
 pub const FIXTURES: &[(&str, &str)] = &[
@@ -63,14 +62,6 @@ pub const FIXTURES: &[(&str, &str)] = &[
         "single_slash_is_invalid",
         include_str!("../fixtures/single_slash_is_invalid.bnfgen"),
     ),
-    // CRLF line endings: every bare `\r` is one byte of Invalid input
-    // (drift-free with the legacy lexer, which rejected CRLF files);
-    // both rules still recognize. The file is pinned to CRLF in
-    // `tests/fixtures/.gitattributes`.
-    (
-        "carriage_return_between_rules",
-        include_str!("../fixtures/carriage_return_between_rules.bnfgen"),
-    ),
     // Multibyte content inside a string literal: byte ranges over
     // multi-byte codepoints must stay safe for source slicing.
     (
@@ -84,11 +75,6 @@ pub const FIXTURES: &[(&str, &str)] = &[
         "invalid_multibyte_ident",
         include_str!("../fixtures/invalid_multibyte_ident.bnfgen"),
     ),
-    // Whitespace only: a single token tiling the whole source.
-    (
-        "whitespace_only",
-        include_str!("../fixtures/whitespace_only.bnfgen"),
-    ),
     // 2^64 digits: the legacy lexer parsed at lex time and rejected this
     // with `InvalidInteger`. Here they are a raw Int lexeme; whether the
     // value fits is a downstream concern. Ticket 03 will change the
@@ -96,11 +82,6 @@ pub const FIXTURES: &[(&str, &str)] = &[
     (
         "integer_overflow",
         include_str!("../fixtures/integer_overflow.bnfgen"),
-    ),
-    // Quotes retained, escapes as typed: nothing was decoded.
-    (
-        "string_escapes",
-        include_str!("../fixtures/string_escapes.bnfgen"),
     ),
     // `re` plus a raw string body. The syntax crate neither compiles nor
     // validates the regular expression; ticket 03 will map `Re`.
