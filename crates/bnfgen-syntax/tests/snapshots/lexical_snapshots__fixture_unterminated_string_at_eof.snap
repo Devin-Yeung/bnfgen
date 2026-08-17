@@ -1,0 +1,15 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+expression: render(&doc)
+---
+000..001 LAngle "<"
+001..002 Id "a"
+002..003 RAngle ">"
+003..004 Whitespace " "
+004..007 Def "::="
+007..008 Whitespace " "
+008..021 UnterminatedStr "\"unterminated"
+errors:
+008..021 UnterminatedString
+007..007 UnexpectedEof
+rules: 0

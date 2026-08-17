@@ -1,0 +1,26 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+expression: render(&doc)
+---
+000..001 LAngle "<"
+001..002 Id "a"
+002..003 RAngle ">"
+003..004 Whitespace " "
+004..007 Def "::="
+007..008 Whitespace " "
+008..011 Str "\"x\""
+011..012 Semi ";"
+012..013 Whitespace " "
+013..024 Comment "// mid-file"
+024..025 Whitespace "\n"
+025..026 LAngle "<"
+026..027 Id "b"
+027..028 RAngle ">"
+028..029 Whitespace " "
+029..032 Def "::="
+032..033 Whitespace " "
+033..036 Str "\"y\""
+036..037 Semi ";"
+037..038 Whitespace "\n"
+errors:
+rules: 2

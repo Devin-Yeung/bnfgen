@@ -1,0 +1,23 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+expression: render(&doc)
+---
+000..001 LAngle "<"
+001..009 Id "greeting"
+009..010 RAngle ">"
+010..011 Whitespace " "
+011..014 Def "::="
+014..015 Whitespace " "
+015..022 Str "\"hello\""
+022..023 Whitespace " "
+023..024 LAngle "<"
+024..028 Id "name"
+028..029 RAngle ">"
+029..030 Whitespace " "
+030..031 Or "|"
+031..032 Whitespace " "
+032..037 Str "\"bye\""
+037..038 Semi ";"
+038..039 Whitespace "\n"
+errors:
+rules: 1

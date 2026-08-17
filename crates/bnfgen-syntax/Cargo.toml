@@ -8,6 +8,11 @@ license.workspace = true
 logos = "0.16.1"
 lalrpop-util = "0.23.1"
 
+# Text snapshots for the normalized public-seam representation (ticket
+# 02). Matches the version pinned in `bnfgen-cli`; no features needed.
+[dev-dependencies]
+insta = "1.47.2"
+
 # External-lexer setup: the built-in terminal lexer is not needed, and
 # keeping it off makes the LALRPOP dependency smaller.
 [build-dependencies]

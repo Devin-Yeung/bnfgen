@@ -1,0 +1,7 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+expression: render(&doc)
+---
+000..003 Whitespace " \t\n"
+errors:
+rules: 0
