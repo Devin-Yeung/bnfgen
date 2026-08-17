@@ -291,6 +291,7 @@ dependencies = [
  "lalrpop-util",
  "logos",
  "termtree",
+ "walkdir",
 ]
 
 [[package]]

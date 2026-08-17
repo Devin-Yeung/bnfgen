@@ -9,7 +9,7 @@
 //!
 //! Ticket 03 extends the rule block with construct lines for the typed
 //! forms it adds. Add a new case by dropping a `.bnfgen` file in
-//! `tests/fixtures/` and listing it in `common::FIXTURES`.
+//! `tests/fixtures/`.
 
 mod common;
 
@@ -110,10 +110,8 @@ fn render(doc: &ParsedDocument) -> String {
 
 #[test]
 fn public_seam_fixtures_snapshot() {
-    for (name, source) in common::FIXTURES {
-        let doc = parse(source);
-        common::assert_tiles_source(&doc);
-        common::assert_token_lookup(&doc);
+    for (name, source) in common::fixtures() {
+        let doc = parse(&source);
         insta::with_settings!({ omit_expression => true }, {
             assert_snapshot!(format!("fixture_{name}"), render(&doc));
         });

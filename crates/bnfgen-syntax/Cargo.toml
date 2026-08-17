@@ -14,6 +14,7 @@ lalrpop-util = "0.23.1"
 [dev-dependencies]
 insta = "1.47.2"
 termtree = "1.0.0"
+walkdir = "2.5.0"
 
 # External-lexer setup: the built-in terminal lexer is not needed, and
 # keeping it off makes the LALRPOP dependency smaller.
