@@ -9,9 +9,11 @@ logos = "0.16.1"
 lalrpop-util = "0.23.1"
 
 # Text snapshots for the normalized public-seam representation (ticket
-# 02). Matches the version pinned in `bnfgen-cli`; no features needed.
+# 02). insta matches the version pinned in `bnfgen-cli`; termtree draws
+# the eza-style Unicode tree. No extra features needed.
 [dev-dependencies]
 insta = "1.47.2"
+termtree = "1.0.0"
 
 # External-lexer setup: the built-in terminal lexer is not needed, and
 # keeping it off makes the LALRPOP dependency smaller.

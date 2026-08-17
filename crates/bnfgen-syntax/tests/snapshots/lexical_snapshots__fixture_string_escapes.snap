@@ -1,20 +1,22 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
-input:
+<input>
 <a> ::= "line \"quoted\" \n end";
-
-000..001 LAngle "<"
-001..002 Id "a"
-002..003 RAngle ">"
-003..004 Whitespace " "
-004..007 Def "::="
-007..008 Whitespace " "
-008..032 Str "\"line \\\"quoted\\\" \\n end\""
-032..033 Semi ";"
-033..034 Whitespace "\n"
-errors:
-rules:
-000..033 a
-  alt 008..032
-    008..032 Terminal "\"line \\\"quoted\\\" \\n end\""
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle "<"
+│   ├── 001..002 Id "a"
+│   ├── 002..003 RAngle ">"
+│   ├── 003..004 Whitespace " "
+│   ├── 004..007 Def "::="
+│   ├── 007..008 Whitespace " "
+│   ├── 008..032 Str "\"line \\\"quoted\\\" \\n end\""
+│   ├── 032..033 Semi ";"
+│   └── 033..034 Whitespace "\n"
+├── errors
+└── rules
+    └── 000..033 a
+        └── alt 008..032
+            └── 008..032 Terminal "\"line \\\"quoted\\\" \\n end\""

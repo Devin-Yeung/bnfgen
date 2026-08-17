@@ -1,9 +1,8 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
-input:
-
-[no trailing newline]
-
-errors:
-rules:
+<input></input>
+document
+├── tokens
+├── errors
+└── rules

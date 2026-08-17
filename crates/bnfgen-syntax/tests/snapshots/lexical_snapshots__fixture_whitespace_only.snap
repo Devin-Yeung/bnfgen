@@ -1,9 +1,11 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
-input:
- \t
-
-000..003 Whitespace " \t\n"
-errors:
-rules:
+<input>
+ 	
+</input>
+document
+├── tokens
+│   └── 000..003 Whitespace " \t\n"
+├── errors
+└── rules

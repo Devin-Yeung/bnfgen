@@ -1,39 +1,41 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
-input:
+<input>
 <a> ::= "x"; @#~ <b> ::= "y";
-
-000..001 LAngle "<"
-001..002 Id "a"
-002..003 RAngle ">"
-003..004 Whitespace " "
-004..007 Def "::="
-007..008 Whitespace " "
-008..011 Str "\"x\""
-011..012 Semi ";"
-012..013 Whitespace " "
-013..014 Invalid "@"
-014..015 Invalid "#"
-015..016 Invalid "~"
-016..017 Whitespace " "
-017..018 LAngle "<"
-018..019 Id "b"
-019..020 RAngle ">"
-020..021 Whitespace " "
-021..024 Def "::="
-024..025 Whitespace " "
-025..028 Str "\"y\""
-028..029 Semi ";"
-029..030 Whitespace "\n"
-errors:
-013..014 UnrecognizedInput
-014..015 UnrecognizedInput
-015..016 UnrecognizedInput
-rules:
-000..012 a
-  alt 008..011
-    008..011 Terminal "\"x\""
-017..029 b
-  alt 025..028
-    025..028 Terminal "\"y\""
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle "<"
+│   ├── 001..002 Id "a"
+│   ├── 002..003 RAngle ">"
+│   ├── 003..004 Whitespace " "
+│   ├── 004..007 Def "::="
+│   ├── 007..008 Whitespace " "
+│   ├── 008..011 Str "\"x\""
+│   ├── 011..012 Semi ";"
+│   ├── 012..013 Whitespace " "
+│   ├── 013..014 Invalid "@"
+│   ├── 014..015 Invalid "#"
+│   ├── 015..016 Invalid "~"
+│   ├── 016..017 Whitespace " "
+│   ├── 017..018 LAngle "<"
+│   ├── 018..019 Id "b"
+│   ├── 019..020 RAngle ">"
+│   ├── 020..021 Whitespace " "
+│   ├── 021..024 Def "::="
+│   ├── 024..025 Whitespace " "
+│   ├── 025..028 Str "\"y\""
+│   ├── 028..029 Semi ";"
+│   └── 029..030 Whitespace "\n"
+├── errors
+│   ├── 013..014 UnrecognizedInput
+│   ├── 014..015 UnrecognizedInput
+│   └── 015..016 UnrecognizedInput
+└── rules
+    ├── 000..012 a
+    │   └── alt 008..011
+    │       └── 008..011 Terminal "\"x\""
+    └── 017..029 b
+        └── alt 025..028
+            └── 025..028 Terminal "\"y\""

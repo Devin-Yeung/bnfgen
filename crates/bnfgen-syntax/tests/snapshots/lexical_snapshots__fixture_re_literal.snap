@@ -1,14 +1,16 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
-input:
+<input>
 re "[a-z]+";
-
-000..002 Re "re"
-002..003 Whitespace " "
-003..011 Str "\"[a-z]+\""
-011..012 Semi ";"
-012..013 Whitespace "\n"
-errors:
-000..002 UnexpectedToken
-rules:
+</input>
+document
+├── tokens
+│   ├── 000..002 Re "re"
+│   ├── 002..003 Whitespace " "
+│   ├── 003..011 Str "\"[a-z]+\""
+│   ├── 011..012 Semi ";"
+│   └── 012..013 Whitespace "\n"
+├── errors
+│   └── 000..002 UnexpectedToken
+└── rules

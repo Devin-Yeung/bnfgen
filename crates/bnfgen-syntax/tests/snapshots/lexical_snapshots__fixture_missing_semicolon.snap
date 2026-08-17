@@ -1,17 +1,17 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
-input:
-<greeting> ::= "hello"
-[no trailing newline]
-
-000..001 LAngle "<"
-001..009 Id "greeting"
-009..010 RAngle ">"
-010..011 Whitespace " "
-011..014 Def "::="
-014..015 Whitespace " "
-015..022 Str "\"hello\""
-errors:
-022..022 UnexpectedEof
-rules:
+<input>
+<greeting> ::= "hello"</input>
+document
+├── tokens
+│   ├── 000..001 LAngle "<"
+│   ├── 001..009 Id "greeting"
+│   ├── 009..010 RAngle ">"
+│   ├── 010..011 Whitespace " "
+│   ├── 011..014 Def "::="
+│   ├── 014..015 Whitespace " "
+│   └── 015..022 Str "\"hello\""
+├── errors
+│   └── 022..022 UnexpectedEof
+└── rules
