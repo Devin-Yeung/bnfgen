@@ -1,0 +1,67 @@
+// Grammar recognition for the Bnfgen source language.
+//
+// This file owns the LALRPOP grammar; it is generated into a private module
+// and its types never cross the crate interface. Recognition here is pure
+// range collection: actions only package byte ranges into the private
+// records in `crate::records`. No decoding, no validation, no fallible
+// work — those belong downstream (ADR 0003).
+//
+// Slice status (ticket 01): only the untyped rule form is recognized.
+// Typed rule heads, weights, repeat ranges, and regular-expression symbols
+// arrive with ticket 03; recovery productions with ticket 04.
+
+use crate::records::{AlternativeRecord, RuleRecord, SymbolRecord};
+use crate::token::TokenKind;
+
+grammar;
+
+// Bridge the lexer: locations are byte offsets into the retained source.
+// The error type exists only to satisfy LALRPOP's signature — no action in
+// this grammar can fail.
+extern {
+    type Location = usize;
+    type Error = &'static str;
+
+    enum TokenKind {
+        "<" => TokenKind::LAngle,
+        ">" => TokenKind::RAngle,
+        "::=" => TokenKind::Def,
+        "|" => TokenKind::Or,
+        ";" => TokenKind::Semi,
+        "id" => TokenKind::Id,
+        "str" => TokenKind::Str,
+    }
+}
+
+pub Document: Vec<RuleRecord> = <rules: Rule*> => rules;
+
+Rule: RuleRecord = {
+    <l: @L> "<" <nl: @L> <_name: "id"> <nr: @R> ">" <lr: @R> "::=" <alts: Alternatives> ";" <r: @R> =>
+        RuleRecord { span: l..r, lhs: l..lr, name: nl..nr, alts },
+};
+
+// Zero-or-more `|`-separated items, with or without a trailing `|`.
+// Mirrors the legacy grammar's `Or` macro so alternative acceptance does
+// not drift during migration.
+Or<T>: Vec<T> = <mut v:(<T> "|")*> <e:T?> => match e {
+    None => v,
+    Some(e) => {
+        v.push(e);
+        v
+    }
+};
+
+Alternatives: Vec<AlternativeRecord> = Or<Alternative>;
+
+Alternative: AlternativeRecord = {
+    <l: @L> <symbols: Symbol+> <r: @R> =>
+        AlternativeRecord { span: l..r, symbols },
+};
+
+Symbol: SymbolRecord = {
+    <l: @L> "str" <r: @R> =>
+        SymbolRecord::Terminal { span: l..r },
+
+    <l: @L> "<" <nl: @L> <_name: "id"> <nr: @R> ">" <r: @R> =>
+        SymbolRecord::NonTerminal { span: l..r, name: nl..nr },
+};
