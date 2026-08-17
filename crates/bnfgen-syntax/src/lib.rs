@@ -34,12 +34,14 @@
 //!
 //! ## Current state
 //!
-//! This is the first migration slice (ticket 01 of the syntax rewrite):
-//! the untyped rule form `<greeting> ::= "hello" <name>;` is recognized.
-//! Later slices add full lexical retention (invalid input as tokens),
-//! typed heads, weights, repeat ranges and regular expressions, recovery
-//! for broken rules, and cursor-context queries. The temporary strict
-//! lowering onto the legacy models stays outside this crate by design.
+//! This is the second migration slice of the syntax rewrite (tickets 01
+//! and 02): the untyped rule form `<greeting> ::= "hello" <name>;` is
+//! recognized, and the token buffer retains every byte of input — invalid
+//! input and unterminated strings included — as recoverable token kinds.
+//! Later slices add typed heads, weights, repeat ranges and regular
+//! expressions, recovery for broken rules, and cursor-context queries. The
+//! temporary strict lowering onto the legacy models stays outside this
+//! crate by design.
 //!
 //! The governing documents are `.scratch/bnfgen-syntax-rewrite/spec.md`,
 //! `docs/architecture/frontend.md`, and ADRs 0002–0004 under `docs/adr/`.

@@ -31,12 +31,14 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
     let (tokens, mut errors) = lexer::lex(source);
 
     // The significant-token adapter: LALRPOP consumes only grammar-relevant
-    // tokens while trivia stays in the complete buffer (ADR 0003). Lexical
-    // failures were already diverted into `errors`, so this stream is
-    // infallible.
+    // tokens while trivia and retained lexical failures stay in the
+    // complete buffer (ADR 0003). Recovery kinds must not reach the
+    // grammar — the generated parser maps any kind without a production to
+    // `InvalidToken` — so this stream is infallible and carries only
+    // terminals the grammar knows.
     let significant = tokens
         .iter()
-        .filter(|token| !token.kind().is_trivia())
+        .filter(|token| token.kind().is_significant())
         .map(|token| Ok((token.range().start, token.kind(), token.range().end)));
 
     let rules = match crate::parser::DocumentParser::new().parse(significant) {
@@ -72,7 +74,13 @@ fn to_syntax_error(
 
     match error {
         ParseError::InvalidToken { location } => {
-            SyntaxError::new(SyntaxErrorKind::UnrecognizedInput, location..location)
+            // A significant kind the grammar does not map (an `Int` before
+            // ticket 03 wires it in, say): the input *was* recognized as a
+            // token, so this is a grammar rejection, not unrecognized
+            // input — `UnrecognizedInput` belongs to `Invalid` tokens
+            // alone. Ticket 03 gives every significant kind a production,
+            // making this arm unreachable.
+            SyntaxError::new(SyntaxErrorKind::UnexpectedToken, location..location)
         }
         ParseError::UnrecognizedEof { location, .. } => {
             SyntaxError::new(SyntaxErrorKind::UnexpectedEof, location..location)
@@ -110,9 +118,10 @@ impl ParsedDocument {
         &self.source
     }
 
-    /// All tokens in source order — significant tokens and trivia alike.
-    /// A token's text is not stored on it; slice `source()` with the
-    /// token's range, or use [`slice`](Self::slice).
+    /// All tokens in source order — significant tokens, trivia, and
+    /// retained lexical failures alike; together they cover every byte of
+    /// the source. A token's text is not stored on it; slice `source()`
+    /// with the token's range, or use [`slice`](Self::slice).
     pub fn tokens(&self) -> impl Iterator<Item = SyntaxToken> + '_ {
         self.tokens.iter().cloned()
     }

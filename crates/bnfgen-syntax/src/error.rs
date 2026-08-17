@@ -33,10 +33,15 @@ impl SyntaxError {
 /// The structured kind of a syntax error.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SyntaxErrorKind {
-    /// Input that does not match any token rule. In this slice the
-    /// offending text is dropped from the token buffer; ticket 02 retains
-    /// it as recoverable token input instead.
+    /// Input that does not match any token rule. The offending bytes are
+    /// retained in the token buffer as an [`Invalid`](crate::TokenKind)
+    /// token; this error records the failure itself.
     UnrecognizedInput,
+    /// A string literal was left unterminated — its opening quote never
+    /// found a closing quote. The bytes from the opening quote onward are
+    /// retained as an [`UnterminatedStr`](crate::TokenKind) token; this
+    /// error records the failure itself.
+    UnterminatedString,
     /// A well-formed token appeared where the grammar could not accept it.
     UnexpectedToken,
     /// The document ended where the grammar required more input.
