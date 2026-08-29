@@ -1,4 +1,4 @@
-//! Normalized public snapshots of the parse-and-query seam (tickets 01–02).
+//! Normalized public snapshots of the parse-and-query seam (tickets 01–03).
 //!
 //! The renderer below is the spec's "normalized representation": an
 //! eza-style Unicode tree (via `termtree`) of public token kinds and byte
@@ -7,13 +7,12 @@
 //! (decoded `Int(usize)` / `Str(String)` payloads) is what this replaces;
 //! the raw spelling is asserted verbatim here.
 //!
-//! Ticket 03 extends the rule block with construct lines for the typed
-//! forms it adds. Add a new case by dropping a `.bnfgen` file in
-//! `tests/fixtures/`.
+//! The rule block records the raw, ranged forms of every valid construct.
+//! Add a new case by dropping a `.bnfgen` file in `tests/fixtures/`.
 
 mod common;
 
-use bnfgen_syntax::{parse, ParsedDocument, SymbolKind, SyntaxToken};
+use bnfgen_syntax::{parse, NonTerminalSyntax, ParsedDocument, SymbolKind, SyntaxToken};
 use insta::assert_snapshot;
 use termtree::Tree;
 
@@ -51,6 +50,34 @@ fn token_leaf(doc: &ParsedDocument, token: SyntaxToken) -> Tree<String> {
     ))
 }
 
+/// Render the syntax that makes a non-terminal typed or untyped. Keeping
+/// name and type ranges separate proves that callers never need to scan the
+/// bracketed text to recover either fact.
+fn non_terminal_tree(label: &str, non_terminal: NonTerminalSyntax<'_>) -> Tree<String> {
+    let range = non_terminal.range();
+    let mut tree = Tree::new(format!(
+        "{} {label} {}",
+        range_label(range.start, range.end),
+        non_terminal.text(),
+    ));
+
+    let name_range = non_terminal.name_range();
+    tree.push(Tree::new(format!(
+        "name {} {}",
+        range_label(name_range.start, name_range.end),
+        non_terminal.name(),
+    )));
+    if let Some(ty) = non_terminal.ty() {
+        let ty_range = ty.range();
+        tree.push(Tree::new(format!(
+            "type {} {}",
+            range_label(ty_range.start, ty_range.end),
+            ty.text(),
+        )));
+    }
+    tree
+}
+
 /// Public-seam tree: `tokens`, `errors`, and `rules` as siblings under
 /// `document`. Trivia (whitespace, comments) is a token leaf, not a CST
 /// node — there is no generic tree; comments never nest under rules.
@@ -69,34 +96,95 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
 
     let rules = Tree::new("rules".to_owned()).with_leaves(doc.rules().map(|rule| {
         let range = rule.range();
-        Tree::new(format!(
+        let mut rule_tree = Tree::new(format!(
             "{} {}",
             range_label(range.start, range.end),
             rule.name().name(),
-        ))
-        .with_leaves(rule.alternatives().map(|alternative| {
+        ));
+        rule_tree.push(non_terminal_tree("lhs", rule.name()));
+        rule_tree.extend(rule.alternatives().map(|alternative| {
             let range = alternative.range();
-            Tree::new(format!("alt {}", range_label(range.start, range.end))).with_leaves(
-                alternative.symbols().map(|symbol| {
-                    let range = symbol.range();
-                    let label = match symbol.kind() {
-                        SymbolKind::Terminal => format!(
+            let mut alternative_tree =
+                Tree::new(format!("alt {}", range_label(range.start, range.end)));
+            if let Some(weight) = alternative.weight() {
+                let range = weight.range();
+                alternative_tree.push(Tree::new(format!(
+                    "weight {} {}",
+                    range_label(range.start, range.end),
+                    weight.text(),
+                )));
+            }
+            alternative_tree.extend(alternative.symbols().map(|symbol| {
+                let range = symbol.range();
+                match symbol.kind() {
+                    SymbolKind::Terminal => {
+                        let terminal = symbol
+                            .as_terminal()
+                            .expect("Terminal kind has a string-literal view");
+                        Tree::new(format!(
                             "{} Terminal{}",
                             range_label(range.start, range.end),
-                            inline_source(symbol.text()),
-                        ),
-                        SymbolKind::NonTerminal => {
-                            let name = symbol
-                                .as_non_terminal()
-                                .expect("NonTerminal kind has a non-terminal view")
-                                .name();
-                            format!("{} NonTerminal {name}", range_label(range.start, range.end),)
-                        }
-                    };
-                    Tree::new(label)
-                }),
-            )
-        }))
+                            inline_source(terminal.text()),
+                        ))
+                    }
+                    SymbolKind::NonTerminal => non_terminal_tree(
+                        "NonTerminal",
+                        symbol
+                            .as_non_terminal()
+                            .expect("NonTerminal kind has a non-terminal view"),
+                    ),
+                    SymbolKind::Regex => {
+                        let regex = symbol
+                            .as_regex()
+                            .expect("Regex kind has a regular-expression view");
+                        let pattern = regex.pattern();
+                        let pattern_range = pattern.range();
+                        Tree::new(format!(
+                            "{} Regex {}",
+                            range_label(range.start, range.end),
+                            regex.text(),
+                        ))
+                        .with_leaves([Tree::new(format!(
+                            "pattern {} {}",
+                            range_label(pattern_range.start, pattern_range.end),
+                            pattern.text(),
+                        ))])
+                    }
+                }
+            }));
+            if let Some(repeat) = alternative.repeat() {
+                let range = repeat.range();
+                let lower = repeat.lower_bound();
+                let lower_range = lower.range();
+                let mut repeat_tree = Tree::new(format!(
+                    "repeat {} {}",
+                    range_label(range.start, range.end),
+                    repeat.text(),
+                ))
+                .with_leaves([Tree::new(format!(
+                    "lower {} {}",
+                    range_label(lower_range.start, lower_range.end),
+                    lower.text(),
+                ))]);
+                if let Some(comma) = repeat.comma_range() {
+                    repeat_tree.push(Tree::new(format!(
+                        "comma {}",
+                        range_label(comma.start, comma.end),
+                    )));
+                }
+                if let Some(upper) = repeat.upper_bound() {
+                    let range = upper.range();
+                    repeat_tree.push(Tree::new(format!(
+                        "upper {} {}",
+                        range_label(range.start, range.end),
+                        upper.text(),
+                    )));
+                }
+                alternative_tree.push(repeat_tree);
+            }
+            alternative_tree
+        }));
+        rule_tree
     }));
 
     Tree::new("document".to_owned()).with_leaves([tokens, errors, rules])

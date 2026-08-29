@@ -1,0 +1,3 @@
+<Expr: "set"> ::= 10 <Atom: "set"> "U" re("[a-z]+") {1, 5}
+                  | 2 "empty" {3,}
+                  | <Atom> {4};

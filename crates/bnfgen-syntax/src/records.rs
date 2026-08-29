@@ -13,16 +13,15 @@
 
 use std::ops::Range;
 
-/// One recognized rule: `<name> ::= … ;`
+/// One recognized rule: `<name> ::= … ;` or `<name: "type"> ::= … ;`.
 #[derive(Debug)]
 pub(crate) struct RuleRecord {
     /// The whole rule text, from `<` through `;`.
     pub(crate) span: Range<usize>,
-    /// The bracketed left-hand-side form, `<name>` — today the rule's
-    /// opening `<` through its closing `>`.
-    pub(crate) lhs: Range<usize>,
-    /// The identifier inside the left-hand-side angle brackets.
-    pub(crate) name: Range<usize>,
+    /// The bracketed left-hand-side form. The same record shape represents
+    /// declarations and references, so views never reconstruct typed syntax
+    /// by scanning tokens.
+    pub(crate) lhs: NonTerminalRecord,
     /// The `|`-separated alternatives.
     pub(crate) alts: Vec<AlternativeRecord>,
 }
@@ -30,9 +29,35 @@ pub(crate) struct RuleRecord {
 /// One alternative on a rule's right-hand side.
 #[derive(Debug)]
 pub(crate) struct AlternativeRecord {
-    /// From the first symbol to the last symbol of this alternative.
+    /// The whole alternative, including an optional weight and repeat.
     pub(crate) span: Range<usize>,
+    /// Raw integer token before the first symbol, when present.
+    pub(crate) weight: Option<Range<usize>>,
     pub(crate) symbols: Vec<SymbolRecord>,
+    /// The trailing invocation-limit clause, when present.
+    pub(crate) repeat: Option<RepeatRecord>,
+}
+
+/// One `<name>` or `<name: "type">` occurrence.
+#[derive(Debug)]
+pub(crate) struct NonTerminalRecord {
+    pub(crate) span: Range<usize>,
+    pub(crate) name: Range<usize>,
+    /// The raw quoted type lexeme. Decoding belongs to analysis.
+    pub(crate) ty: Option<Range<usize>>,
+}
+
+/// A trailing invocation-limit clause.
+///
+/// These fields describe spelling, not meaning. In particular, `{5}` and
+/// `{5,}` both have no explicit upper token; `comma` distinguishes them so
+/// downstream lowering can apply the legacy semantics without guessing.
+#[derive(Debug)]
+pub(crate) struct RepeatRecord {
+    pub(crate) span: Range<usize>,
+    pub(crate) lower: Range<usize>,
+    pub(crate) comma: Option<Range<usize>>,
+    pub(crate) upper: Option<Range<usize>>,
 }
 
 /// One symbol within an alternative.
@@ -40,9 +65,11 @@ pub(crate) struct AlternativeRecord {
 pub(crate) enum SymbolRecord {
     /// A string literal, kept raw (quotes included, escapes undecoded).
     Terminal { span: Range<usize> },
-    /// A non-terminal reference `<name>`.
-    NonTerminal {
+    /// A typed or untyped non-terminal reference.
+    NonTerminal(NonTerminalRecord),
+    /// `re("pattern")`, kept raw and uncompiled.
+    Regex {
         span: Range<usize>,
-        name: Range<usize>,
+        pattern: Range<usize>,
     },
 }

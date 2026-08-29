@@ -34,13 +34,12 @@
 //!
 //! ## Current state
 //!
-//! This is the second migration slice of the syntax rewrite (tickets 01
-//! and 02): the untyped rule form `<greeting> ::= "hello" <name>;` is
-//! recognized, and the token buffer retains every byte of input — invalid
-//! input and unterminated strings included — as recoverable token kinds.
-//! Later slices add typed heads, weights, repeat ranges and regular
-//! expressions, recovery for broken rules, and cursor-context queries. The
-//! temporary strict lowering onto the legacy models stays outside this
+//! This is the third migration slice of the syntax rewrite (tickets 01–03):
+//! every valid language construct is recognized through typed views, and
+//! the token buffer retains every byte of input — invalid input and
+//! unterminated strings included — as recoverable token kinds. Later slices
+//! add recovery for broken rules, partial facts, and cursor-context queries.
+//! The temporary strict lowering onto the legacy models stays outside this
 //! crate by design.
 //!
 //! The governing documents are `.scratch/bnfgen-syntax-rewrite/spec.md`,
@@ -59,7 +58,10 @@ lalrpop_mod!(parser);
 pub use document::ParsedDocument;
 pub use error::{SyntaxError, SyntaxErrorKind};
 pub use token::{SyntaxToken, TokenKind};
-pub use views::{AlternativeSyntax, NonTerminalSyntax, RuleSyntax, SymbolKind, SymbolSyntax};
+pub use views::{
+    AlternativeSyntax, IntegerSyntax, NonTerminalSyntax, RegexSyntax, RepeatSyntax, RuleSyntax,
+    StringLiteralSyntax, SymbolKind, SymbolSyntax,
+};
 
 /// Parse source text into a [`ParsedDocument`].
 ///

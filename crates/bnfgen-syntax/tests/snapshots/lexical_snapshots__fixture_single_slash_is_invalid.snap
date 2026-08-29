@@ -30,8 +30,12 @@ document
 │   └── 013..014 UnrecognizedInput
 └── rules
     ├── 000..012 a
+    │   ├── 000..003 lhs <a>
+    │   │   └── name 001..002 a
     │   └── alt 008..011
     │       └── 008..011 Terminal "x"
     └── 015..027 b
+        ├── 015..018 lhs <b>
+        │   └── name 016..017 b
         └── alt 023..026
             └── 023..026 Terminal "y"

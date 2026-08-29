@@ -26,8 +26,11 @@ document
 ├── errors
 └── rules
     └── 000..038 greeting
+        ├── 000..010 lhs <greeting>
+        │   └── name 001..009 greeting
         ├── alt 015..029
         │   ├── 015..022 Terminal "hello"
-        │   └── 023..029 NonTerminal name
+        │   └── 023..029 NonTerminal <name>
+        │       └── name 024..028 name
         └── alt 032..037
             └── 032..037 Terminal "bye"

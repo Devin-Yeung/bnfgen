@@ -18,5 +18,7 @@ document
 ├── errors
 └── rules
     └── 000..024 a
+        ├── 000..003 lhs <a>
+        │   └── name 001..002 a
         └── alt 008..023
             └── 008..023 Terminal "héllo wörld"
