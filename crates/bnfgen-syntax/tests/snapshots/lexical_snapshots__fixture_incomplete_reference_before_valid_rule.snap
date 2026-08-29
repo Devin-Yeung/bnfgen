@@ -2,7 +2,7 @@
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 ---
 <input>
-<broken> ::= "bad" @;
+<broken> ::= <target;
 <good> ::= "ok";
 </input>
 document
@@ -13,9 +13,8 @@ document
 │   ├── 008..009 Whitespace  
 │   ├── 009..012 Def ::=
 │   ├── 012..013 Whitespace  
-│   ├── 013..018 Str "bad"
-│   ├── 018..019 Whitespace  
-│   ├── 019..020 Invalid @
+│   ├── 013..014 LAngle <
+│   ├── 014..020 Id target
 │   ├── 020..021 Semi ;
 │   ├── 021..022 Whitespace
 │   ├── 022..023 LAngle <
@@ -28,10 +27,20 @@ document
 │   ├── 037..038 Semi ;
 │   └── 038..039 Whitespace
 ├── errors
-│   └── 019..020 UnrecognizedInput
+│   └── 020..021 UnexpectedToken
 ├── recovery
-│   └── 000..021 <broken> ::= "bad" @;
+│   └── 000..021 <broken> ::= <target;
 └── rules
+    ├── 000..021 broken
+    │   ├── 000..008 lhs <broken>
+    │   │   ├── name 001..007 broken
+    │   │   └── closing 007..008
+    │   ├── definition 009..012
+    │   ├── alt 013..020
+    │   │   └── 013..020 NonTerminal <target
+    │   │       ├── name 014..020 target
+    │   │       └── closing <missing>
+    │   └── terminator 020..021
     └── 022..038 good
         ├── 022..028 lhs <good>
         │   ├── name 023..027 good

@@ -67,10 +67,13 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
     let significant = tokens
         .iter()
         .filter(|token| token.kind().is_significant())
-        .map(|token| Ok((token.range().start, token.kind(), token.range().end)));
+        .map(|token| (token.range().start, token.kind(), token.range().end))
+        .collect::<Vec<_>>();
 
     let mut rules = Vec::new();
-    match crate::parser::DocumentParser::new().parse(significant) {
+    match crate::parser::DocumentParser::new()
+        .parse(significant.iter().cloned().map(Ok::<_, &'static str>))
+    {
         Ok(events) => {
             for event in events {
                 match event {
@@ -79,6 +82,14 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
                     }
                     ParseEvent::Rule(rule) => rules.push(rule),
                     ParseEvent::Recovery { error, range } => {
+                        let partial_tokens = significant
+                            .iter()
+                            .filter(|(start, _, end)| *start < range.end && range.start < *end)
+                            .cloned()
+                            .collect();
+                        if let Some(rule) = parse_partial_rule(partial_tokens) {
+                            rules.push(rule);
+                        }
                         errors.push(error);
                         recovery_ranges.push(range);
                     }
@@ -90,6 +101,9 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
         // range is also the only truthful recovery region in that case.
         Err(error) => {
             let error = to_syntax_error(error);
+            if let Some(rule) = parse_partial_rule(significant) {
+                rules.push(rule);
+            }
             recovery_ranges.push(error.range());
             errors.push(error);
         }
@@ -103,6 +117,18 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
         recovery_ranges,
         rules,
     }
+}
+
+/// Recognize truthful facts from one range that the strict grammar rejected.
+///
+/// Synchronization and diagnostics still come from the main LALRPOP parser.
+/// This second generated entry point sees only the isolated token range and
+/// can therefore accept editing prefixes without making the strict grammar
+/// ambiguous or teaching the document layer source-language token patterns.
+fn parse_partial_rule(tokens: Vec<(usize, TokenKind, usize)>) -> Option<RuleRecord> {
+    crate::partial_parser::PartialRuleParser::new()
+        .parse(tokens.into_iter().map(Ok::<_, &'static str>))
+        .ok()
 }
 
 /// Whether a grammar-recognized rule overlaps retained lexical failure.

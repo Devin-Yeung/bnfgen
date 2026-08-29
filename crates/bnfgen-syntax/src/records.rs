@@ -6,24 +6,28 @@
 //! the public surface wraps them in the borrowing views in [`crate::views`],
 //! and storage may change without breaking callers.
 //!
-//! Children are non-optional in this slice because a record only exists once
-//! the grammar has fully recognized it. Future recovery will admit partially
-//! recognized rules; their records will hold `Option` children and the views
-//! will surface those as `None`.
+//! A record describes only syntax that was actually observed. Required
+//! children are therefore optional: recovery may know that a rule or nested
+//! form has begun without inventing the delimiter or value that would finish
+//! it. No missing child is represented by a zero-width range.
 
 use std::ops::Range;
 
 /// One recognized rule: `<name> ::= … ;` or `<name: "type"> ::= … ;`.
 #[derive(Debug)]
 pub(crate) struct RuleRecord {
-    /// The whole rule text, from `<` through `;`.
+    /// The observed rule text. A complete rule runs from `<` through `;`.
     pub(crate) span: Range<usize>,
     /// The bracketed left-hand-side form. The same record shape represents
     /// declarations and references, so views never reconstruct typed syntax
     /// by scanning tokens.
-    pub(crate) lhs: NonTerminalRecord,
+    pub(crate) lhs: Option<NonTerminalRecord>,
+    /// The `::=` token, when written.
+    pub(crate) definition: Option<Range<usize>>,
     /// The `|`-separated alternatives.
     pub(crate) alts: Vec<AlternativeRecord>,
+    /// The terminating `;`, when written.
+    pub(crate) terminator: Option<Range<usize>>,
 }
 
 /// One alternative on a rule's right-hand side.
@@ -42,9 +46,23 @@ pub(crate) struct AlternativeRecord {
 #[derive(Debug)]
 pub(crate) struct NonTerminalRecord {
     pub(crate) span: Range<usize>,
-    pub(crate) name: Range<usize>,
+    pub(crate) opening: Range<usize>,
+    pub(crate) name: Option<Range<usize>>,
+    pub(crate) type_separator: Option<Range<usize>>,
     /// The raw quoted type lexeme. Decoding belongs to analysis.
-    pub(crate) ty: Option<Range<usize>>,
+    pub(crate) ty: Option<StringRecord>,
+    pub(crate) closing: Option<Range<usize>>,
+}
+
+/// A complete or unterminated quoted string.
+///
+/// The lexer already decides whether the closing quote exists. Keeping that
+/// fact beside the range lets terminals, types, and regex patterns share one
+/// truthful representation without decoding their contents.
+#[derive(Debug)]
+pub(crate) struct StringRecord {
+    pub(crate) span: Range<usize>,
+    pub(crate) terminated: bool,
 }
 
 /// A trailing invocation-limit clause.
@@ -55,21 +73,29 @@ pub(crate) struct NonTerminalRecord {
 #[derive(Debug)]
 pub(crate) struct RepeatRecord {
     pub(crate) span: Range<usize>,
-    pub(crate) lower: Range<usize>,
+    pub(crate) opening: Range<usize>,
+    pub(crate) lower: Option<Range<usize>>,
     pub(crate) comma: Option<Range<usize>>,
     pub(crate) upper: Option<Range<usize>>,
+    pub(crate) closing: Option<Range<usize>>,
+}
+
+/// A complete or partially typed `re("pattern")` symbol.
+#[derive(Debug)]
+pub(crate) struct RegexRecord {
+    pub(crate) span: Range<usize>,
+    pub(crate) opening_parenthesis: Option<Range<usize>>,
+    pub(crate) pattern: Option<StringRecord>,
+    pub(crate) closing_parenthesis: Option<Range<usize>>,
 }
 
 /// One symbol within an alternative.
 #[derive(Debug)]
 pub(crate) enum SymbolRecord {
     /// A string literal, kept raw (quotes included, escapes undecoded).
-    Terminal { span: Range<usize> },
+    Terminal(StringRecord),
     /// A typed or untyped non-terminal reference.
     NonTerminal(NonTerminalRecord),
     /// `re("pattern")`, kept raw and uncompiled.
-    Regex {
-        span: Range<usize>,
-        pattern: Range<usize>,
-    },
+    Regex(RegexRecord),
 }

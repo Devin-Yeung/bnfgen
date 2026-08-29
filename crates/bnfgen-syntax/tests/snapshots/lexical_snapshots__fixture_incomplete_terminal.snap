@@ -1,0 +1,29 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+<input>
+<entry> ::= "value
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle <
+│   ├── 001..006 Id entry
+│   ├── 006..007 RAngle >
+│   ├── 007..008 Whitespace  
+│   ├── 008..011 Def ::=
+│   ├── 011..012 Whitespace  
+│   └── 012..019 UnterminatedStr
+├── errors
+│   ├── 012..019 UnterminatedString
+│   └── 012..019 UnexpectedToken
+├── recovery
+│   └── 000..019
+└── rules
+    └── 000..019 entry
+        ├── 000..007 lhs <entry>
+        │   ├── name 001..006 entry
+        │   └── closing 006..007
+        ├── definition 008..011
+        ├── alt 012..019
+        │   └── 012..019 Terminal <unterminated>
+        └── terminator <missing>

@@ -4,14 +4,15 @@
 //! never retain syntax independently of the source it came from.
 //! Every accessor returns either raw text sliced from the document or a
 //! UTF-8 byte range — never a decoded or validated value. Accessors for
-//! required children become `Option` once recovery can produce partially
-//! recognized rules; today a view exists only for fully recognized syntax.
+//! required children are `Option` because recovery can publish a rule-shaped
+//! prefix without inventing the syntax that would complete it.
 
 use std::ops::Range;
 
 use crate::document::ParsedDocument;
 use crate::records::{
-    AlternativeRecord, NonTerminalRecord, RepeatRecord, RuleRecord, SymbolRecord,
+    AlternativeRecord, NonTerminalRecord, RegexRecord, RepeatRecord, RuleRecord, StringRecord,
+    SymbolRecord,
 };
 
 /// A recognized rule: its left-hand side, alternatives, and source ranges.
@@ -36,9 +37,17 @@ impl<'a> RuleSyntax<'a> {
         self.doc.slice(self.record.span.clone())
     }
 
-    /// The left-hand-side non-terminal, e.g. `<greeting>`.
-    pub fn name(&self) -> NonTerminalSyntax<'a> {
-        NonTerminalSyntax::new(self.doc, &self.record.lhs)
+    /// The left-hand-side non-terminal, when enough of one was recognized.
+    pub fn lhs(&self) -> Option<NonTerminalSyntax<'a>> {
+        self.record
+            .lhs
+            .as_ref()
+            .map(|record| NonTerminalSyntax::new(self.doc, record))
+    }
+
+    /// The written `::=` token, absent while a declaration is incomplete.
+    pub fn definition_range(&self) -> Option<Range<usize>> {
+        self.record.definition.clone()
     }
 
     /// The `|`-separated alternatives, in source order.
@@ -48,6 +57,11 @@ impl<'a> RuleSyntax<'a> {
             .alts
             .iter()
             .map(move |record| AlternativeSyntax::new(doc, record))
+    }
+
+    /// The written `;`, absent while a rule is incomplete.
+    pub fn terminator_range(&self) -> Option<Range<usize>> {
+        self.record.terminator.clone()
     }
 }
 
@@ -77,25 +91,46 @@ impl<'a> NonTerminalSyntax<'a> {
         self.doc.slice(self.record.span.clone())
     }
 
+    /// The opening `<` that establishes this non-terminal-shaped fact.
+    pub fn opening_delimiter_range(&self) -> Range<usize> {
+        self.record.opening.clone()
+    }
+
     /// The bare identifier's source range.
-    pub fn name_range(&self) -> Range<usize> {
+    pub fn name_range(&self) -> Option<Range<usize>> {
         self.record.name.clone()
     }
 
-    /// The identifier's raw spelling.
-    pub fn name(&self) -> &'a str {
-        self.doc.slice(self.record.name.clone())
+    /// The identifier's raw spelling, absent for a bare opening `<`.
+    pub fn name(&self) -> Option<&'a str> {
+        self.record
+            .name
+            .as_ref()
+            .map(|range| self.doc.slice(range.clone()))
+    }
+
+    /// The written `:` before a type annotation.
+    ///
+    /// This distinguishes an untyped occurrence from one whose type string
+    /// has not been written yet.
+    pub fn type_separator_range(&self) -> Option<Range<usize>> {
+        self.record.type_separator.clone()
     }
 
     /// The quoted type annotation when this occurrence is typed.
     ///
     /// The returned literal includes its quotes and escapes. Syntax does not
     /// decode it or decide what type identity it denotes.
-    pub fn ty(&self) -> Option<StringLiteralSyntax<'a>> {
+    pub fn ty(&self) -> Option<StringSyntax<'a>> {
         self.record
             .ty
             .as_ref()
-            .map(|span| StringLiteralSyntax::new(self.doc, span.clone()))
+            .map(|record| StringSyntax::new(self.doc, record))
+    }
+
+    /// The written `>`, absent while the occurrence is incomplete.
+    pub fn closing_delimiter_range(&self) -> Option<Range<usize>> {
+        self.record.closing.clone()
     }
 }
 
@@ -172,9 +207,9 @@ impl<'a> SymbolSyntax<'a> {
     /// The symbol's source range.
     pub fn range(&self) -> Range<usize> {
         match self.record {
-            SymbolRecord::Terminal { span } => span.clone(),
+            SymbolRecord::Terminal(record) => record.span.clone(),
             SymbolRecord::NonTerminal(record) => record.span.clone(),
-            SymbolRecord::Regex { span, .. } => span.clone(),
+            SymbolRecord::Regex(record) => record.span.clone(),
         }
     }
 
@@ -186,19 +221,17 @@ impl<'a> SymbolSyntax<'a> {
 
     pub fn kind(&self) -> SymbolKind {
         match self.record {
-            SymbolRecord::Terminal { .. } => SymbolKind::Terminal,
+            SymbolRecord::Terminal(_) => SymbolKind::Terminal,
             SymbolRecord::NonTerminal(_) => SymbolKind::NonTerminal,
-            SymbolRecord::Regex { .. } => SymbolKind::Regex,
+            SymbolRecord::Regex(_) => SymbolKind::Regex,
         }
     }
 
     /// The raw quoted literal when this symbol is a terminal.
-    pub fn as_terminal(&self) -> Option<StringLiteralSyntax<'a>> {
+    pub fn as_terminal(&self) -> Option<StringSyntax<'a>> {
         match self.record {
-            SymbolRecord::Terminal { span } => {
-                Some(StringLiteralSyntax::new(self.doc, span.clone()))
-            }
-            SymbolRecord::NonTerminal(_) | SymbolRecord::Regex { .. } => None,
+            SymbolRecord::Terminal(record) => Some(StringSyntax::new(self.doc, record)),
+            SymbolRecord::NonTerminal(_) | SymbolRecord::Regex(_) => None,
         }
     }
 
@@ -206,42 +239,46 @@ impl<'a> SymbolSyntax<'a> {
     pub fn as_non_terminal(&self) -> Option<NonTerminalSyntax<'a>> {
         match self.record {
             SymbolRecord::NonTerminal(record) => Some(NonTerminalSyntax::new(self.doc, record)),
-            SymbolRecord::Terminal { .. } | SymbolRecord::Regex { .. } => None,
+            SymbolRecord::Terminal(_) | SymbolRecord::Regex(_) => None,
         }
     }
 
     /// The regular-expression form when this symbol is `re("pattern")`.
     pub fn as_regex(&self) -> Option<RegexSyntax<'a>> {
         match self.record {
-            SymbolRecord::Regex { span, pattern } => Some(RegexSyntax {
-                doc: self.doc,
-                span: span.clone(),
-                pattern: pattern.clone(),
-            }),
-            SymbolRecord::Terminal { .. } | SymbolRecord::NonTerminal(_) => None,
+            SymbolRecord::Regex(record) => Some(RegexSyntax::new(self.doc, record)),
+            SymbolRecord::Terminal(_) | SymbolRecord::NonTerminal(_) => None,
         }
     }
 }
 
-/// A raw quoted string token used as a terminal, type, or regex pattern.
+/// Raw quoted string syntax used as a terminal, type, or regex pattern.
+///
+/// The view also represents a string whose closing quote has not been typed;
+/// callers get the observed text and can test termination without decoding it.
 #[derive(Debug, Clone)]
-pub struct StringLiteralSyntax<'a> {
+pub struct StringSyntax<'a> {
     doc: &'a ParsedDocument,
-    span: Range<usize>,
+    record: &'a StringRecord,
 }
 
-impl<'a> StringLiteralSyntax<'a> {
-    fn new(doc: &'a ParsedDocument, span: Range<usize>) -> Self {
-        Self { doc, span }
+impl<'a> StringSyntax<'a> {
+    fn new(doc: &'a ParsedDocument, record: &'a StringRecord) -> Self {
+        Self { doc, record }
     }
 
     pub fn range(&self) -> Range<usize> {
-        self.span.clone()
+        self.record.span.clone()
     }
 
     /// Exact source spelling, including quotes and undecoded escapes.
     pub fn text(&self) -> &'a str {
-        self.doc.slice(self.span.clone())
+        self.doc.slice(self.record.span.clone())
+    }
+
+    /// Whether the lexer observed a closing quote.
+    pub fn is_terminated(&self) -> bool {
+        self.record.terminated
     }
 }
 
@@ -287,8 +324,16 @@ impl<'a> RepeatSyntax<'a> {
         self.doc.slice(self.record.span.clone())
     }
 
-    pub fn lower_bound(&self) -> IntegerSyntax<'a> {
-        IntegerSyntax::new(self.doc, self.record.lower.clone())
+    /// The opening `{` that establishes this repeat-shaped fact.
+    pub fn opening_delimiter_range(&self) -> Range<usize> {
+        self.record.opening.clone()
+    }
+
+    pub fn lower_bound(&self) -> Option<IntegerSyntax<'a>> {
+        self.record
+            .lower
+            .as_ref()
+            .map(|span| IntegerSyntax::new(self.doc, span.clone()))
     }
 
     /// The comma distinguishes exact `{n}` from open `{n,}` syntax.
@@ -303,27 +348,48 @@ impl<'a> RepeatSyntax<'a> {
             .as_ref()
             .map(|span| IntegerSyntax::new(self.doc, span.clone()))
     }
+
+    /// The written `}`, absent while the repeat is incomplete.
+    pub fn closing_delimiter_range(&self) -> Option<Range<usize>> {
+        self.record.closing.clone()
+    }
 }
 
 /// Raw syntax for a regular-expression symbol, `re("pattern")`.
 #[derive(Debug, Clone)]
 pub struct RegexSyntax<'a> {
     doc: &'a ParsedDocument,
-    span: Range<usize>,
-    pattern: Range<usize>,
+    record: &'a RegexRecord,
 }
 
 impl<'a> RegexSyntax<'a> {
+    fn new(doc: &'a ParsedDocument, record: &'a RegexRecord) -> Self {
+        Self { doc, record }
+    }
+
     pub fn range(&self) -> Range<usize> {
-        self.span.clone()
+        self.record.span.clone()
     }
 
     pub fn text(&self) -> &'a str {
-        self.doc.slice(self.span.clone())
+        self.doc.slice(self.record.span.clone())
     }
 
-    /// The quoted, uncompiled regex pattern.
-    pub fn pattern(&self) -> StringLiteralSyntax<'a> {
-        StringLiteralSyntax::new(self.doc, self.pattern.clone())
+    /// The written `(`, absent after a bare `re` prefix.
+    pub fn opening_parenthesis_range(&self) -> Option<Range<usize>> {
+        self.record.opening_parenthesis.clone()
+    }
+
+    /// The raw, uncompiled regex pattern when one has begun.
+    pub fn pattern(&self) -> Option<StringSyntax<'a>> {
+        self.record
+            .pattern
+            .as_ref()
+            .map(|record| StringSyntax::new(self.doc, record))
+    }
+
+    /// The written `)`, absent while the regex form is incomplete.
+    pub fn closing_parenthesis_range(&self) -> Option<Range<usize>> {
+        self.record.closing_parenthesis.clone()
     }
 }

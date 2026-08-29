@@ -20,6 +20,9 @@ document
 └── rules
     └── 000..012 a
         ├── 000..003 lhs <a>
-        │   └── name 001..002 a
-        └── alt 008..011
-            └── 008..011 Terminal "x"
+        │   ├── name 001..002 a
+        │   └── closing 002..003
+        ├── definition 004..007
+        ├── alt 008..011
+        │   └── 008..011 Terminal "x"
+        └── terminator 011..012

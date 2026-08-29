@@ -28,10 +28,14 @@ document
 └── rules
     └── 000..038 greeting
         ├── 000..010 lhs <greeting>
-        │   └── name 001..009 greeting
+        │   ├── name 001..009 greeting
+        │   └── closing 009..010
+        ├── definition 011..014
         ├── alt 015..029
         │   ├── 015..022 Terminal "hello"
         │   └── 023..029 NonTerminal <name>
-        │       └── name 024..028 name
-        └── alt 032..037
-            └── 032..037 Terminal "bye"
+        │       ├── name 024..028 name
+        │       └── closing 028..029
+        ├── alt 032..037
+        │   └── 032..037 Terminal "bye"
+        └── terminator 037..038

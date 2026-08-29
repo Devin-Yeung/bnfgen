@@ -24,13 +24,23 @@ document
 │   └── 021..026 UnterminatedStr "open
 ├── errors
 │   ├── 021..026 UnterminatedString
-│   └── 020..020 UnexpectedEof
+│   └── 021..026 UnexpectedToken
 ├── recovery
-│   ├── 013..020 <b> ::=
-│   └── 021..026 "open
+│   └── 013..026 <b> ::= "open
 └── rules
-    └── 000..012 a
-        ├── 000..003 lhs <a>
-        │   └── name 001..002 a
-        └── alt 008..011
-            └── 008..011 Terminal "x"
+    ├── 000..012 a
+    │   ├── 000..003 lhs <a>
+    │   │   ├── name 001..002 a
+    │   │   └── closing 002..003
+    │   ├── definition 004..007
+    │   ├── alt 008..011
+    │   │   └── 008..011 Terminal "x"
+    │   └── terminator 011..012
+    └── 013..026 b
+        ├── 013..016 lhs <b>
+        │   ├── name 014..015 b
+        │   └── closing 015..016
+        ├── definition 017..020
+        ├── alt 021..026
+        │   └── 021..026 Terminal "open <unterminated>
+        └── terminator <missing>

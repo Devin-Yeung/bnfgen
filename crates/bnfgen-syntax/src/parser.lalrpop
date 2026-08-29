@@ -11,7 +11,8 @@
 // synchronize broken rules at a grammar-supported continuation.
 
 use crate::records::{
-    AlternativeRecord, NonTerminalRecord, RepeatRecord, RuleRecord, SymbolRecord,
+    AlternativeRecord, NonTerminalRecord, RegexRecord, RepeatRecord, RuleRecord, StringRecord,
+    SymbolRecord,
 };
 use crate::document::ParseEvent;
 use crate::token::TokenKind;
@@ -41,6 +42,7 @@ extern {
         "re" => TokenKind::Re,
         "id" => TokenKind::Id,
         "str" => TokenKind::Str,
+        "unterminated str" => TokenKind::UnterminatedStr,
         "int" => TokenKind::Int,
     }
 }
@@ -48,19 +50,44 @@ extern {
 pub Document: Vec<ParseEvent> = <rules: Rule*> => rules;
 
 Rule: ParseEvent = {
-    <l: @L> <lhs: NonTerminal> "::=" <alts: Alternatives> ";" <r: @R> =>
-        ParseEvent::Rule(RuleRecord { span: l..r, lhs, alts }),
+    <l: @L>
+    <lhs: NonTerminal>
+    <dl: @L> "::=" <dr: @R>
+    <alts: Alternatives>
+    <sl: @L> ";" <sr: @R>
+    <r: @R> => ParseEvent::Rule(RuleRecord {
+        span: l..r,
+        lhs: Some(lhs),
+        definition: Some(dl..dr),
+        alts,
+        terminator: Some(sl..sr),
+    }),
 
     <l: @L> <recovery: !> <r: @R> =>
         ParseEvent::recovered(recovery, l..r),
 };
 
 NonTerminal: NonTerminalRecord = {
-    <l: @L> "<" <nl: @L> "id" <nr: @R> ">" <r: @R> =>
-        NonTerminalRecord { span: l..r, name: nl..nr, ty: None },
+    <l: @L> <ol: @L> "<" <or: @R> <nl: @L> "id" <nr: @R>
+    <cl: @L> ">" <cr: @R> <r: @R> => NonTerminalRecord {
+        span: l..r,
+        opening: ol..or,
+        name: Some(nl..nr),
+        type_separator: None,
+        ty: None,
+        closing: Some(cl..cr),
+    },
 
-    <l: @L> "<" <nl: @L> "id" <nr: @R> ":" <tl: @L> "str" <tr: @R> ">" <r: @R> =>
-        NonTerminalRecord { span: l..r, name: nl..nr, ty: Some(tl..tr) },
+    <l: @L> <ol: @L> "<" <or: @R> <nl: @L> "id" <nr: @R>
+    <tl: @L> ":" <tr: @R> <ty: String>
+    <cl: @L> ">" <cr: @R> <r: @R> => NonTerminalRecord {
+        span: l..r,
+        opening: ol..or,
+        name: Some(nl..nr),
+        type_separator: Some(tl..tr),
+        ty: Some(ty),
+        closing: Some(cl..cr),
+    },
 };
 
 // Zero-or-more `|`-separated items, with or without a trailing `|`.
@@ -83,20 +110,44 @@ Alternative: AlternativeRecord = {
 
 Integer: Range<usize> = <l: @L> "int" <r: @R> => l..r;
 
-Repeat: RepeatRecord = {
-    <l: @L> "{" <lower: Integer> "}" <r: @R> =>
-        RepeatRecord { span: l..r, lower, comma: None, upper: None },
+String: StringRecord = <l: @L> "str" <r: @R> => StringRecord {
+    span: l..r,
+    terminated: true,
+};
 
-    <l: @L> "{" <lower: Integer> <cl: @L> "," <cr: @R> <upper: Integer?> "}" <r: @R> =>
-        RepeatRecord { span: l..r, lower, comma: Some(cl..cr), upper },
+Repeat: RepeatRecord = {
+    <l: @L> <ol: @L> "{" <or: @R> <lower: Integer>
+    <cl: @L> "}" <cr: @R> <r: @R> => RepeatRecord {
+        span: l..r,
+        opening: ol..or,
+        lower: Some(lower),
+        comma: None,
+        upper: None,
+        closing: Some(cl..cr),
+    },
+
+    <l: @L> <ol: @L> "{" <or: @R> <lower: Integer>
+    <ml: @L> "," <mr: @R> <upper: Integer?>
+    <cl: @L> "}" <cr: @R> <r: @R> => RepeatRecord {
+        span: l..r,
+        opening: ol..or,
+        lower: Some(lower),
+        comma: Some(ml..mr),
+        upper,
+        closing: Some(cl..cr),
+    },
 };
 
 Symbol: SymbolRecord = {
-    <l: @L> "str" <r: @R> =>
-        SymbolRecord::Terminal { span: l..r },
+    <string: String> => SymbolRecord::Terminal(string),
 
     <non_terminal: NonTerminal> => SymbolRecord::NonTerminal(non_terminal),
 
-    <l: @L> "re" "(" <pl: @L> "str" <pr: @R> ")" <r: @R> =>
-        SymbolRecord::Regex { span: l..r, pattern: pl..pr },
+    <l: @L> "re" <ol: @L> "(" <or: @R> <pattern: String>
+    <cl: @L> ")" <cr: @R> <r: @R> => SymbolRecord::Regex(RegexRecord {
+        span: l..r,
+        opening_parenthesis: Some(ol..or),
+        pattern: Some(pattern),
+        closing_parenthesis: Some(cl..cr),
+    }),
 };

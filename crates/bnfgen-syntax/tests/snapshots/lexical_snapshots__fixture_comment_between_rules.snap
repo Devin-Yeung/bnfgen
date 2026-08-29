@@ -32,11 +32,17 @@ document
 └── rules
     ├── 000..012 a
     │   ├── 000..003 lhs <a>
-    │   │   └── name 001..002 a
-    │   └── alt 008..011
-    │       └── 008..011 Terminal "x"
+    │   │   ├── name 001..002 a
+    │   │   └── closing 002..003
+    │   ├── definition 004..007
+    │   ├── alt 008..011
+    │   │   └── 008..011 Terminal "x"
+    │   └── terminator 011..012
     └── 025..037 b
         ├── 025..028 lhs <b>
-        │   └── name 026..027 b
-        └── alt 033..036
-            └── 033..036 Terminal "y"
+        │   ├── name 026..027 b
+        │   └── closing 027..028
+        ├── definition 029..032
+        ├── alt 033..036
+        │   └── 033..036 Terminal "y"
+        └── terminator 036..037

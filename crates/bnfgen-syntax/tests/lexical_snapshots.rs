@@ -61,19 +61,45 @@ fn non_terminal_tree(label: &str, non_terminal: NonTerminalSyntax<'_>) -> Tree<S
         non_terminal.text(),
     ));
 
-    let name_range = non_terminal.name_range();
-    tree.push(Tree::new(format!(
-        "name {} {}",
-        range_label(name_range.start, name_range.end),
-        non_terminal.name(),
-    )));
+    match (non_terminal.name_range(), non_terminal.name()) {
+        (Some(name_range), Some(name)) => {
+            tree.push(Tree::new(format!(
+                "name {} {}",
+                range_label(name_range.start, name_range.end),
+                name,
+            )));
+        }
+        (None, None) => {
+            tree.push(Tree::new("name <missing>".to_owned()));
+        }
+        _ => unreachable!("name range and text come from the same optional record"),
+    }
+    if let Some(separator) = non_terminal.type_separator_range() {
+        tree.push(Tree::new(format!(
+            "type-separator {}",
+            range_label(separator.start, separator.end),
+        )));
+    }
     if let Some(ty) = non_terminal.ty() {
         let ty_range = ty.range();
         tree.push(Tree::new(format!(
-            "type {} {}",
+            "type {} {}{}",
             range_label(ty_range.start, ty_range.end),
             ty.text(),
+            if ty.is_terminated() {
+                ""
+            } else {
+                " <unterminated>"
+            },
         )));
+    }
+    if let Some(closing) = non_terminal.closing_delimiter_range() {
+        tree.push(Tree::new(format!(
+            "closing {}",
+            range_label(closing.start, closing.end),
+        )));
+    } else {
+        tree.push(Tree::new("closing <missing>".to_owned()));
     }
     tree
 }
@@ -105,12 +131,21 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
 
     let rules = Tree::new("rules".to_owned()).with_leaves(doc.rules().map(|rule| {
         let range = rule.range();
-        let mut rule_tree = Tree::new(format!(
-            "{} {}",
-            range_label(range.start, range.end),
-            rule.name().name(),
-        ));
-        rule_tree.push(non_terminal_tree("lhs", rule.name()));
+        let name = rule.lhs().and_then(|lhs| lhs.name()).unwrap_or("<missing>");
+        let mut rule_tree = Tree::new(format!("{} {}", range_label(range.start, range.end), name,));
+        if let Some(lhs) = rule.lhs() {
+            rule_tree.push(non_terminal_tree("lhs", lhs));
+        } else {
+            rule_tree.push(Tree::new("lhs <missing>".to_owned()));
+        }
+        if let Some(definition) = rule.definition_range() {
+            rule_tree.push(Tree::new(format!(
+                "definition {}",
+                range_label(definition.start, definition.end),
+            )));
+        } else {
+            rule_tree.push(Tree::new("definition <missing>".to_owned()));
+        }
         rule_tree.extend(rule.alternatives().map(|alternative| {
             let range = alternative.range();
             let mut alternative_tree =
@@ -131,9 +166,14 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
                             .as_terminal()
                             .expect("Terminal kind has a string-literal view");
                         Tree::new(format!(
-                            "{} Terminal{}",
+                            "{} Terminal{}{}",
                             range_label(range.start, range.end),
                             inline_source(terminal.text()),
+                            if terminal.is_terminated() {
+                                ""
+                            } else {
+                                " <unterminated>"
+                            },
                         ))
                     }
                     SymbolKind::NonTerminal => non_terminal_tree(
@@ -146,35 +186,63 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
                         let regex = symbol
                             .as_regex()
                             .expect("Regex kind has a regular-expression view");
-                        let pattern = regex.pattern();
-                        let pattern_range = pattern.range();
-                        Tree::new(format!(
+                        let mut regex_tree = Tree::new(format!(
                             "{} Regex {}",
                             range_label(range.start, range.end),
                             regex.text(),
-                        ))
-                        .with_leaves([Tree::new(format!(
-                            "pattern {} {}",
-                            range_label(pattern_range.start, pattern_range.end),
-                            pattern.text(),
-                        ))])
+                        ));
+                        if let Some(opening) = regex.opening_parenthesis_range() {
+                            regex_tree.push(Tree::new(format!(
+                                "opening-parenthesis {}",
+                                range_label(opening.start, opening.end),
+                            )));
+                        } else {
+                            regex_tree.push(Tree::new("opening-parenthesis <missing>".to_owned()));
+                        }
+                        if let Some(pattern) = regex.pattern() {
+                            let pattern_range = pattern.range();
+                            regex_tree.push(Tree::new(format!(
+                                "pattern {} {}{}",
+                                range_label(pattern_range.start, pattern_range.end),
+                                pattern.text(),
+                                if pattern.is_terminated() {
+                                    ""
+                                } else {
+                                    " <unterminated>"
+                                },
+                            )));
+                        } else {
+                            regex_tree.push(Tree::new("pattern <missing>".to_owned()));
+                        }
+                        if let Some(closing) = regex.closing_parenthesis_range() {
+                            regex_tree.push(Tree::new(format!(
+                                "closing-parenthesis {}",
+                                range_label(closing.start, closing.end),
+                            )));
+                        } else {
+                            regex_tree.push(Tree::new("closing-parenthesis <missing>".to_owned()));
+                        }
+                        regex_tree
                     }
                 }
             }));
             if let Some(repeat) = alternative.repeat() {
                 let range = repeat.range();
-                let lower = repeat.lower_bound();
-                let lower_range = lower.range();
                 let mut repeat_tree = Tree::new(format!(
                     "repeat {} {}",
                     range_label(range.start, range.end),
                     repeat.text(),
-                ))
-                .with_leaves([Tree::new(format!(
-                    "lower {} {}",
-                    range_label(lower_range.start, lower_range.end),
-                    lower.text(),
-                ))]);
+                ));
+                if let Some(lower) = repeat.lower_bound() {
+                    let lower_range = lower.range();
+                    repeat_tree.push(Tree::new(format!(
+                        "lower {} {}",
+                        range_label(lower_range.start, lower_range.end),
+                        lower.text(),
+                    )));
+                } else {
+                    repeat_tree.push(Tree::new("lower <missing>".to_owned()));
+                }
                 if let Some(comma) = repeat.comma_range() {
                     repeat_tree.push(Tree::new(format!(
                         "comma {}",
@@ -189,10 +257,26 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
                         upper.text(),
                     )));
                 }
+                if let Some(closing) = repeat.closing_delimiter_range() {
+                    repeat_tree.push(Tree::new(format!(
+                        "closing {}",
+                        range_label(closing.start, closing.end),
+                    )));
+                } else {
+                    repeat_tree.push(Tree::new("closing <missing>".to_owned()));
+                }
                 alternative_tree.push(repeat_tree);
             }
             alternative_tree
         }));
+        if let Some(terminator) = rule.terminator_range() {
+            rule_tree.push(Tree::new(format!(
+                "terminator {}",
+                range_label(terminator.start, terminator.end),
+            )));
+        } else {
+            rule_tree.push(Tree::new("terminator <missing>".to_owned()));
+        }
         rule_tree
     }));
 

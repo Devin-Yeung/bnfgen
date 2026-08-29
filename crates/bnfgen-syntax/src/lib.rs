@@ -38,8 +38,9 @@
 //! language construct is recognized through typed views, and
 //! the token buffer retains every byte of input — invalid input and
 //! unterminated strings included — as recoverable token kinds. Broken rules
-//! recover through LALRPOP's grammar-level error recovery; later slices add
-//! partial facts and cursor-context queries.
+//! recover through LALRPOP's grammar-level error recovery, and recognized
+//! facts inside incomplete rules remain available through the same typed
+//! views. A later slice adds cursor-context queries.
 //! The temporary strict lowering onto the legacy models stays outside this
 //! crate by design.
 //!
@@ -55,13 +56,14 @@ mod views;
 
 use lalrpop_util::lalrpop_mod;
 lalrpop_mod!(parser);
+lalrpop_mod!(partial_parser);
 
 pub use document::ParsedDocument;
 pub use error::{SyntaxError, SyntaxErrorKind};
 pub use token::{SyntaxToken, TokenKind};
 pub use views::{
     AlternativeSyntax, IntegerSyntax, NonTerminalSyntax, RegexSyntax, RepeatSyntax, RuleSyntax,
-    StringLiteralSyntax, SymbolKind, SymbolSyntax,
+    StringSyntax, SymbolKind, SymbolSyntax,
 };
 
 /// Parse source text into a [`ParsedDocument`].

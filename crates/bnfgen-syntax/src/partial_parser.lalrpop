@@ -1,0 +1,246 @@
+// Best-effort recognition for one rule range isolated by the strict grammar.
+//
+// The main parser remains deliberately strict enough to locate errors and
+// synchronize rules. Once it has isolated a malformed range, this grammar
+// recognizes only facts established by that prefix. Complete and incomplete
+// productions are kept distinct so a missing delimiter cannot be confused
+// with the beginning of a following symbol.
+
+use crate::records::{
+    AlternativeRecord, NonTerminalRecord, RegexRecord, RepeatRecord, RuleRecord, StringRecord,
+    SymbolRecord,
+};
+use crate::token::TokenKind;
+use std::ops::Range;
+
+grammar;
+
+extern {
+    type Location = usize;
+    type Error = &'static str;
+
+    enum TokenKind {
+        "<" => TokenKind::LAngle,
+        ">" => TokenKind::RAngle,
+        "{" => TokenKind::LBrace,
+        "}" => TokenKind::RBrace,
+        "(" => TokenKind::LParen,
+        ")" => TokenKind::RParen,
+        "::=" => TokenKind::Def,
+        ":" => TokenKind::Colon,
+        "," => TokenKind::Comma,
+        "|" => TokenKind::Or,
+        ";" => TokenKind::Semi,
+        "re" => TokenKind::Re,
+        "id" => TokenKind::Id,
+        "str" => TokenKind::Str,
+        "unterminated str" => TokenKind::UnterminatedStr,
+        "int" => TokenKind::Int,
+    }
+}
+
+pub PartialRule: RuleRecord = {
+    <mut rule: RulePrefix> <terminator: Terminator?> <r: @R> => {
+        if let Some(terminator) = terminator {
+            rule.span.end = r;
+            rule.terminator = Some(terminator);
+        }
+        rule
+    },
+};
+
+RulePrefix: RuleRecord = {
+    <l: @L> <lhs: IncompleteNonTerminal> <r: @R> => RuleRecord {
+        span: l..r,
+        lhs: Some(lhs),
+        definition: None,
+        alts: Vec::new(),
+        terminator: None,
+    },
+    <l: @L> <lhs: CompleteNonTerminal> <r: @R> => RuleRecord {
+        span: l..r,
+        lhs: Some(lhs),
+        definition: None,
+        alts: Vec::new(),
+        terminator: None,
+    },
+    <l: @L> <lhs: CompleteNonTerminal>
+    <dl: @L> "::=" <dr: @R> <r: @R> => RuleRecord {
+        span: l..r,
+        lhs: Some(lhs),
+        definition: Some(dl..dr),
+        alts: Vec::new(),
+        terminator: None,
+    },
+    <l: @L> <lhs: CompleteNonTerminal>
+    <dl: @L> "::=" <dr: @R> <alts: PartialAlternatives> <r: @R> => RuleRecord {
+        span: l..r,
+        lhs: Some(lhs),
+        definition: Some(dl..dr),
+        alts,
+        terminator: None,
+    },
+};
+
+Terminator: Range<usize> = <l: @L> ";" <r: @R> => l..r;
+
+CompleteNonTerminal: NonTerminalRecord = {
+    <l: @L> <ol: @L> "<" <or: @R> <nl: @L> "id" <nr: @R>
+    <cl: @L> ">" <cr: @R> <r: @R> => NonTerminalRecord {
+        span: l..r,
+        opening: ol..or,
+        name: Some(nl..nr),
+        type_separator: None,
+        ty: None,
+        closing: Some(cl..cr),
+    },
+    <l: @L> <ol: @L> "<" <or: @R> <nl: @L> "id" <nr: @R>
+    <tl: @L> ":" <tr: @R> <ty: CompleteString>
+    <cl: @L> ">" <cr: @R> <r: @R> => NonTerminalRecord {
+        span: l..r,
+        opening: ol..or,
+        name: Some(nl..nr),
+        type_separator: Some(tl..tr),
+        ty: Some(ty),
+        closing: Some(cl..cr),
+    },
+};
+
+IncompleteNonTerminal: NonTerminalRecord = {
+    <l: @L> <ol: @L> "<" <or: @R> <r: @R> => NonTerminalRecord {
+        span: l..r, opening: ol..or, name: None, type_separator: None,
+        ty: None, closing: None,
+    },
+    <l: @L> <ol: @L> "<" <or: @R> <nl: @L> "id" <nr: @R> <r: @R> =>
+        NonTerminalRecord {
+            span: l..r, opening: ol..or, name: Some(nl..nr), type_separator: None,
+            ty: None, closing: None,
+        },
+    <l: @L> <ol: @L> "<" <or: @R> <nl: @L> "id" <nr: @R>
+    <tl: @L> ":" <tr: @R> <r: @R> => NonTerminalRecord {
+        span: l..r, opening: ol..or, name: Some(nl..nr),
+        type_separator: Some(tl..tr), ty: None, closing: None,
+    },
+    <l: @L> <ol: @L> "<" <or: @R> <nl: @L> "id" <nr: @R>
+    <tl: @L> ":" <tr: @R> <ty: PartialString> <r: @R> => NonTerminalRecord {
+        span: l..r, opening: ol..or, name: Some(nl..nr),
+        type_separator: Some(tl..tr), ty: Some(ty), closing: None,
+    },
+};
+
+// Every alternative before the final one must be complete. The final
+// alternative may itself be complete, incomplete, or absent after `|`.
+PartialAlternatives: Vec<AlternativeRecord> = {
+    <alternative: CompleteAlternative> => vec![alternative],
+    <alternative: IncompleteAlternative> => vec![alternative],
+    <alternative: CompleteAlternative> "|" => vec![alternative],
+    <alternative: CompleteAlternative> "|" <mut rest: PartialAlternatives> => {
+        rest.insert(0, alternative);
+        rest
+    },
+};
+
+CompleteAlternative: AlternativeRecord = {
+    <l: @L> <weight: Integer?> <symbols: CompleteSymbol+> <repeat: CompleteRepeat?> <r: @R> =>
+        AlternativeRecord { span: l..r, weight, symbols, repeat },
+};
+
+IncompleteAlternative: AlternativeRecord = {
+    <l: @L> <weight: Integer> <r: @R> => AlternativeRecord {
+        span: l..r, weight: Some(weight), symbols: Vec::new(), repeat: None,
+    },
+    <l: @L> <weight: Integer?> <symbols: CompleteSymbol*> <last: IncompleteSymbol> <r: @R> => {
+        let mut symbols = symbols;
+        symbols.push(last);
+        AlternativeRecord { span: l..r, weight, symbols, repeat: None }
+    },
+    <l: @L> <weight: Integer?> <symbols: CompleteSymbol*> <repeat: IncompleteRepeat> <r: @R> =>
+        AlternativeRecord { span: l..r, weight, symbols, repeat: Some(repeat) },
+};
+
+Integer: Range<usize> = <l: @L> "int" <r: @R> => l..r;
+
+CompleteString: StringRecord = <l: @L> "str" <r: @R> => StringRecord {
+    span: l..r,
+    terminated: true,
+};
+
+PartialString: StringRecord = {
+    <string: CompleteString> => string,
+    <l: @L> "unterminated str" <r: @R> => StringRecord {
+        span: l..r,
+        terminated: false,
+    },
+};
+
+CompleteRepeat: RepeatRecord = {
+    <l: @L> <ol: @L> "{" <or: @R> <lower: Integer>
+    <cl: @L> "}" <cr: @R> <r: @R> => RepeatRecord {
+        span: l..r, opening: ol..or, lower: Some(lower), comma: None,
+        upper: None, closing: Some(cl..cr),
+    },
+    <l: @L> <ol: @L> "{" <or: @R> <lower: Integer>
+    <ml: @L> "," <mr: @R> <upper: Integer?>
+    <cl: @L> "}" <cr: @R> <r: @R> => RepeatRecord {
+        span: l..r, opening: ol..or, lower: Some(lower), comma: Some(ml..mr),
+        upper, closing: Some(cl..cr),
+    },
+};
+
+IncompleteRepeat: RepeatRecord = {
+    <l: @L> <ol: @L> "{" <or: @R> <r: @R> => RepeatRecord {
+        span: l..r, opening: ol..or, lower: None, comma: None,
+        upper: None, closing: None,
+    },
+    <l: @L> <ol: @L> "{" <or: @R> <lower: Integer> <r: @R> => RepeatRecord {
+        span: l..r, opening: ol..or, lower: Some(lower), comma: None,
+        upper: None, closing: None,
+    },
+    <l: @L> <ol: @L> "{" <or: @R> <lower: Integer>
+    <ml: @L> "," <mr: @R> <r: @R> => RepeatRecord {
+        span: l..r, opening: ol..or, lower: Some(lower), comma: Some(ml..mr),
+        upper: None, closing: None,
+    },
+    <l: @L> <ol: @L> "{" <or: @R> <lower: Integer>
+    <ml: @L> "," <mr: @R> <upper: Integer> <r: @R> => RepeatRecord {
+        span: l..r, opening: ol..or, lower: Some(lower), comma: Some(ml..mr),
+        upper: Some(upper), closing: None,
+    },
+};
+
+CompleteSymbol: SymbolRecord = {
+    <string: CompleteString> => SymbolRecord::Terminal(string),
+    <non_terminal: CompleteNonTerminal> => SymbolRecord::NonTerminal(non_terminal),
+    <l: @L> "re" <ol: @L> "(" <or: @R> <pattern: CompleteString>
+    <cl: @L> ")" <cr: @R> <r: @R> => SymbolRecord::Regex(RegexRecord {
+        span: l..r,
+        opening_parenthesis: Some(ol..or),
+        pattern: Some(pattern),
+        closing_parenthesis: Some(cl..cr),
+    }),
+};
+
+IncompleteSymbol: SymbolRecord = {
+    <l: @L> "unterminated str" <r: @R> => SymbolRecord::Terminal(StringRecord {
+        span: l..r,
+        terminated: false,
+    }),
+    <non_terminal: IncompleteNonTerminal> => SymbolRecord::NonTerminal(non_terminal),
+    <regex: IncompleteRegex> => SymbolRecord::Regex(regex),
+};
+
+IncompleteRegex: RegexRecord = {
+    <l: @L> "re" <r: @R> => RegexRecord {
+        span: l..r, opening_parenthesis: None, pattern: None,
+        closing_parenthesis: None,
+    },
+    <l: @L> "re" <ol: @L> "(" <or: @R> <r: @R> => RegexRecord {
+        span: l..r, opening_parenthesis: Some(ol..or), pattern: None,
+        closing_parenthesis: None,
+    },
+    <l: @L> "re" <ol: @L> "(" <or: @R>
+    <pattern: PartialString> <r: @R> => RegexRecord {
+        span: l..r, opening_parenthesis: Some(ol..or), pattern: Some(pattern),
+        closing_parenthesis: None,
+    },
+};

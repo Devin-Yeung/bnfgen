@@ -1,0 +1,50 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+<input>
+<first> ::= "ok";
+<second> ::= <target
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle <
+│   ├── 001..006 Id first
+│   ├── 006..007 RAngle >
+│   ├── 007..008 Whitespace  
+│   ├── 008..011 Def ::=
+│   ├── 011..012 Whitespace  
+│   ├── 012..016 Str "ok"
+│   ├── 016..017 Semi ;
+│   ├── 017..018 Whitespace
+│   ├── 018..019 LAngle <
+│   ├── 019..025 Id second
+│   ├── 025..026 RAngle >
+│   ├── 026..027 Whitespace  
+│   ├── 027..030 Def ::=
+│   ├── 030..031 Whitespace  
+│   ├── 031..032 LAngle <
+│   ├── 032..038 Id target
+│   └── 038..039 Whitespace
+├── errors
+│   └── 038..038 UnexpectedEof
+├── recovery
+│   └── 018..038 <second> ::= <target
+└── rules
+    ├── 000..017 first
+    │   ├── 000..007 lhs <first>
+    │   │   ├── name 001..006 first
+    │   │   └── closing 006..007
+    │   ├── definition 008..011
+    │   ├── alt 012..016
+    │   │   └── 012..016 Terminal "ok"
+    │   └── terminator 016..017
+    └── 018..038 second
+        ├── 018..026 lhs <second>
+        │   ├── name 019..025 second
+        │   └── closing 025..026
+        ├── definition 027..030
+        ├── alt 031..038
+        │   └── 031..038 NonTerminal <target
+        │       ├── name 032..038 target
+        │       └── closing <missing>
+        └── terminator <missing>

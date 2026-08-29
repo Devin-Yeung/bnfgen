@@ -1,0 +1,23 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+<input>
+<entry>
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle <
+│   ├── 001..006 Id entry
+│   ├── 006..007 RAngle >
+│   └── 007..008 Whitespace
+├── errors
+│   └── 007..007 UnexpectedEof
+├── recovery
+│   └── 000..007 <entry>
+└── rules
+    └── 000..007 entry
+        ├── 000..007 lhs <entry>
+        │   ├── name 001..006 entry
+        │   └── closing 006..007
+        ├── definition <missing>
+        └── terminator <missing>

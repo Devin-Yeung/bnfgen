@@ -122,11 +122,14 @@ impl TokenKind {
     }
 
     /// Whether this kind participates in grammar recognition — the
-    /// significant-token stream LALRPOP consumes. Trivia and retained
-    /// lexical failures are excluded: they stay in the complete buffer but
-    /// never reach the grammar.
+    /// significant-token stream LALRPOP consumes.
+    ///
+    /// An unterminated string participates because its opening quote is a
+    /// reliable typed fact for a terminal, type, or regex pattern. Arbitrary
+    /// invalid input remains outside structural recognition; both kinds stay
+    /// in the complete token buffer and retain their lexical errors.
     pub fn is_significant(&self) -> bool {
-        !self.is_trivia() && !self.is_lexical_recovery()
+        !self.is_trivia() && !matches!(self, TokenKind::Invalid)
     }
 }
 

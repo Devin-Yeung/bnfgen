@@ -31,6 +31,9 @@ document
 └── rules
     └── 019..035 good
         ├── 019..025 lhs <good>
-        │   └── name 020..024 good
-        └── alt 030..034
-            └── 030..034 Terminal "ok"
+        │   ├── name 020..024 good
+        │   └── closing 024..025
+        ├── definition 026..029
+        ├── alt 030..034
+        │   └── 030..034 Terminal "ok"
+        └── terminator 034..035

@@ -17,3 +17,11 @@ document
 ├── recovery
 │   └── 000..022 <greeting> ::= "hello"
 └── rules
+    └── 000..022 greeting
+        ├── 000..010 lhs <greeting>
+        │   ├── name 001..009 greeting
+        │   └── closing 009..010
+        ├── definition 011..014
+        ├── alt 015..022
+        │   └── 015..022 Terminal "hello"
+        └── terminator <missing>

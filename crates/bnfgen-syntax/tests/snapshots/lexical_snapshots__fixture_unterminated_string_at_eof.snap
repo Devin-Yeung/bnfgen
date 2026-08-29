@@ -14,8 +14,15 @@ document
 │   └── 008..021 UnterminatedStr "unterminated
 ├── errors
 │   ├── 008..021 UnterminatedString
-│   └── 007..007 UnexpectedEof
+│   └── 008..021 UnexpectedToken
 ├── recovery
-│   ├── 000..007 <a> ::=
-│   └── 008..021 "unterminated
+│   └── 000..021 <a> ::= "unterminated
 └── rules
+    └── 000..021 a
+        ├── 000..003 lhs <a>
+        │   ├── name 001..002 a
+        │   └── closing 002..003
+        ├── definition 004..007
+        ├── alt 008..021
+        │   └── 008..021 Terminal "unterminated <unterminated>
+        └── terminator <missing>

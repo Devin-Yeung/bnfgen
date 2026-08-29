@@ -1,0 +1,27 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+<input>
+<entry: "value"
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle <
+│   ├── 001..006 Id entry
+│   ├── 006..007 Colon :
+│   ├── 007..008 Whitespace  
+│   ├── 008..015 Str "value"
+│   └── 015..016 Whitespace
+├── errors
+│   └── 015..015 UnexpectedEof
+├── recovery
+│   └── 000..015 <entry: "value"
+└── rules
+    └── 000..015 entry
+        ├── 000..015 lhs <entry: "value"
+        │   ├── name 001..006 entry
+        │   ├── type-separator 006..007
+        │   ├── type 008..015 "value"
+        │   └── closing <missing>
+        ├── definition <missing>
+        └── terminator <missing>

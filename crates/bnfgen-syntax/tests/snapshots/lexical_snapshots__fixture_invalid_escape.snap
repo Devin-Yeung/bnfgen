@@ -20,7 +20,7 @@ document
 ├── errors
 │   ├── 008..014 UnterminatedString
 │   ├── 022..025 UnterminatedString
-│   └── 014..015 UnexpectedToken
+│   └── 008..014 UnexpectedToken
 ├── recovery
 │   └── 000..025
 └── rules

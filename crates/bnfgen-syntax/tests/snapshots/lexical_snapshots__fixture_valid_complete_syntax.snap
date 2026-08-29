@@ -68,27 +68,39 @@ document
     └── 000..125 Expr
         ├── 000..013 lhs <Expr: "set">
         │   ├── name 001..005 Expr
-        │   └── type 007..012 "set"
+        │   ├── type-separator 005..006
+        │   ├── type 007..012 "set"
+        │   └── closing 012..013
+        ├── definition 014..017
         ├── alt 018..058
         │   ├── weight 018..020 10
         │   ├── 021..034 NonTerminal <Atom: "set">
         │   │   ├── name 022..026 Atom
-        │   │   └── type 028..033 "set"
+        │   │   ├── type-separator 026..027
+        │   │   ├── type 028..033 "set"
+        │   │   └── closing 033..034
         │   ├── 035..038 Terminal "U"
         │   ├── 039..051 Regex re("[a-z]+")
-        │   │   └── pattern 042..050 "[a-z]+"
+        │   │   ├── opening-parenthesis 041..042
+        │   │   ├── pattern 042..050 "[a-z]+"
+        │   │   └── closing-parenthesis 050..051
         │   └── repeat 052..058 {1, 5}
         │       ├── lower 053..054 1
         │       ├── comma 054..055
-        │       └── upper 056..057 5
+        │       ├── upper 056..057 5
+        │       └── closing 057..058
         ├── alt 079..093
         │   ├── weight 079..080 2
         │   ├── 081..088 Terminal "empty"
         │   └── repeat 089..093 {3,}
         │       ├── lower 090..091 3
-        │       └── comma 091..092
-        └── alt 114..124
-            ├── 114..120 NonTerminal <Atom>
-            │   └── name 115..119 Atom
-            └── repeat 121..124 {4}
-                └── lower 122..123 4
+        │       ├── comma 091..092
+        │       └── closing 092..093
+        ├── alt 114..124
+        │   ├── 114..120 NonTerminal <Atom>
+        │   │   ├── name 115..119 Atom
+        │   │   └── closing 119..120
+        │   └── repeat 121..124 {4}
+        │       ├── lower 122..123 4
+        │       └── closing 123..124
+        └── terminator 124..125

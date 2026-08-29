@@ -1,0 +1,35 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+<input>
+<entry> ::= "first" | 3
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle <
+│   ├── 001..006 Id entry
+│   ├── 006..007 RAngle >
+│   ├── 007..008 Whitespace  
+│   ├── 008..011 Def ::=
+│   ├── 011..012 Whitespace  
+│   ├── 012..019 Str "first"
+│   ├── 019..020 Whitespace  
+│   ├── 020..021 Or |
+│   ├── 021..022 Whitespace  
+│   ├── 022..023 Int 3
+│   └── 023..024 Whitespace
+├── errors
+│   └── 023..023 UnexpectedEof
+├── recovery
+│   └── 000..023 <entry> ::= "first" | 3
+└── rules
+    └── 000..023 entry
+        ├── 000..007 lhs <entry>
+        │   ├── name 001..006 entry
+        │   └── closing 006..007
+        ├── definition 008..011
+        ├── alt 012..019
+        │   └── 012..019 Terminal "first"
+        ├── alt 022..023
+        │   └── weight 022..023 3
+        └── terminator <missing>
