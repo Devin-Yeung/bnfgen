@@ -1,7 +1,6 @@
 //! The lexical layer of the Bnfgen source language.
 //!
-//! Two invariants govern this module, both taken from
-//! `docs/adr/0003-use-token-backed-tolerant-syntax-documents.md`:
+//! Two invariants govern this module:
 //!
 //! 1. **Lexemes stay raw.** Integer, string, identifier, and type tokens
 //!    record only a kind and a byte range. Decoding escapes, parsing
@@ -123,9 +122,9 @@ impl TokenKind {
     }
 
     /// Whether this kind participates in grammar recognition — the
-    /// significant-token stream LALRPOP consumes (ADR 0003). Trivia and
-    /// retained lexical failures are excluded: they stay in the complete
-    /// buffer but never reach the grammar.
+    /// significant-token stream LALRPOP consumes. Trivia and retained
+    /// lexical failures are excluded: they stay in the complete buffer but
+    /// never reach the grammar.
     pub fn is_significant(&self) -> bool {
         !self.is_trivia() && !self.is_lexical_recovery()
     }
@@ -136,7 +135,7 @@ impl TokenKind {
 ///
 /// The token carries no text. Its raw lexeme is obtained by slicing the
 /// document source with [`range`](Self::range) — one canonical copy of the
-/// text, per ADR 0003.
+/// text.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SyntaxToken {
     kind: TokenKind,

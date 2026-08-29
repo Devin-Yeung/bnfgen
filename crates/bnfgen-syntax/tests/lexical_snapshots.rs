@@ -1,4 +1,4 @@
-//! Normalized public snapshots of the parse-and-query seam (tickets 01–03).
+//! Normalized public snapshots of the parse-and-query seam.
 //!
 //! The renderer below is the spec's "normalized representation": an
 //! eza-style Unicode tree (via `termtree`) of public token kinds and byte

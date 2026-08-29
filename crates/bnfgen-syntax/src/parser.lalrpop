@@ -4,10 +4,10 @@
 // and its types never cross the crate interface. Recognition here is pure
 // range collection: actions only package byte ranges into the private
 // records in `crate::records`. No decoding, no validation, no fallible
-// work — those belong downstream (ADR 0003).
+// work — those belong downstream.
 //
-// Slice status (ticket 03): every construct accepted by the legacy grammar
-// is recognized as raw syntax. Recovery productions arrive with ticket 04.
+// Current status: every construct accepted by the legacy grammar is
+// recognized as raw syntax. Recovery productions will arrive later.
 
 use crate::records::{
     AlternativeRecord, NonTerminalRecord, RepeatRecord, RuleRecord, SymbolRecord,

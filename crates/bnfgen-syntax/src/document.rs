@@ -32,7 +32,7 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
 
     // The significant-token adapter: LALRPOP consumes only grammar-relevant
     // tokens while trivia and retained lexical failures stay in the
-    // complete buffer (ADR 0003). Recovery kinds must not reach the
+    // complete buffer. Recovery kinds must not reach the
     // grammar — the generated parser maps any kind without a production to
     // `InvalidToken` — so this stream is infallible and carries only
     // terminals the grammar knows.
@@ -45,8 +45,8 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
         Ok(rules) => rules,
         Err(error) => {
             errors.push(to_syntax_error(error));
-            // Ticket 04 replaces this whole-document drop with recovery
-            // that resynchronizes to later rules. Until then, a document
+            // Recovery will eventually replace this whole-document drop
+            // and resynchronize to later rules. Until then, a document
             // with a grammar error recognizes no rules — but its source and
             // complete token buffer remain queryable.
             Vec::new()
@@ -65,8 +65,8 @@ pub(super) fn parse(source: &str) -> ParsedDocument {
 /// generated parser's `expected` terminal list is LALRPOP display text and
 /// is deliberately dropped here.
 ///
-/// TODO(ticket 04): surface structured expected-terminal information once
-/// recovery needs it, instead of resurrecting message strings.
+/// TODO: surface structured expected-terminal information once recovery needs
+/// it, instead of resurrecting message strings.
 fn to_syntax_error(
     error: lalrpop_util::ParseError<usize, crate::token::TokenKind, &'static str>,
 ) -> SyntaxError {
@@ -74,12 +74,12 @@ fn to_syntax_error(
 
     match error {
         ParseError::InvalidToken { location } => {
-            // A significant kind the grammar does not map (an `Int` before
-            // ticket 03 wires it in, say): the input *was* recognized as a
+            // A significant kind the grammar does not map (an `Int`, say):
+            // the input *was* recognized as a
             // token, so this is a grammar rejection, not unrecognized
             // input — `UnrecognizedInput` belongs to `Invalid` tokens
-            // alone. Ticket 03 gives every significant kind a production,
-            // making this arm unreachable.
+            // alone. Once every significant kind has a production, this arm
+            // becomes unreachable.
             SyntaxError::new(SyntaxErrorKind::UnexpectedToken, location..location)
         }
         ParseError::UnrecognizedEof { location, .. } => {
@@ -134,8 +134,8 @@ impl ParsedDocument {
     /// `offset == source.len()` resolves to the final token. Returns
     /// `None` past the end of the source and for an empty document.
     ///
-    /// These boundary rules are the ones cursor-context classification
-    /// (ticket 06) builds on; keep them this simple.
+    /// These boundary rules are the ones cursor-context classification builds
+    /// on; keep them this simple.
     pub fn token_at(&self, offset: usize) -> Option<SyntaxToken> {
         if offset > self.source.len() {
             return None;

@@ -1,15 +1,15 @@
 //! Private, byte-range-backed storage for recognized grammar structure.
 //!
-//! Per ADR 0004 these records are deliberately *not* a tree: each one names
-//! UTF-8 byte ranges into the retained source, so recognized syntax never
-//! copies text and never needs trivia reinserted. They are an implementation
-//! detail — the public surface wraps them in the borrowing views in
-//! [`crate::views`], and storage may change without breaking callers.
+//! These records are deliberately *not* a tree: each one names UTF-8 byte
+//! ranges into the retained source, so recognized syntax never copies text
+//! and never needs trivia reinserted. They are an implementation detail —
+//! the public surface wraps them in the borrowing views in [`crate::views`],
+//! and storage may change without breaking callers.
 //!
 //! Children are non-optional in this slice because a record only exists once
-//! the grammar has fully recognized it. Recovery (tickets 04/05) will admit
-//! partially recognized rules; their records will hold `Option` children and
-//! the views will surface those as `None`.
+//! the grammar has fully recognized it. Future recovery will admit partially
+//! recognized rules; their records will hold `Option` children and the views
+//! will surface those as `None`.
 
 use std::ops::Range;
 

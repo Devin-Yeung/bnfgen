@@ -1,12 +1,11 @@
 //! Language-specific immutable views over a parsed document.
 //!
 //! Views borrow the document and wrap its private records, so callers can
-//! never retain syntax independently of the source it came from (ADR 0003).
+//! never retain syntax independently of the source it came from.
 //! Every accessor returns either raw text sliced from the document or a
 //! UTF-8 byte range — never a decoded or validated value. Accessors for
-//! required children become `Option` returning once recovery can produce
-//! partially recognized rules (tickets 04/05); today a view exists only for
-//! fully recognized syntax.
+//! required children become `Option` once recovery can produce partially
+//! recognized rules; today a view exists only for fully recognized syntax.
 
 use std::ops::Range;
 

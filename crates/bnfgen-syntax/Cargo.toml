@@ -8,9 +8,9 @@ license.workspace = true
 logos = "0.16.1"
 lalrpop-util = "0.23.1"
 
-# Text snapshots for the normalized public-seam representation (ticket
-# 02). insta matches the version pinned in `bnfgen-cli`; termtree draws
-# the eza-style Unicode tree. No extra features needed.
+# Text snapshots for the normalized public-seam representation. insta matches
+# the version pinned in `bnfgen-cli`; termtree draws the eza-style Unicode
+# tree. No extra features needed.
 [dev-dependencies]
 insta = "1.47.2"
 termtree = "1.0.0"

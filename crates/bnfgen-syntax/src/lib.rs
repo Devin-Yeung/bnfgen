@@ -3,13 +3,13 @@
 //! The Bnfgen source language: lexing, grammar recognition, recovery, and
 //! the token-backed [`ParsedDocument`] that callers query.
 //!
-//! This crate is the sole owner of the Logos lexer and the LALRPOP grammar
-//! (ADR 0002). It knows the *shape* of a grammar file and nothing about its
+//! This crate is the sole owner of the Logos lexer and the LALRPOP grammar.
+//! It knows the *shape* of a grammar file and nothing about its
 //! *meaning*: literal decoding, integer parsing, regular-expression
 //! compilation, name resolution, and generation invariants all live
 //! downstream. It has no dependency on Rowan, Miette, Petgraph, Rand, or
-//! any generation, CLI, or LSP code (ADR 0004 records why the storage stays
-//! token-backed instead).
+//! any generation, CLI, or LSP code; the storage stays token-backed so
+//! recognized syntax can remain source-preserving and independently queried.
 //!
 //! ## The contract
 //!
@@ -34,16 +34,16 @@
 //!
 //! ## Current state
 //!
-//! This is the third migration slice of the syntax rewrite (tickets 01–03):
-//! every valid language construct is recognized through typed views, and
+//! This is the current migration slice of the syntax rewrite: every valid
+//! language construct is recognized through typed views, and
 //! the token buffer retains every byte of input — invalid input and
 //! unterminated strings included — as recoverable token kinds. Later slices
 //! add recovery for broken rules, partial facts, and cursor-context queries.
 //! The temporary strict lowering onto the legacy models stays outside this
 //! crate by design.
 //!
-//! The governing documents are `.scratch/bnfgen-syntax-rewrite/spec.md`,
-//! `docs/architecture/frontend.md`, and ADRs 0002–0004 under `docs/adr/`.
+//! The governing documents are `.scratch/bnfgen-syntax-rewrite/spec.md` and
+//! `docs/architecture/frontend.md`.
 
 mod document;
 mod error;
