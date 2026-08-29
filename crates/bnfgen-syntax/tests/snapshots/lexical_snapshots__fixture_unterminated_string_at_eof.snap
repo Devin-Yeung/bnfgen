@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <a> ::= "unterminated</input>
@@ -12,17 +13,17 @@ document
 │   ├── 004..007 Def ::=
 │   ├── 007..008 Whitespace  
 │   └── 008..021 UnterminatedStr "unterminated
-├── errors
+├── diagnostics
 │   ├── 008..021 UnterminatedString
-│   └── 008..021 UnexpectedToken
+│   └── 021..021 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..021 <a> ::= "unterminated
+│   └── 008..021 UnterminatedString "unterminated
 └── rules
-    └── 000..021 a
+    └── 000..021 a [partial, recovered]
         ├── 000..003 lhs <a>
         │   ├── name 001..002 a
         │   └── closing 002..003
         ├── definition 004..007
-        ├── alt 008..021
+        ├── alt 008..021 [partial, recovered]
         │   └── 008..021 Terminal "unterminated <unterminated>
         └── terminator <missing>

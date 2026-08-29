@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <a> ::= "x" ü;
@@ -17,8 +18,16 @@ document
 │   ├── 012..014 Invalid ü
 │   ├── 014..015 Semi ;
 │   └── 015..016 Whitespace
-├── errors
+├── diagnostics
 │   └── 012..014 UnrecognizedInput
 ├── recovery
-│   └── 000..015 <a> ::= "x" ü;
+│   └── 012..014 InvalidLexeme ü
 └── rules
+    └── 000..015 a [complete, recovered]
+        ├── 000..003 lhs <a>
+        │   ├── name 001..002 a
+        │   └── closing 002..003
+        ├── definition 004..007
+        ├── alt 008..011 [complete]
+        │   └── 008..011 Terminal "x"
+        └── terminator 014..015

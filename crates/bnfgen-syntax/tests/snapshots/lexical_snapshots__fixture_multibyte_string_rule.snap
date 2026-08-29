@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <a> ::= "héllo wörld";
@@ -15,14 +16,14 @@ document
 │   ├── 008..023 Str "héllo wörld"
 │   ├── 023..024 Semi ;
 │   └── 024..025 Whitespace
-├── errors
+├── diagnostics
 ├── recovery
 └── rules
-    └── 000..024 a
+    └── 000..024 a [complete]
         ├── 000..003 lhs <a>
         │   ├── name 001..002 a
         │   └── closing 002..003
         ├── definition 004..007
-        ├── alt 008..023
+        ├── alt 008..023 [complete]
         │   └── 008..023 Terminal "héllo wörld"
         └── terminator 023..024

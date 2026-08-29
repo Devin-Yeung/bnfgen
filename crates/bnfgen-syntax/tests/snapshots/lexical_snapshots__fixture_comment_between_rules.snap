@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <a> ::= "x"; // mid-file
@@ -27,22 +28,22 @@ document
 │   ├── 033..036 Str "y"
 │   ├── 036..037 Semi ;
 │   └── 037..038 Whitespace
-├── errors
+├── diagnostics
 ├── recovery
 └── rules
-    ├── 000..012 a
+    ├── 000..012 a [complete]
     │   ├── 000..003 lhs <a>
     │   │   ├── name 001..002 a
     │   │   └── closing 002..003
     │   ├── definition 004..007
-    │   ├── alt 008..011
+    │   ├── alt 008..011 [complete]
     │   │   └── 008..011 Terminal "x"
     │   └── terminator 011..012
-    └── 025..037 b
+    └── 025..037 b [complete]
         ├── 025..028 lhs <b>
         │   ├── name 026..027 b
         │   └── closing 027..028
         ├── definition 029..032
-        ├── alt 033..036
+        ├── alt 033..036 [complete]
         │   └── 033..036 Terminal "y"
         └── terminator 036..037

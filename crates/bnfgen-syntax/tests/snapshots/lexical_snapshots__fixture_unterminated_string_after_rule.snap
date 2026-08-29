@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <a> ::= "x";
@@ -22,25 +23,25 @@ document
 │   ├── 017..020 Def ::=
 │   ├── 020..021 Whitespace  
 │   └── 021..026 UnterminatedStr "open
-├── errors
+├── diagnostics
 │   ├── 021..026 UnterminatedString
-│   └── 021..026 UnexpectedToken
+│   └── 026..026 Missing(RuleTerminator)
 ├── recovery
-│   └── 013..026 <b> ::= "open
+│   └── 021..026 UnterminatedString "open
 └── rules
-    ├── 000..012 a
+    ├── 000..012 a [complete]
     │   ├── 000..003 lhs <a>
     │   │   ├── name 001..002 a
     │   │   └── closing 002..003
     │   ├── definition 004..007
-    │   ├── alt 008..011
+    │   ├── alt 008..011 [complete]
     │   │   └── 008..011 Terminal "x"
     │   └── terminator 011..012
-    └── 013..026 b
+    └── 013..026 b [partial, recovered]
         ├── 013..016 lhs <b>
         │   ├── name 014..015 b
         │   └── closing 015..016
         ├── definition 017..020
-        ├── alt 021..026
+        ├── alt 021..026 [partial, recovered]
         │   └── 021..026 Terminal "open <unterminated>
         └── terminator <missing>

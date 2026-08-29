@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <broken> ::= <target;
@@ -26,26 +27,30 @@ document
 │   ├── 033..037 Str "ok"
 │   ├── 037..038 Semi ;
 │   └── 038..039 Whitespace
-├── errors
-│   └── 020..021 UnexpectedToken
+├── diagnostics
+│   ├── 013..013 Missing(Alternative)
+│   ├── 013..013 Missing(RuleTerminator)
+│   ├── 020..020 Missing(NonTerminalClosingDelimiter)
+│   └── 020..020 Missing(Definition)
 ├── recovery
-│   └── 000..021 <broken> ::= <target;
 └── rules
-    ├── 000..021 broken
+    ├── 000..012 broken [partial]
     │   ├── 000..008 lhs <broken>
     │   │   ├── name 001..007 broken
     │   │   └── closing 007..008
     │   ├── definition 009..012
-    │   ├── alt 013..020
-    │   │   └── 013..020 NonTerminal <target
-    │   │       ├── name 014..020 target
-    │   │       └── closing <missing>
+    │   └── terminator <missing>
+    ├── 013..021 target [partial]
+    │   ├── 013..020 lhs <target
+    │   │   ├── name 014..020 target
+    │   │   └── closing <missing>
+    │   ├── definition <missing>
     │   └── terminator 020..021
-    └── 022..038 good
+    └── 022..038 good [complete]
         ├── 022..028 lhs <good>
         │   ├── name 023..027 good
         │   └── closing 027..028
         ├── definition 029..032
-        ├── alt 033..037
+        ├── alt 033..037 [complete]
         │   └── 033..037 Terminal "ok"
         └── terminator 037..038

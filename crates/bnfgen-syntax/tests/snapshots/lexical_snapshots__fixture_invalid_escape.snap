@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <a> ::= "bad \x escape";
@@ -17,10 +18,25 @@ document
 │   ├── 015..016 Whitespace  
 │   ├── 016..022 Id escape
 │   └── 022..025 UnterminatedStr
-├── errors
+├── diagnostics
 │   ├── 008..014 UnterminatedString
 │   ├── 022..025 UnterminatedString
-│   └── 008..014 UnexpectedToken
+│   ├── 014..014 Missing(RuleTerminator)
+│   ├── 014..015 UnexpectedToken
+│   ├── 016..022 UnexpectedToken
+│   └── 022..025 UnexpectedToken
 ├── recovery
-│   └── 000..025
+│   ├── 008..014 UnterminatedString "bad \
+│   ├── 022..025 UnterminatedString
+│   ├── 014..015 UnexpectedToken x
+│   ├── 016..022 UnexpectedToken escape
+│   └── 022..025 UnexpectedToken
 └── rules
+    └── 000..014 a [partial, recovered]
+        ├── 000..003 lhs <a>
+        │   ├── name 001..002 a
+        │   └── closing 002..003
+        ├── definition 004..007
+        ├── alt 008..014 [partial, recovered]
+        │   └── 008..014 Terminal "bad \ <unterminated>
+        └── terminator <missing>

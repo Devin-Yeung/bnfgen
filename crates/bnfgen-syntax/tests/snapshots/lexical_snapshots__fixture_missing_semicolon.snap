@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <greeting> ::= "hello"</input>
@@ -12,16 +13,15 @@ document
 │   ├── 011..014 Def ::=
 │   ├── 014..015 Whitespace  
 │   └── 015..022 Str "hello"
-├── errors
-│   └── 022..022 UnexpectedEof
+├── diagnostics
+│   └── 022..022 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..022 <greeting> ::= "hello"
 └── rules
-    └── 000..022 greeting
+    └── 000..022 greeting [partial]
         ├── 000..010 lhs <greeting>
         │   ├── name 001..009 greeting
         │   └── closing 009..010
         ├── definition 011..014
-        ├── alt 015..022
+        ├── alt 015..022 [complete]
         │   └── 015..022 Terminal "hello"
         └── terminator <missing>

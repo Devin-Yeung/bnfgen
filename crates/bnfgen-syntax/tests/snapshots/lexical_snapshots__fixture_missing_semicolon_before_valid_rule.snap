@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <broken> ::= "unfinished"
@@ -24,8 +25,23 @@ document
 │   ├── 037..041 Str "ok"
 │   ├── 041..042 Semi ;
 │   └── 042..043 Whitespace
-├── errors
-│   └── 033..036 UnexpectedToken
+├── diagnostics
+│   └── 026..026 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..042
 └── rules
+    ├── 000..025 broken [partial]
+    │   ├── 000..008 lhs <broken>
+    │   │   ├── name 001..007 broken
+    │   │   └── closing 007..008
+    │   ├── definition 009..012
+    │   ├── alt 013..025 [complete]
+    │   │   └── 013..025 Terminal "unfinished"
+    │   └── terminator <missing>
+    └── 026..042 good [complete]
+        ├── 026..032 lhs <good>
+        │   ├── name 027..031 good
+        │   └── closing 031..032
+        ├── definition 033..036
+        ├── alt 037..041 [complete]
+        │   └── 037..041 Terminal "ok"
+        └── terminator 041..042

@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <entry> ::= <target: "value"
@@ -18,20 +19,25 @@ document
 │   ├── 020..021 Whitespace  
 │   ├── 021..028 Str "value"
 │   └── 028..029 Whitespace
-├── errors
-│   └── 028..028 UnexpectedEof
+├── diagnostics
+│   ├── 012..012 Missing(Alternative)
+│   ├── 012..012 Missing(RuleTerminator)
+│   ├── 028..028 Missing(NonTerminalClosingDelimiter)
+│   ├── 028..028 Missing(Definition)
+│   └── 028..028 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..028 <entry> ::= <target: "value"
 └── rules
-    └── 000..028 entry
-        ├── 000..007 lhs <entry>
-        │   ├── name 001..006 entry
-        │   └── closing 006..007
-        ├── definition 008..011
-        ├── alt 012..028
-        │   └── 012..028 NonTerminal <target: "value"
-        │       ├── name 013..019 target
-        │       ├── type-separator 019..020
-        │       ├── type 021..028 "value"
-        │       └── closing <missing>
+    ├── 000..011 entry [partial]
+    │   ├── 000..007 lhs <entry>
+    │   │   ├── name 001..006 entry
+    │   │   └── closing 006..007
+    │   ├── definition 008..011
+    │   └── terminator <missing>
+    └── 012..028 target [partial]
+        ├── 012..028 lhs <target: "value"
+        │   ├── name 013..019 target
+        │   ├── type-separator 019..020
+        │   ├── type 021..028 "value"
+        │   └── closing <missing>
+        ├── definition <missing>
         └── terminator <missing>

@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <first> ::= "ok";
@@ -25,26 +26,31 @@ document
 │   ├── 031..032 LAngle <
 │   ├── 032..038 Id target
 │   └── 038..039 Whitespace
-├── errors
-│   └── 038..038 UnexpectedEof
+├── diagnostics
+│   ├── 031..031 Missing(Alternative)
+│   ├── 031..031 Missing(RuleTerminator)
+│   ├── 038..038 Missing(NonTerminalClosingDelimiter)
+│   ├── 038..038 Missing(Definition)
+│   └── 038..038 Missing(RuleTerminator)
 ├── recovery
-│   └── 018..038 <second> ::= <target
 └── rules
-    ├── 000..017 first
+    ├── 000..017 first [complete]
     │   ├── 000..007 lhs <first>
     │   │   ├── name 001..006 first
     │   │   └── closing 006..007
     │   ├── definition 008..011
-    │   ├── alt 012..016
+    │   ├── alt 012..016 [complete]
     │   │   └── 012..016 Terminal "ok"
     │   └── terminator 016..017
-    └── 018..038 second
-        ├── 018..026 lhs <second>
-        │   ├── name 019..025 second
-        │   └── closing 025..026
-        ├── definition 027..030
-        ├── alt 031..038
-        │   └── 031..038 NonTerminal <target
-        │       ├── name 032..038 target
-        │       └── closing <missing>
+    ├── 018..030 second [partial]
+    │   ├── 018..026 lhs <second>
+    │   │   ├── name 019..025 second
+    │   │   └── closing 025..026
+    │   ├── definition 027..030
+    │   └── terminator <missing>
+    └── 031..038 target [partial]
+        ├── 031..038 lhs <target
+        │   ├── name 032..038 target
+        │   └── closing <missing>
+        ├── definition <missing>
         └── terminator <missing>

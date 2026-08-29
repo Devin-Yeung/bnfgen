@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <greeting> ::= "hello" <name> | "bye";
@@ -23,19 +24,29 @@ document
 │   ├── 032..037 Str "bye"
 │   ├── 037..038 Semi ;
 │   └── 038..039 Whitespace
-├── errors
+├── diagnostics
+│   ├── 023..023 Missing(RuleTerminator)
+│   ├── 030..030 Missing(Definition)
+│   ├── 030..030 Missing(RuleTerminator)
+│   ├── 030..031 UnexpectedToken
+│   ├── 032..037 UnexpectedToken
+│   └── 037..038 UnexpectedToken
 ├── recovery
+│   ├── 030..031 UnexpectedToken |
+│   ├── 032..037 UnexpectedToken "bye"
+│   └── 037..038 UnexpectedToken ;
 └── rules
-    └── 000..038 greeting
-        ├── 000..010 lhs <greeting>
-        │   ├── name 001..009 greeting
-        │   └── closing 009..010
-        ├── definition 011..014
-        ├── alt 015..029
-        │   ├── 015..022 Terminal "hello"
-        │   └── 023..029 NonTerminal <name>
-        │       ├── name 024..028 name
-        │       └── closing 028..029
-        ├── alt 032..037
-        │   └── 032..037 Terminal "bye"
-        └── terminator 037..038
+    ├── 000..022 greeting [partial]
+    │   ├── 000..010 lhs <greeting>
+    │   │   ├── name 001..009 greeting
+    │   │   └── closing 009..010
+    │   ├── definition 011..014
+    │   ├── alt 015..022 [complete]
+    │   │   └── 015..022 Terminal "hello"
+    │   └── terminator <missing>
+    └── 023..029 name [partial]
+        ├── 023..029 lhs <name>
+        │   ├── name 024..028 name
+        │   └── closing 028..029
+        ├── definition <missing>
+        └── terminator <missing>

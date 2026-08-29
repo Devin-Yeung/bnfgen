@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <entry> ::= "first" | 3
@@ -18,18 +19,16 @@ document
 │   ├── 021..022 Whitespace  
 │   ├── 022..023 Int 3
 │   └── 023..024 Whitespace
-├── errors
-│   └── 023..023 UnexpectedEof
+├── diagnostics
+│   ├── 023..023 Missing(Symbol)
+│   └── 023..023 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..023 <entry> ::= "first" | 3
 └── rules
-    └── 000..023 entry
+    └── 000..023 entry [partial]
         ├── 000..007 lhs <entry>
         │   ├── name 001..006 entry
         │   └── closing 006..007
         ├── definition 008..011
-        ├── alt 012..019
+        ├── alt 012..019 [complete]
         │   └── 012..019 Terminal "first"
-        ├── alt 022..023
-        │   └── weight 022..023 3
         └── terminator <missing>

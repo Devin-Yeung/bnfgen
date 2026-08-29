@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <a> ::= 18446744073709551616 "x";
@@ -17,15 +18,15 @@ document
 │   ├── 029..032 Str "x"
 │   ├── 032..033 Semi ;
 │   └── 033..034 Whitespace
-├── errors
+├── diagnostics
 ├── recovery
 └── rules
-    └── 000..033 a
+    └── 000..033 a [complete]
         ├── 000..003 lhs <a>
         │   ├── name 001..002 a
         │   └── closing 002..003
         ├── definition 004..007
-        ├── alt 008..032
+        ├── alt 008..032 [complete]
         │   ├── weight 008..028 18446744073709551616
         │   └── 029..032 Terminal "x"
         └── terminator 032..033

@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <broken> ::= "bad" @;
@@ -27,16 +28,24 @@ document
 │   ├── 033..037 Str "ok"
 │   ├── 037..038 Semi ;
 │   └── 038..039 Whitespace
-├── errors
+├── diagnostics
 │   └── 019..020 UnrecognizedInput
 ├── recovery
-│   └── 000..021 <broken> ::= "bad" @;
+│   └── 019..020 InvalidLexeme @
 └── rules
-    └── 022..038 good
+    ├── 000..021 broken [complete, recovered]
+    │   ├── 000..008 lhs <broken>
+    │   │   ├── name 001..007 broken
+    │   │   └── closing 007..008
+    │   ├── definition 009..012
+    │   ├── alt 013..018 [complete]
+    │   │   └── 013..018 Terminal "bad"
+    │   └── terminator 020..021
+    └── 022..038 good [complete]
         ├── 022..028 lhs <good>
         │   ├── name 023..027 good
         │   └── closing 027..028
         ├── definition 029..032
-        ├── alt 033..037
+        ├── alt 033..037 [complete]
         │   └── 033..037 Terminal "ok"
         └── terminator 037..038

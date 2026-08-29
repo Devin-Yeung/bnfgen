@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <Expr: "set"> ::= 10 <Atom: "set"> "U" re("[a-z]+") {1, 5}
@@ -62,45 +63,78 @@ document
 │   ├── 123..124 RBrace }
 │   ├── 124..125 Semi ;
 │   └── 125..126 Whitespace
-├── errors
+├── diagnostics
+│   ├── 021..021 Missing(Symbol)
+│   ├── 021..022 UnexpectedToken
+│   ├── 022..022 Missing(RuleTerminator)
+│   ├── 022..026 UnexpectedToken
+│   ├── 026..027 UnexpectedToken
+│   ├── 028..033 UnexpectedToken
+│   ├── 033..034 UnexpectedToken
+│   ├── 035..038 UnexpectedToken
+│   ├── 039..041 UnexpectedToken
+│   ├── 041..042 UnexpectedToken
+│   ├── 042..050 UnexpectedToken
+│   ├── 050..051 UnexpectedToken
+│   ├── 052..053 UnexpectedToken
+│   ├── 053..054 UnexpectedToken
+│   ├── 054..055 UnexpectedToken
+│   ├── 056..057 UnexpectedToken
+│   ├── 057..058 UnexpectedToken
+│   ├── 077..078 UnexpectedToken
+│   ├── 079..080 UnexpectedToken
+│   ├── 081..088 UnexpectedToken
+│   ├── 089..090 UnexpectedToken
+│   ├── 090..091 UnexpectedToken
+│   ├── 091..092 UnexpectedToken
+│   ├── 092..093 UnexpectedToken
+│   ├── 112..113 UnexpectedToken
+│   ├── 121..121 Missing(Definition)
+│   ├── 121..121 Missing(RuleTerminator)
+│   ├── 121..122 UnexpectedToken
+│   ├── 122..123 UnexpectedToken
+│   ├── 123..124 UnexpectedToken
+│   └── 124..125 UnexpectedToken
 ├── recovery
+│   ├── 021..022 UnexpectedToken <
+│   ├── 022..026 UnexpectedToken Atom
+│   ├── 026..027 UnexpectedToken :
+│   ├── 028..033 UnexpectedToken "set"
+│   ├── 033..034 UnexpectedToken >
+│   ├── 035..038 UnexpectedToken "U"
+│   ├── 039..041 UnexpectedToken re
+│   ├── 041..042 UnexpectedToken (
+│   ├── 042..050 UnexpectedToken "[a-z]+"
+│   ├── 050..051 UnexpectedToken )
+│   ├── 052..053 UnexpectedToken {
+│   ├── 053..054 UnexpectedToken 1
+│   ├── 054..055 UnexpectedToken ,
+│   ├── 056..057 UnexpectedToken 5
+│   ├── 057..058 UnexpectedToken }
+│   ├── 077..078 UnexpectedToken |
+│   ├── 079..080 UnexpectedToken 2
+│   ├── 081..088 UnexpectedToken "empty"
+│   ├── 089..090 UnexpectedToken {
+│   ├── 090..091 UnexpectedToken 3
+│   ├── 091..092 UnexpectedToken ,
+│   ├── 092..093 UnexpectedToken }
+│   ├── 112..113 UnexpectedToken |
+│   ├── 121..122 UnexpectedToken {
+│   ├── 122..123 UnexpectedToken 4
+│   ├── 123..124 UnexpectedToken }
+│   └── 124..125 UnexpectedToken ;
 └── rules
-    └── 000..125 Expr
-        ├── 000..013 lhs <Expr: "set">
-        │   ├── name 001..005 Expr
-        │   ├── type-separator 005..006
-        │   ├── type 007..012 "set"
-        │   └── closing 012..013
-        ├── definition 014..017
-        ├── alt 018..058
-        │   ├── weight 018..020 10
-        │   ├── 021..034 NonTerminal <Atom: "set">
-        │   │   ├── name 022..026 Atom
-        │   │   ├── type-separator 026..027
-        │   │   ├── type 028..033 "set"
-        │   │   └── closing 033..034
-        │   ├── 035..038 Terminal "U"
-        │   ├── 039..051 Regex re("[a-z]+")
-        │   │   ├── opening-parenthesis 041..042
-        │   │   ├── pattern 042..050 "[a-z]+"
-        │   │   └── closing-parenthesis 050..051
-        │   └── repeat 052..058 {1, 5}
-        │       ├── lower 053..054 1
-        │       ├── comma 054..055
-        │       ├── upper 056..057 5
-        │       └── closing 057..058
-        ├── alt 079..093
-        │   ├── weight 079..080 2
-        │   ├── 081..088 Terminal "empty"
-        │   └── repeat 089..093 {3,}
-        │       ├── lower 090..091 3
-        │       ├── comma 091..092
-        │       └── closing 092..093
-        ├── alt 114..124
-        │   ├── 114..120 NonTerminal <Atom>
-        │   │   ├── name 115..119 Atom
-        │   │   └── closing 119..120
-        │   └── repeat 121..124 {4}
-        │       ├── lower 122..123 4
-        │       └── closing 123..124
-        └── terminator 124..125
+    ├── 000..022 Expr [partial, recovered]
+    │   ├── 000..013 lhs <Expr: "set">
+    │   │   ├── name 001..005 Expr
+    │   │   ├── type-separator 005..006
+    │   │   ├── type 007..012 "set"
+    │   │   └── closing 012..013
+    │   ├── definition 014..017
+    │   └── terminator <missing>
+    └── 114..120 Atom [partial]
+        ├── 114..120 lhs <Atom>
+        │   ├── name 115..119 Atom
+        │   └── closing 119..120
+        ├── definition <missing>
+        └── terminator <missing>

@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 re "[a-z]+";
@@ -11,8 +12,12 @@ document
 │   ├── 003..011 Str "[a-z]+"
 │   ├── 011..012 Semi ;
 │   └── 012..013 Whitespace
-├── errors
-│   └── 000..002 UnexpectedToken
+├── diagnostics
+│   ├── 000..002 UnexpectedToken
+│   ├── 003..011 UnexpectedToken
+│   └── 011..012 UnexpectedToken
 ├── recovery
-│   └── 000..012 re "[a-z]+";
+│   ├── 000..002 UnexpectedToken re
+│   ├── 003..011 UnexpectedToken "[a-z]+"
+│   └── 011..012 UnexpectedToken ;
 └── rules

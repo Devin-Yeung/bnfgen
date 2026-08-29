@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <entry> ::=
@@ -12,12 +13,12 @@ document
 │   ├── 007..008 Whitespace  
 │   ├── 008..011 Def ::=
 │   └── 011..012 Whitespace
-├── errors
-│   └── 011..011 UnexpectedEof
+├── diagnostics
+│   ├── 011..011 Missing(Alternative)
+│   └── 011..011 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..011 <entry> ::=
 └── rules
-    └── 000..011 entry
+    └── 000..011 entry [partial]
         ├── 000..007 lhs <entry>
         │   ├── name 001..006 entry
         │   └── closing 006..007

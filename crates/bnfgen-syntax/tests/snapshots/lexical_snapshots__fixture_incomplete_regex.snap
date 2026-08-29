@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <entry> ::= re("value"
@@ -16,17 +17,17 @@ document
 │   ├── 014..015 LParen (
 │   ├── 015..022 Str "value"
 │   └── 022..023 Whitespace
-├── errors
-│   └── 022..022 UnexpectedEof
+├── diagnostics
+│   ├── 022..022 Missing(RegexClosingParenthesis)
+│   └── 022..022 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..022 <entry> ::= re("value"
 └── rules
-    └── 000..022 entry
+    └── 000..022 entry [partial]
         ├── 000..007 lhs <entry>
         │   ├── name 001..006 entry
         │   └── closing 006..007
         ├── definition 008..011
-        ├── alt 012..022
+        ├── alt 012..022 [partial]
         │   └── 012..022 Regex re("value"
         │       ├── opening-parenthesis 014..015
         │       ├── pattern 015..022 "value"

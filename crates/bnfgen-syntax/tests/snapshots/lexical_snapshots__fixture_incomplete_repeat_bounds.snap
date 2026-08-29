@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <entry> ::= "value" {
@@ -16,17 +17,18 @@ document
 │   ├── 019..020 Whitespace  
 │   ├── 020..021 LBrace {
 │   └── 021..022 Whitespace
-├── errors
-│   └── 021..021 UnexpectedEof
+├── diagnostics
+│   ├── 021..021 Missing(RepeatLowerBound)
+│   ├── 021..021 Missing(RepeatClosingDelimiter)
+│   └── 021..021 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..021 <entry> ::= "value" {
 └── rules
-    └── 000..021 entry
+    └── 000..021 entry [partial]
         ├── 000..007 lhs <entry>
         │   ├── name 001..006 entry
         │   └── closing 006..007
         ├── definition 008..011
-        ├── alt 012..021
+        ├── alt 012..021 [partial]
         │   ├── 012..019 Terminal "value"
         │   └── repeat 020..021 {
         │       ├── lower <missing>

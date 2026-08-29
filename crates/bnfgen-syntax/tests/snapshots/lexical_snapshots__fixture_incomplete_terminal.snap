@@ -1,5 +1,6 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
 ---
 <input>
 <entry> ::= "value
@@ -13,17 +14,17 @@ document
 │   ├── 008..011 Def ::=
 │   ├── 011..012 Whitespace  
 │   └── 012..019 UnterminatedStr
-├── errors
+├── diagnostics
 │   ├── 012..019 UnterminatedString
-│   └── 012..019 UnexpectedToken
+│   └── 019..019 Missing(RuleTerminator)
 ├── recovery
-│   └── 000..019
+│   └── 012..019 UnterminatedString
 └── rules
-    └── 000..019 entry
+    └── 000..019 entry [partial, recovered]
         ├── 000..007 lhs <entry>
         │   ├── name 001..006 entry
         │   └── closing 006..007
         ├── definition 008..011
-        ├── alt 012..019
+        ├── alt 012..019 [partial, recovered]
         │   └── 012..019 Terminal <unterminated>
         └── terminator <missing>
