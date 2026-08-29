@@ -287,8 +287,6 @@ name = "bnfgen-syntax"
 version = "0.1.0"
 dependencies = [
  "insta",
- "lalrpop",
- "lalrpop-util",
  "logos",
  "termtree",
  "walkdir",

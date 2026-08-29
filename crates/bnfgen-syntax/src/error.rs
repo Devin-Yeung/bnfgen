@@ -1,49 +1,63 @@
-//! Syntax errors as retained data.
+//! Syntax diagnostics retained by a parsed document.
 //!
-//! A parse never fails: when recognition goes wrong, the document keeps a
-//! `SyntaxError` describing *what kind* of problem occurred *where*, so
-//! callers can reason about errors structurally instead of parsing message
-//! strings. Rendering (Miette or otherwise) stays outside this crate.
+//! A diagnostic explains an observed syntax problem. It is distinct from a
+//! recovery observation: a missing delimiter has a diagnostic but no source
+//! range to recover, while unexpected source can have both a diagnostic and
+//! a recovery observation.
 
 use std::ops::Range;
 
-/// A syntax error attached to a [`ParsedDocument`](crate::ParsedDocument).
+/// A source-ranged problem observed while lexing or parsing.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SyntaxError {
-    kind: SyntaxErrorKind,
+pub struct SyntaxDiagnostic {
+    kind: SyntaxDiagnosticKind,
     range: Range<usize>,
 }
 
-impl SyntaxError {
-    pub(super) fn new(kind: SyntaxErrorKind, range: Range<usize>) -> Self {
+impl SyntaxDiagnostic {
+    pub(crate) fn new(kind: SyntaxDiagnosticKind, range: Range<usize>) -> Self {
         Self { kind, range }
     }
 
-    pub fn kind(&self) -> SyntaxErrorKind {
+    pub fn kind(&self) -> SyntaxDiagnosticKind {
         self.kind
     }
 
-    /// The UTF-8 byte range the error refers to in the retained source.
-    /// An end-of-input error points at an empty range at that offset.
+    /// The UTF-8 byte range the diagnostic refers to.
+    ///
+    /// A missing construct has an empty range at its insertion point. An
+    /// unexpected source construct has the nonempty range it occupies.
     pub fn range(&self) -> Range<usize> {
         self.range.clone()
     }
 }
 
-/// The structured kind of a syntax error.
+/// The source-language category of a syntax diagnostic.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SyntaxErrorKind {
-    /// Input that does not match any token rule. The offending bytes are
-    /// retained in the token buffer as an [`Invalid`](crate::TokenKind)
-    /// token; this error records the failure itself.
+pub enum SyntaxDiagnosticKind {
+    /// Input did not match any lexical token rule.
     UnrecognizedInput,
-    /// A string literal was left unterminated — its opening quote never
-    /// found a closing quote. The bytes from the opening quote onward are
-    /// retained as an [`UnterminatedStr`](crate::TokenKind) token; this
-    /// error records the failure itself.
+    /// A string literal has no closing quote.
     UnterminatedString,
-    /// A well-formed token appeared where the grammar could not accept it.
+    /// A token was present but cannot occur at this syntactic position.
     UnexpectedToken,
-    /// The document ended where the grammar required more input.
-    UnexpectedEof,
+    /// A syntactic element was absent at the diagnostic's insertion point.
+    Missing(ExpectedSyntax),
+}
+
+/// A language-specific syntactic element that a parser expected.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ExpectedSyntax {
+    RuleName,
+    NonTerminalName,
+    NonTerminalClosingDelimiter,
+    Definition,
+    Alternative,
+    Symbol,
+    RepeatLowerBound,
+    RepeatClosingDelimiter,
+    RegexOpeningParenthesis,
+    RegexPattern,
+    RegexClosingParenthesis,
+    RuleTerminator,
 }

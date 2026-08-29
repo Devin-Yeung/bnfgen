@@ -5,25 +5,25 @@
 //! kind; unmatched input produces a retained recovery kind
 //! ([`Invalid`](crate::TokenKind::Invalid) or
 //! [`UnterminatedStr`](crate::TokenKind::UnterminatedStr)) plus a matching
-//! [`SyntaxError`](crate::SyntaxError) recording the failure, and iteration
+//! [`SyntaxDiagnostic`](crate::SyntaxDiagnostic) recording the failure, and iteration
 //! always continues past the problem. This is the lexical half of "parsing
-//! is total"; the grammar-recognition half lives in `parser.lalrpop` and
-//! `document.rs`.
+//! is total"; the grammar-recognition half lives in the private parser
+//! module and `document.rs`.
 
 use logos::Logos;
 
-use crate::error::{SyntaxError, SyntaxErrorKind};
+use crate::error::{SyntaxDiagnostic, SyntaxDiagnosticKind};
 use crate::token::{SyntaxToken, TokenKind};
 
 /// Lex `source` into a source-ordered token buffer plus retained lexical
-/// errors, in the same source order as the tokens.
+/// diagnostics, in the same source order as the tokens.
 ///
 /// Logos reports unmatched input as `Err(())` with the span it consumed —
 /// at least one byte, so the iterator is guaranteed to make progress and
 /// this loop terminates for every input. Rather than dropping unmatched
 /// bytes, each run is retained as a recovery token so the buffer covers
 /// the source completely, with a matching error recording the failure.
-pub(super) fn lex(source: &str) -> (Vec<SyntaxToken>, Vec<SyntaxError>) {
+pub(super) fn lex(source: &str) -> (Vec<SyntaxToken>, Vec<SyntaxDiagnostic>) {
     let mut tokens = Vec::new();
     let mut errors = Vec::new();
 
@@ -41,13 +41,13 @@ pub(super) fn lex(source: &str) -> (Vec<SyntaxToken>, Vec<SyntaxError>) {
                 let (kind, error_kind) = if source.as_bytes()[range.start] == b'"' {
                     (
                         TokenKind::UnterminatedStr,
-                        SyntaxErrorKind::UnterminatedString,
+                        SyntaxDiagnosticKind::UnterminatedString,
                     )
                 } else {
-                    (TokenKind::Invalid, SyntaxErrorKind::UnrecognizedInput)
+                    (TokenKind::Invalid, SyntaxDiagnosticKind::UnrecognizedInput)
                 };
                 tokens.push(SyntaxToken::new(kind, range.clone()));
-                errors.push(SyntaxError::new(error_kind, range));
+                errors.push(SyntaxDiagnostic::new(error_kind, range));
             }
         }
     }

@@ -2,7 +2,7 @@
 
 This document records the target crate seams for the parser and front-end refactor. The refactor prepares Bnfgen for a future language server, but does not design or implement LSP capabilities, workspace behavior, or protocol handling.
 
-The governing decisions are [ADR 0001](../adr/0001-separate-analysis-from-generation-planning.md), [ADR 0002](../adr/0002-split-syntax-analysis-and-generation-crates.md), [ADR 0003](../adr/0003-use-token-backed-tolerant-syntax-documents.md), and [ADR 0004](../adr/0004-keep-syntax-storage-token-backed.md).
+The governing decisions are [ADR 0001](../adr/0001-separate-analysis-from-generation-planning.md), [ADR 0002](../adr/0002-split-syntax-analysis-and-generation-crates.md), [ADR 0003](../adr/0003-use-token-backed-tolerant-syntax-documents.md), [ADR 0004](../adr/0004-keep-syntax-storage-token-backed.md), [ADR 0005](../adr/0005-use-one-handwritten-tolerant-syntax-parser.md), and [ADR 0006](../adr/0006-model-parsed-documents-as-syntax-snapshots.md). ADR 0005 supersedes the earlier LALRPOP-specific implementation details while preserving the crate seams and token-backed document contract.
 
 ## Dependency direction
 
@@ -34,11 +34,11 @@ Owns the source language and the tolerant parsing interface:
 
 - source text and byte ranges;
 - raw tokens, trivia, and lexical errors;
-- the Logos lexer and LALRPOP grammar;
+- the Logos lexer and one private handwritten tolerant parser;
 - parser recovery;
 - `ParsedDocument`, language-specific syntax views, and syntax errors.
 
-The core output is a token-backed `ParsedDocument`. It preserves the original source, raw tokens, trivia, invalid input, recovered regions, and syntax errors. LALRPOP consumes a significant-token adapter and contributes structural ranges and recovery events; its recovery types are implementation details and do not cross the crate interface. Typed syntax access is a view over the retained source model, not a strict generation AST.
+The core output is a token-backed `ParsedDocument`. It preserves the original source, raw tokens, trivia, invalid input, recovered regions, and syntax errors. One private handwritten recursive-descent parser consumes a significant-token view and contributes structural ranges, partial facts, and recovery events; its cursor and recovery details do not cross the crate interface. Typed syntax access is a view over the retained source model, not a strict generation AST.
 
 Incomplete syntax must not discard later valid rules or unrecognized text. Syntax parsing does not decode string or integer values, compile regular expressions, resolve names, or establish generation invariants.
 
@@ -50,11 +50,26 @@ The public contract follows these rules:
 - line, column, and UTF-16 positions are derived by a separate source index or adapter, not cached on every token;
 - `ParsedDocument` is `Send + Sync`, so an LSP may retain and query documents across worker threads.
 
-The complete source-backed token buffer is the lossless representation. Private records identify recognized rules, alternatives, symbols, and recovery regions by token identity or byte range; they do not materialize a second generic tree. Required syntax that is absent simply has no record. Typed wrappers such as rule and non-terminal views provide domain-specific accessors and return `None` when incomplete syntax omits a child.
+The complete source-backed token buffer is the lossless representation. Private records identify recognized rules, alternatives, symbols, and recovery regions by token identity or byte range; they do not materialize a second generic tree. Required syntax that is absent simply has no record. The parser records only source-established partial facts, reports missing expected syntax without fabricating source tokens, and consumes unexpected input only through local recovery that guarantees progress. Typed wrappers such as rule and non-terminal views provide domain-specific accessors and return `None` when incomplete syntax omits a child.
 
-The public interface provides the capabilities callers need rather than exposing storage: source and token iteration, rules and their typed children, syntax errors, token lookup at a byte offset, and syntax-context classification at a byte offset. `bnfgen-analysis` consumes these language-specific views and never matches raw token kinds to reconstruct the grammar. Internal `TokenId` values, LALRPOP recovery types, significant-token adapters, and storage records do not cross the crate interface.
+The public interface provides the capabilities callers need rather than exposing storage: source and token iteration, rules and their typed children, syntax diagnostics, recovery observations, token lookup at a byte offset, and syntax-context classification at a byte offset. `bnfgen-analysis` consumes these language-specific views and never matches raw token kinds to reconstruct the grammar. Internal token identifiers, parser cursors and recovery sets, significant-token adapters, and storage records do not cross the crate interface.
 
 This crate does not depend on Rowan, Miette, Petgraph, Rand, generation code, CLI code, or LSP types. It does not decode literal values, resolve names, compile regular expressions for generation, or decide whether a grammar can execute.
+
+### Parsed-document model
+
+`ParsedDocument` is a syntax snapshot of exactly one source string. It is not a `RawGrammar`, a semantic model, or a claim that a document can generate. It owns four distinct kinds of information:
+
+| Category | Meaning | Public form |
+| --- | --- | --- |
+| Source fidelity | Every byte the user supplied, including trivia and lexical failures | `source()`, source-ordered `tokens()`, source slices |
+| Recognized syntax | Only structural facts established by source; facts may be incomplete | typed borrowing views such as `RuleSyntax`, `NonTerminalSyntax`, and `SymbolSyntax` |
+| Syntax diagnostics | Why a token was unexpected or an expected construct is absent | ranged `SyntaxDiagnostic` values; an absent construct has a zero-width diagnostic at the insertion point |
+| Recovery observations | Actual source ranges locally consumed, skipped, or otherwise not structurally attached while continuing parse | structured recovery views, separate from diagnostics and typed syntax |
+
+A typed view reports its structural state without asking an analysis caller to infer it from optional children or overlapping recovery ranges: it exposes whether its required syntax is complete and whether parser recovery affected it. Its child accessors still return `None` for source syntax that was never written. `Complete` means structurally complete only; it does **not** mean semantically valid, name-resolved, regex-valid, or generation-ready.
+
+Missing syntax produces a diagnostic but no fictional source token or nonempty recovery range. Unexpected source text remains in the token buffer and is represented by a recovery observation. A partial view can overlap a recovery observation because it reports the portion of a construct the source actually established; the recovery observation names the unstructured portion rather than causing that useful fact to disappear.
 
 ### `bnfgen-analysis`
 
@@ -123,7 +138,7 @@ generated string or parse tree     bnfgen
 
 | Crate | Observable snapshot contract |
 | --- | --- |
-| `bnfgen-syntax` | complete tokens, recognized syntax, recovery regions, cursor contexts, and selected typing states |
+| `bnfgen-syntax` | complete tokens, recognized syntax and structural state, diagnostics, recovery observations, cursor contexts, and selected typing states |
 | `bnfgen-analysis` | normalized symbol information and structured diagnostics |
 | `bnfgen` | existing seeded generation and parse-tree outputs |
 | `bnfgen-cli` | rendered diagnostics, CLI behavior, and MCP outputs |
@@ -135,6 +150,5 @@ Existing output-oriented snapshots should be reused wherever behavior is unchang
 - LSP protocol or capability design;
 - an empty `bnfgen-lsp` placeholder crate;
 - workspace or import semantics;
-- incremental parsing;
 - separate parser, graph, or diagnostics crates;
-- replacing LALRPOP with another parsing algorithm.
+- incremental parsing, incremental lexing, persistent subtrees, or edit-based range remapping.

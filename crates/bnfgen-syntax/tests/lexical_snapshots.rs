@@ -12,7 +12,9 @@
 
 mod common;
 
-use bnfgen_syntax::{parse, NonTerminalSyntax, ParsedDocument, SymbolKind, SyntaxToken};
+use bnfgen_syntax::{
+    parse, NonTerminalSyntax, ParsedDocument, StructuralState, SymbolKind, SyntaxToken,
+};
 use insta::assert_snapshot;
 use termtree::Tree;
 
@@ -104,27 +106,39 @@ fn non_terminal_tree(label: &str, non_terminal: NonTerminalSyntax<'_>) -> Tree<S
     tree
 }
 
-/// Public-seam tree: tokens, errors, recovery, and rules are siblings under
-/// `document`. Trivia (whitespace, comments) is a token leaf, not a CST
-/// node — there is no generic tree; comments never nest under rules.
+fn structural_state_label(state: StructuralState) -> &'static str {
+    match state {
+        StructuralState::Complete => "complete",
+        StructuralState::Partial => "partial",
+    }
+}
+
+/// Public-seam tree: tokens, diagnostics, recovery observations, and rules
+/// are siblings under `document`. Trivia (whitespace, comments) is a token
+/// leaf, not a CST node — there is no generic tree; comments never nest
+/// under rules.
 fn document_tree(doc: &ParsedDocument) -> Tree<String> {
     let tokens = Tree::new("tokens".to_owned())
         .with_leaves(doc.tokens().map(|token| token_leaf(doc, token)));
 
-    let errors = Tree::new("errors".to_owned()).with_leaves(doc.errors().iter().map(|error| {
-        let range = error.range();
-        Tree::new(format!(
-            "{} {:?}",
-            range_label(range.start, range.end),
-            error.kind()
-        ))
-    }));
+    let diagnostics = Tree::new("diagnostics".to_owned()).with_leaves(
+        doc.diagnostics().iter().map(|diagnostic| {
+            let range = diagnostic.range();
+            Tree::new(format!(
+                "{} {:?}",
+                range_label(range.start, range.end),
+                diagnostic.kind()
+            ))
+        }),
+    );
 
     let recovery =
-        Tree::new("recovery".to_owned()).with_leaves(doc.recovery_ranges().map(|range| {
+        Tree::new("recovery".to_owned()).with_leaves(doc.recovery().map(|observation| {
+            let range = observation.range();
             Tree::new(format!(
-                "{}{}",
+                "{} {:?}{}",
                 range_label(range.start, range.end),
+                observation.kind(),
                 inline_source(doc.slice(range)),
             ))
         }));
@@ -132,7 +146,17 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
     let rules = Tree::new("rules".to_owned()).with_leaves(doc.rules().map(|rule| {
         let range = rule.range();
         let name = rule.lhs().and_then(|lhs| lhs.name()).unwrap_or("<missing>");
-        let mut rule_tree = Tree::new(format!("{} {}", range_label(range.start, range.end), name,));
+        let mut rule_tree = Tree::new(format!(
+            "{} {} [{}{}]",
+            range_label(range.start, range.end),
+            name,
+            structural_state_label(rule.structural_state()),
+            if rule.has_recovery() {
+                ", recovered"
+            } else {
+                ""
+            },
+        ));
         if let Some(lhs) = rule.lhs() {
             rule_tree.push(non_terminal_tree("lhs", lhs));
         } else {
@@ -148,8 +172,16 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
         }
         rule_tree.extend(rule.alternatives().map(|alternative| {
             let range = alternative.range();
-            let mut alternative_tree =
-                Tree::new(format!("alt {}", range_label(range.start, range.end)));
+            let mut alternative_tree = Tree::new(format!(
+                "alt {} [{}{}]",
+                range_label(range.start, range.end),
+                structural_state_label(alternative.structural_state()),
+                if alternative.has_recovery() {
+                    ", recovered"
+                } else {
+                    ""
+                },
+            ));
             if let Some(weight) = alternative.weight() {
                 let range = weight.range();
                 alternative_tree.push(Tree::new(format!(
@@ -280,7 +312,7 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
         rule_tree
     }));
 
-    Tree::new("document".to_owned()).with_leaves([tokens, errors, recovery, rules])
+    Tree::new("document".to_owned()).with_leaves([tokens, diagnostics, recovery, rules])
 }
 
 /// Fixture source as written, then the public-seam tree. Slices in the

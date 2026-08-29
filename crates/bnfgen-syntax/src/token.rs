@@ -88,7 +88,7 @@ pub enum TokenKind {
     /// token buffer in source order. The legacy lexer reported this class
     /// of input as a lexical error and lost the bytes; here they stay
     /// observable, with a matching
-    /// [`UnrecognizedInput`](crate::SyntaxErrorKind::UnrecognizedInput)
+    /// [`UnrecognizedInput`](crate::SyntaxDiagnosticKind::UnrecognizedInput)
     /// error recording the failure.
     ///
     /// Deliberately carries no logos pattern: a catch-all regex would tie
@@ -100,7 +100,7 @@ pub enum TokenKind {
     /// run beginning with the opening quote that never found its closing
     /// quote before the match died — at end of file, or on an escape
     /// `Str` does not accept. Retained raw with a matching
-    /// [`UnterminatedString`](crate::SyntaxErrorKind::UnterminatedString)
+    /// [`UnterminatedString`](crate::SyntaxDiagnosticKind::UnterminatedString)
     /// error. Like [`Invalid`](TokenKind::Invalid), constructed by
     /// `crate::lexer`, never by logos.
     UnterminatedStr,
@@ -115,14 +115,14 @@ impl TokenKind {
 
     /// Whether this kind is a retained lexical failure: bytes kept in the
     /// buffer as recoverable input that the grammar never consumes. Every
-    /// such token is accompanied by a [`SyntaxError`](crate::SyntaxError)
+    /// such token is accompanied by a [`SyntaxDiagnostic`](crate::SyntaxDiagnostic)
     /// recording the failure.
     pub fn is_lexical_recovery(&self) -> bool {
         matches!(self, TokenKind::Invalid | TokenKind::UnterminatedStr)
     }
 
     /// Whether this kind participates in grammar recognition — the
-    /// significant-token stream LALRPOP consumes.
+    /// significant-token stream the tolerant parser consumes.
     ///
     /// An unterminated string participates because its opening quote is a
     /// reliable typed fact for a terminal, type, or regex pattern. Arbitrary

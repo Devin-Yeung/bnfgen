@@ -12,8 +12,28 @@ use std::ops::Range;
 use crate::document::ParsedDocument;
 use crate::records::{
     AlternativeRecord, NonTerminalRecord, RegexRecord, RepeatRecord, RuleRecord, StringRecord,
-    SymbolRecord,
+    StructuralState as RecordStructuralState, SymbolRecord,
 };
+
+/// Whether source established all required syntax for a view.
+///
+/// This is a syntactic property only. `Complete` does not imply that values
+/// decode, names resolve, a regular expression compiles, or generation is
+/// possible.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StructuralState {
+    Complete,
+    Partial,
+}
+
+impl From<RecordStructuralState> for StructuralState {
+    fn from(state: RecordStructuralState) -> Self {
+        match state {
+            RecordStructuralState::Complete => Self::Complete,
+            RecordStructuralState::Partial => Self::Partial,
+        }
+    }
+}
 
 /// A recognized rule: its left-hand side, alternatives, and source ranges.
 #[derive(Debug, Clone)]
@@ -35,6 +55,16 @@ impl<'a> RuleSyntax<'a> {
     /// The rule's raw text, exactly as written.
     pub fn text(&self) -> &'a str {
         self.doc.slice(self.record.span.clone())
+    }
+
+    /// Whether all required rule syntax was written.
+    pub fn structural_state(&self) -> StructuralState {
+        self.record.state.into()
+    }
+
+    /// Whether parser recovery affected source inside this rule.
+    pub fn has_recovery(&self) -> bool {
+        self.record.has_recovery
     }
 
     /// The left-hand-side non-terminal, when enough of one was recognized.
@@ -89,6 +119,11 @@ impl<'a> NonTerminalSyntax<'a> {
     /// The full bracketed form's raw text, delimiters included.
     pub fn text(&self) -> &'a str {
         self.doc.slice(self.record.span.clone())
+    }
+
+    /// Whether all required non-terminal syntax was written.
+    pub fn structural_state(&self) -> StructuralState {
+        self.record.state.into()
     }
 
     /// The opening `<` that establishes this non-terminal-shaped fact.
@@ -156,6 +191,16 @@ impl<'a> AlternativeSyntax<'a> {
         self.doc.slice(self.record.span.clone())
     }
 
+    /// Whether all required alternative syntax was written.
+    pub fn structural_state(&self) -> StructuralState {
+        self.record.state.into()
+    }
+
+    /// Whether parser recovery affected source inside this alternative.
+    pub fn has_recovery(&self) -> bool {
+        self.record.has_recovery
+    }
+
     /// The optional raw integer weight before the first symbol.
     pub fn weight(&self) -> Option<IntegerSyntax<'a>> {
         self.record
@@ -219,6 +264,11 @@ impl<'a> SymbolSyntax<'a> {
         self.doc.slice(self.range())
     }
 
+    /// Whether all required syntax for this symbol was written.
+    pub fn structural_state(&self) -> StructuralState {
+        self.record.state().into()
+    }
+
     pub fn kind(&self) -> SymbolKind {
         match self.record {
             SymbolRecord::Terminal(_) => SymbolKind::Terminal,
@@ -276,6 +326,15 @@ impl<'a> StringSyntax<'a> {
         self.doc.slice(self.record.span.clone())
     }
 
+    /// Whether all required string syntax was written.
+    pub fn structural_state(&self) -> StructuralState {
+        if self.record.terminated {
+            StructuralState::Complete
+        } else {
+            StructuralState::Partial
+        }
+    }
+
     /// Whether the lexer observed a closing quote.
     pub fn is_terminated(&self) -> bool {
         self.record.terminated
@@ -296,6 +355,10 @@ impl<'a> IntegerSyntax<'a> {
 
     pub fn range(&self) -> Range<usize> {
         self.span.clone()
+    }
+
+    pub fn structural_state(&self) -> StructuralState {
+        StructuralState::Complete
     }
 
     /// Exact decimal spelling. Parsing and overflow checks are downstream.
@@ -322,6 +385,11 @@ impl<'a> RepeatSyntax<'a> {
 
     pub fn text(&self) -> &'a str {
         self.doc.slice(self.record.span.clone())
+    }
+
+    /// Whether all required repeat syntax was written.
+    pub fn structural_state(&self) -> StructuralState {
+        self.record.state.into()
     }
 
     /// The opening `{` that establishes this repeat-shaped fact.
@@ -373,6 +441,11 @@ impl<'a> RegexSyntax<'a> {
 
     pub fn text(&self) -> &'a str {
         self.doc.slice(self.record.span.clone())
+    }
+
+    /// Whether all required regular-expression syntax was written.
+    pub fn structural_state(&self) -> StructuralState {
+        self.record.state.into()
     }
 
     /// The written `(`, absent after a bare `re` prefix.
