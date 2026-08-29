@@ -7,11 +7,13 @@
 // work — those belong downstream.
 //
 // Current status: every construct accepted by the legacy grammar is
-// recognized as raw syntax. Recovery productions will arrive later.
+// recognized as raw syntax. A rule-level `!` production lets LALRPOP
+// synchronize broken rules at a grammar-supported continuation.
 
 use crate::records::{
     AlternativeRecord, NonTerminalRecord, RepeatRecord, RuleRecord, SymbolRecord,
 };
+use crate::document::ParseEvent;
 use crate::token::TokenKind;
 use std::ops::Range;
 
@@ -43,11 +45,14 @@ extern {
     }
 }
 
-pub Document: Vec<RuleRecord> = <rules: Rule*> => rules;
+pub Document: Vec<ParseEvent> = <rules: Rule*> => rules;
 
-Rule: RuleRecord = {
+Rule: ParseEvent = {
     <l: @L> <lhs: NonTerminal> "::=" <alts: Alternatives> ";" <r: @R> =>
-        RuleRecord { span: l..r, lhs, alts },
+        ParseEvent::Rule(RuleRecord { span: l..r, lhs, alts }),
+
+    <l: @L> <recovery: !> <r: @R> =>
+        ParseEvent::recovered(recovery, l..r),
 };
 
 NonTerminal: NonTerminalRecord = {

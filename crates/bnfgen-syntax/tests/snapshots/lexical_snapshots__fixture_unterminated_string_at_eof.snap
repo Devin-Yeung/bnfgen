@@ -15,4 +15,7 @@ document
 ├── errors
 │   ├── 008..021 UnterminatedString
 │   └── 007..007 UnexpectedEof
+├── recovery
+│   ├── 000..007 <a> ::=
+│   └── 008..021 "unterminated
 └── rules

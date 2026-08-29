@@ -32,6 +32,8 @@ document
 │   ├── 013..014 UnrecognizedInput
 │   ├── 014..015 UnrecognizedInput
 │   └── 015..016 UnrecognizedInput
+├── recovery
+│   └── 013..016 @#~
 └── rules
     ├── 000..012 a
     │   ├── 000..003 lhs <a>

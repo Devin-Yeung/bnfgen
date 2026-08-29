@@ -19,9 +19,6 @@ document
 │   └── 015..016 Whitespace
 ├── errors
 │   └── 012..014 UnrecognizedInput
+├── recovery
+│   └── 000..015 <a> ::= "x" ü;
 └── rules
-    └── 000..015 a
-        ├── 000..003 lhs <a>
-        │   └── name 001..002 a
-        └── alt 008..011
-            └── 008..011 Terminal "x"

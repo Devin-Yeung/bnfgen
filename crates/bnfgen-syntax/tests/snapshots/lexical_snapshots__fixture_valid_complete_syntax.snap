@@ -63,6 +63,7 @@ document
 │   ├── 124..125 Semi ;
 │   └── 125..126 Whitespace
 ├── errors
+├── recovery
 └── rules
     └── 000..125 Expr
         ├── 000..013 lhs <Expr: "set">

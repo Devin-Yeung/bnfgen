@@ -16,6 +16,7 @@ document
 │   ├── 012..013 Whitespace  
 │   └── 013..029 Comment // trailing note
 ├── errors
+├── recovery
 └── rules
     └── 000..012 a
         ├── 000..003 lhs <a>

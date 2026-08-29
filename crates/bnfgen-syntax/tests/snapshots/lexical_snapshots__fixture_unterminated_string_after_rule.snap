@@ -25,4 +25,12 @@ document
 ├── errors
 │   ├── 021..026 UnterminatedString
 │   └── 020..020 UnexpectedEof
+├── recovery
+│   ├── 013..020 <b> ::=
+│   └── 021..026 "open
 └── rules
+    └── 000..012 a
+        ├── 000..003 lhs <a>
+        │   └── name 001..002 a
+        └── alt 008..011
+            └── 008..011 Terminal "x"

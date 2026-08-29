@@ -13,4 +13,6 @@ document
 │   └── 012..013 Whitespace
 ├── errors
 │   └── 000..002 UnexpectedToken
+├── recovery
+│   └── 000..012 re "[a-z]+";
 └── rules

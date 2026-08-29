@@ -6,4 +6,5 @@ source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
 document
 ├── tokens
 ├── errors
+├── recovery
 └── rules

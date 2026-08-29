@@ -28,6 +28,8 @@ document
 │   └── 027..028 Whitespace
 ├── errors
 │   └── 013..014 UnrecognizedInput
+├── recovery
+│   └── 013..014 /
 └── rules
     ├── 000..012 a
     │   ├── 000..003 lhs <a>

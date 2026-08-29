@@ -18,6 +18,7 @@ document
 │   ├── 032..033 Semi ;
 │   └── 033..034 Whitespace
 ├── errors
+├── recovery
 └── rules
     └── 000..033 a
         ├── 000..003 lhs <a>

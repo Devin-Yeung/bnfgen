@@ -1,0 +1,31 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+<input>
+<broken> ::= "unfinished"
+<good> ::= "ok";
+</input>
+document
+├── tokens
+│   ├── 000..001 LAngle <
+│   ├── 001..007 Id broken
+│   ├── 007..008 RAngle >
+│   ├── 008..009 Whitespace  
+│   ├── 009..012 Def ::=
+│   ├── 012..013 Whitespace  
+│   ├── 013..025 Str "unfinished"
+│   ├── 025..026 Whitespace
+│   ├── 026..027 LAngle <
+│   ├── 027..031 Id good
+│   ├── 031..032 RAngle >
+│   ├── 032..033 Whitespace  
+│   ├── 033..036 Def ::=
+│   ├── 036..037 Whitespace  
+│   ├── 037..041 Str "ok"
+│   ├── 041..042 Semi ;
+│   └── 042..043 Whitespace
+├── errors
+│   └── 033..036 UnexpectedToken
+├── recovery
+│   └── 000..042
+└── rules

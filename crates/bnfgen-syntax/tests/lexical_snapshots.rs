@@ -78,7 +78,7 @@ fn non_terminal_tree(label: &str, non_terminal: NonTerminalSyntax<'_>) -> Tree<S
     tree
 }
 
-/// Public-seam tree: `tokens`, `errors`, and `rules` as siblings under
+/// Public-seam tree: tokens, errors, recovery, and rules are siblings under
 /// `document`. Trivia (whitespace, comments) is a token leaf, not a CST
 /// node — there is no generic tree; comments never nest under rules.
 fn document_tree(doc: &ParsedDocument) -> Tree<String> {
@@ -93,6 +93,15 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
             error.kind()
         ))
     }));
+
+    let recovery =
+        Tree::new("recovery".to_owned()).with_leaves(doc.recovery_ranges().map(|range| {
+            Tree::new(format!(
+                "{}{}",
+                range_label(range.start, range.end),
+                inline_source(doc.slice(range)),
+            ))
+        }));
 
     let rules = Tree::new("rules".to_owned()).with_leaves(doc.rules().map(|rule| {
         let range = rule.range();
@@ -187,7 +196,7 @@ fn document_tree(doc: &ParsedDocument) -> Tree<String> {
         rule_tree
     }));
 
-    Tree::new("document".to_owned()).with_leaves([tokens, errors, rules])
+    Tree::new("document".to_owned()).with_leaves([tokens, errors, recovery, rules])
 }
 
 /// Fixture source as written, then the public-seam tree. Slices in the

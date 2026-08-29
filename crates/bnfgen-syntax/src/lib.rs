@@ -37,8 +37,9 @@
 //! This is the current migration slice of the syntax rewrite: every valid
 //! language construct is recognized through typed views, and
 //! the token buffer retains every byte of input — invalid input and
-//! unterminated strings included — as recoverable token kinds. Later slices
-//! add recovery for broken rules, partial facts, and cursor-context queries.
+//! unterminated strings included — as recoverable token kinds. Broken rules
+//! recover through LALRPOP's grammar-level error recovery; later slices add
+//! partial facts and cursor-context queries.
 //! The temporary strict lowering onto the legacy models stays outside this
 //! crate by design.
 //!
