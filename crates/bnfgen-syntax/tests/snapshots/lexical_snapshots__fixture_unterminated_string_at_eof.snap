@@ -1,29 +1,28 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <a> ::= "unterminated</input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..002 Id a
-│   ├── 002..003 RAngle >
-│   ├── 003..004 Whitespace  
-│   ├── 004..007 Def ::=
-│   ├── 007..008 Whitespace  
-│   └── 008..021 UnterminatedStr "unterminated
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   └── 8..21 UnterminatedStr "unterminated
 ├── diagnostics
-│   ├── 008..021 UnterminatedString
-│   └── 021..021 Missing(RuleTerminator)
+│   ├── 8..21 UnterminatedString
+│   └── 21..21 Missing(RuleTerminator)
 ├── recovery
-│   └── 008..021 UnterminatedString "unterminated
+│   └── 8..21 UnterminatedString "unterminated
 └── rules
-    └── 000..021 a [partial, recovered]
-        ├── 000..003 lhs <a>
-        │   ├── name 001..002 a
-        │   └── closing 002..003
-        ├── definition 004..007
-        ├── alt 008..021 [partial, recovered]
-        │   └── 008..021 Terminal "unterminated <unterminated>
-        └── terminator <missing>
+    └── 0..21 a partial recovered
+        ├── 0..3 lhs complete <a>
+        │   ├── name 1..2 a
+        │   └── closing 2..3
+        ├── definition 4..7
+        ├── 8..21 alt partial recovered
+        │   └── 8..21 Terminal unterminated "unterminated
+        └── terminator missing

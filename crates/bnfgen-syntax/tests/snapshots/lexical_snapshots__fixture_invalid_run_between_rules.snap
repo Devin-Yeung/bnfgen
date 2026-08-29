@@ -1,56 +1,55 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <a> ::= "x"; @#~ <b> ::= "y";
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..002 Id a
-│   ├── 002..003 RAngle >
-│   ├── 003..004 Whitespace  
-│   ├── 004..007 Def ::=
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Str "x"
-│   ├── 011..012 Semi ;
-│   ├── 012..013 Whitespace  
-│   ├── 013..014 Invalid @
-│   ├── 014..015 Invalid #
-│   ├── 015..016 Invalid ~
-│   ├── 016..017 Whitespace  
-│   ├── 017..018 LAngle <
-│   ├── 018..019 Id b
-│   ├── 019..020 RAngle >
-│   ├── 020..021 Whitespace  
-│   ├── 021..024 Def ::=
-│   ├── 024..025 Whitespace  
-│   ├── 025..028 Str "y"
-│   ├── 028..029 Semi ;
-│   └── 029..030 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Str "x"
+│   ├── 11..12 Semi ;
+│   ├── 12..13 Whitespace  
+│   ├── 13..14 Invalid @
+│   ├── 14..15 Invalid #
+│   ├── 15..16 Invalid ~
+│   ├── 16..17 Whitespace  
+│   ├── 17..18 LAngle <
+│   ├── 18..19 Id b
+│   ├── 19..20 RAngle >
+│   ├── 20..21 Whitespace  
+│   ├── 21..24 Def ::=
+│   ├── 24..25 Whitespace  
+│   ├── 25..28 Str "y"
+│   ├── 28..29 Semi ;
+│   └── 29..30 Whitespace
 ├── diagnostics
-│   ├── 013..014 UnrecognizedInput
-│   ├── 014..015 UnrecognizedInput
-│   └── 015..016 UnrecognizedInput
+│   ├── 13..14 UnrecognizedInput
+│   ├── 14..15 UnrecognizedInput
+│   └── 15..16 UnrecognizedInput
 ├── recovery
-│   ├── 013..014 InvalidLexeme @
-│   ├── 014..015 InvalidLexeme #
-│   └── 015..016 InvalidLexeme ~
+│   ├── 13..14 InvalidLexeme @
+│   ├── 14..15 InvalidLexeme #
+│   └── 15..16 InvalidLexeme ~
 └── rules
-    ├── 000..012 a [complete]
-    │   ├── 000..003 lhs <a>
-    │   │   ├── name 001..002 a
-    │   │   └── closing 002..003
-    │   ├── definition 004..007
-    │   ├── alt 008..011 [complete]
-    │   │   └── 008..011 Terminal "x"
-    │   └── terminator 011..012
-    └── 017..029 b [complete]
-        ├── 017..020 lhs <b>
-        │   ├── name 018..019 b
-        │   └── closing 019..020
-        ├── definition 021..024
-        ├── alt 025..028 [complete]
-        │   └── 025..028 Terminal "y"
-        └── terminator 028..029
+    ├── 0..12 a complete
+    │   ├── 0..3 lhs complete <a>
+    │   │   ├── name 1..2 a
+    │   │   └── closing 2..3
+    │   ├── definition 4..7
+    │   ├── 8..11 alt complete
+    │   │   └── 8..11 Terminal complete "x"
+    │   └── terminator 11..12
+    └── 17..29 b complete
+        ├── 17..20 lhs complete <b>
+        │   ├── name 18..19 b
+        │   └── closing 19..20
+        ├── definition 21..24
+        ├── 25..28 alt complete
+        │   └── 25..28 Terminal complete "y"
+        └── terminator 28..29

@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <broken> ::= "bad" ) ;
@@ -8,48 +7,48 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..007 Id broken
-│   ├── 007..008 RAngle >
-│   ├── 008..009 Whitespace  
-│   ├── 009..012 Def ::=
-│   ├── 012..013 Whitespace  
-│   ├── 013..018 Str "bad"
-│   ├── 018..019 Whitespace  
-│   ├── 019..020 RParen )
-│   ├── 020..021 Whitespace  
-│   ├── 021..022 Semi ;
-│   ├── 022..023 Whitespace
-│   ├── 023..024 LAngle <
-│   ├── 024..028 Id good
-│   ├── 028..029 RAngle >
-│   ├── 029..030 Whitespace  
-│   ├── 030..033 Def ::=
-│   ├── 033..034 Whitespace  
-│   ├── 034..038 Str "ok"
-│   ├── 038..039 Semi ;
-│   └── 039..040 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 RAngle >
+│   ├── 8..9 Whitespace  
+│   ├── 9..12 Def ::=
+│   ├── 12..13 Whitespace  
+│   ├── 13..18 Str "bad"
+│   ├── 18..19 Whitespace  
+│   ├── 19..20 RParen )
+│   ├── 20..21 Whitespace  
+│   ├── 21..22 Semi ;
+│   ├── 22..23 Whitespace
+│   ├── 23..24 LAngle <
+│   ├── 24..28 Id good
+│   ├── 28..29 RAngle >
+│   ├── 29..30 Whitespace  
+│   ├── 30..33 Def ::=
+│   ├── 33..34 Whitespace  
+│   ├── 34..38 Str "ok"
+│   ├── 38..39 Semi ;
+│   └── 39..40 Whitespace
 ├── diagnostics
-│   ├── 019..019 Missing(RuleTerminator)
-│   ├── 019..020 UnexpectedToken
-│   └── 021..022 UnexpectedToken
+│   ├── 19..19 Missing(RuleTerminator)
+│   ├── 19..20 UnexpectedToken
+│   └── 21..22 UnexpectedToken
 ├── recovery
-│   ├── 019..020 UnexpectedToken )
-│   └── 021..022 UnexpectedToken ;
+│   ├── 19..20 UnexpectedToken )
+│   └── 21..22 UnexpectedToken ;
 └── rules
-    ├── 000..018 broken [partial]
-    │   ├── 000..008 lhs <broken>
-    │   │   ├── name 001..007 broken
-    │   │   └── closing 007..008
-    │   ├── definition 009..012
-    │   ├── alt 013..018 [complete]
-    │   │   └── 013..018 Terminal "bad"
-    │   └── terminator <missing>
-    └── 023..039 good [complete]
-        ├── 023..029 lhs <good>
-        │   ├── name 024..028 good
-        │   └── closing 028..029
-        ├── definition 030..033
-        ├── alt 034..038 [complete]
-        │   └── 034..038 Terminal "ok"
-        └── terminator 038..039
+    ├── 0..18 broken partial
+    │   ├── 0..8 lhs complete <broken>
+    │   │   ├── name 1..7 broken
+    │   │   └── closing 7..8
+    │   ├── definition 9..12
+    │   ├── 13..18 alt complete
+    │   │   └── 13..18 Terminal complete "bad"
+    │   └── terminator missing
+    └── 23..39 good complete
+        ├── 23..29 lhs complete <good>
+        │   ├── name 24..28 good
+        │   └── closing 28..29
+        ├── definition 30..33
+        ├── 34..38 alt complete
+        │   └── 34..38 Terminal complete "ok"
+        └── terminator 38..39

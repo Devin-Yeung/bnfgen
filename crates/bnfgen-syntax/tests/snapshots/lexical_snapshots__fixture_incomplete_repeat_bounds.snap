@@ -1,36 +1,35 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <entry> ::= "value" {
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..006 Id entry
-│   ├── 006..007 RAngle >
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Def ::=
-│   ├── 011..012 Whitespace  
-│   ├── 012..019 Str "value"
-│   ├── 019..020 Whitespace  
-│   ├── 020..021 LBrace {
-│   └── 021..022 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id entry
+│   ├── 6..7 RAngle >
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..19 Str "value"
+│   ├── 19..20 Whitespace  
+│   ├── 20..21 LBrace {
+│   └── 21..22 Whitespace
 ├── diagnostics
-│   ├── 021..021 Missing(RepeatLowerBound)
-│   ├── 021..021 Missing(RepeatClosingDelimiter)
-│   └── 021..021 Missing(RuleTerminator)
+│   ├── 21..21 Missing(RepeatLowerBound)
+│   ├── 21..21 Missing(RepeatClosingDelimiter)
+│   └── 21..21 Missing(RuleTerminator)
 ├── recovery
 └── rules
-    └── 000..021 entry [partial]
-        ├── 000..007 lhs <entry>
-        │   ├── name 001..006 entry
-        │   └── closing 006..007
-        ├── definition 008..011
-        ├── alt 012..021 [partial]
-        │   ├── 012..019 Terminal "value"
-        │   └── repeat 020..021 {
-        │       ├── lower <missing>
-        │       └── closing <missing>
-        └── terminator <missing>
+    └── 0..21 entry partial
+        ├── 0..7 lhs complete <entry>
+        │   ├── name 1..6 entry
+        │   └── closing 6..7
+        ├── definition 8..11
+        ├── 12..21 alt partial
+        │   ├── 12..19 Terminal complete "value"
+        │   └── 20..21 repeat partial {
+        │       ├── lower missing
+        │       └── closing missing
+        └── terminator missing

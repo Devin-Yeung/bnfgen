@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <broken> ::= "bad" @;
@@ -8,44 +7,44 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..007 Id broken
-│   ├── 007..008 RAngle >
-│   ├── 008..009 Whitespace  
-│   ├── 009..012 Def ::=
-│   ├── 012..013 Whitespace  
-│   ├── 013..018 Str "bad"
-│   ├── 018..019 Whitespace  
-│   ├── 019..020 Invalid @
-│   ├── 020..021 Semi ;
-│   ├── 021..022 Whitespace
-│   ├── 022..023 LAngle <
-│   ├── 023..027 Id good
-│   ├── 027..028 RAngle >
-│   ├── 028..029 Whitespace  
-│   ├── 029..032 Def ::=
-│   ├── 032..033 Whitespace  
-│   ├── 033..037 Str "ok"
-│   ├── 037..038 Semi ;
-│   └── 038..039 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 RAngle >
+│   ├── 8..9 Whitespace  
+│   ├── 9..12 Def ::=
+│   ├── 12..13 Whitespace  
+│   ├── 13..18 Str "bad"
+│   ├── 18..19 Whitespace  
+│   ├── 19..20 Invalid @
+│   ├── 20..21 Semi ;
+│   ├── 21..22 Whitespace
+│   ├── 22..23 LAngle <
+│   ├── 23..27 Id good
+│   ├── 27..28 RAngle >
+│   ├── 28..29 Whitespace  
+│   ├── 29..32 Def ::=
+│   ├── 32..33 Whitespace  
+│   ├── 33..37 Str "ok"
+│   ├── 37..38 Semi ;
+│   └── 38..39 Whitespace
 ├── diagnostics
-│   └── 019..020 UnrecognizedInput
+│   └── 19..20 UnrecognizedInput
 ├── recovery
-│   └── 019..020 InvalidLexeme @
+│   └── 19..20 InvalidLexeme @
 └── rules
-    ├── 000..021 broken [complete, recovered]
-    │   ├── 000..008 lhs <broken>
-    │   │   ├── name 001..007 broken
-    │   │   └── closing 007..008
-    │   ├── definition 009..012
-    │   ├── alt 013..018 [complete]
-    │   │   └── 013..018 Terminal "bad"
-    │   └── terminator 020..021
-    └── 022..038 good [complete]
-        ├── 022..028 lhs <good>
-        │   ├── name 023..027 good
-        │   └── closing 027..028
-        ├── definition 029..032
-        ├── alt 033..037 [complete]
-        │   └── 033..037 Terminal "ok"
-        └── terminator 037..038
+    ├── 0..21 broken complete recovered
+    │   ├── 0..8 lhs complete <broken>
+    │   │   ├── name 1..7 broken
+    │   │   └── closing 7..8
+    │   ├── definition 9..12
+    │   ├── 13..18 alt complete
+    │   │   └── 13..18 Terminal complete "bad"
+    │   └── terminator 20..21
+    └── 22..38 good complete
+        ├── 22..28 lhs complete <good>
+        │   ├── name 23..27 good
+        │   └── closing 27..28
+        ├── definition 29..32
+        ├── 33..37 alt complete
+        │   └── 33..37 Terminal complete "ok"
+        └── terminator 37..38

@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <broken> ::= 
@@ -8,37 +7,37 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..007 Id broken
-│   ├── 007..008 RAngle >
-│   ├── 008..009 Whitespace  
-│   ├── 009..012 Def ::=
-│   ├── 012..014 Whitespace
-│   ├── 014..015 LAngle <
-│   ├── 015..019 Id good
-│   ├── 019..020 RAngle >
-│   ├── 020..021 Whitespace  
-│   ├── 021..024 Def ::=
-│   ├── 024..025 Whitespace  
-│   ├── 025..029 Str "ok"
-│   ├── 029..030 Semi ;
-│   └── 030..031 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 RAngle >
+│   ├── 8..9 Whitespace  
+│   ├── 9..12 Def ::=
+│   ├── 12..14 Whitespace  
+│   ├── 14..15 LAngle <
+│   ├── 15..19 Id good
+│   ├── 19..20 RAngle >
+│   ├── 20..21 Whitespace  
+│   ├── 21..24 Def ::=
+│   ├── 24..25 Whitespace  
+│   ├── 25..29 Str "ok"
+│   ├── 29..30 Semi ;
+│   └── 30..31 Whitespace
 ├── diagnostics
-│   ├── 014..014 Missing(Alternative)
-│   └── 014..014 Missing(RuleTerminator)
+│   ├── 14..14 Missing(Alternative)
+│   └── 14..14 Missing(RuleTerminator)
 ├── recovery
 └── rules
-    ├── 000..012 broken [partial]
-    │   ├── 000..008 lhs <broken>
-    │   │   ├── name 001..007 broken
-    │   │   └── closing 007..008
-    │   ├── definition 009..012
-    │   └── terminator <missing>
-    └── 014..030 good [complete]
-        ├── 014..020 lhs <good>
-        │   ├── name 015..019 good
-        │   └── closing 019..020
-        ├── definition 021..024
-        ├── alt 025..029 [complete]
-        │   └── 025..029 Terminal "ok"
-        └── terminator 029..030
+    ├── 0..12 broken partial
+    │   ├── 0..8 lhs complete <broken>
+    │   │   ├── name 1..7 broken
+    │   │   └── closing 7..8
+    │   ├── definition 9..12
+    │   └── terminator missing
+    └── 14..30 good complete
+        ├── 14..20 lhs complete <good>
+        │   ├── name 15..19 good
+        │   └── closing 19..20
+        ├── definition 21..24
+        ├── 25..29 alt complete
+        │   └── 25..29 Terminal complete "ok"
+        └── terminator 29..30

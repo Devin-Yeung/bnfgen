@@ -1,50 +1,49 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <a> ::= "x"; / <b> ::= "y";
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..002 Id a
-│   ├── 002..003 RAngle >
-│   ├── 003..004 Whitespace  
-│   ├── 004..007 Def ::=
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Str "x"
-│   ├── 011..012 Semi ;
-│   ├── 012..013 Whitespace  
-│   ├── 013..014 Invalid /
-│   ├── 014..015 Whitespace  
-│   ├── 015..016 LAngle <
-│   ├── 016..017 Id b
-│   ├── 017..018 RAngle >
-│   ├── 018..019 Whitespace  
-│   ├── 019..022 Def ::=
-│   ├── 022..023 Whitespace  
-│   ├── 023..026 Str "y"
-│   ├── 026..027 Semi ;
-│   └── 027..028 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Str "x"
+│   ├── 11..12 Semi ;
+│   ├── 12..13 Whitespace  
+│   ├── 13..14 Invalid /
+│   ├── 14..15 Whitespace  
+│   ├── 15..16 LAngle <
+│   ├── 16..17 Id b
+│   ├── 17..18 RAngle >
+│   ├── 18..19 Whitespace  
+│   ├── 19..22 Def ::=
+│   ├── 22..23 Whitespace  
+│   ├── 23..26 Str "y"
+│   ├── 26..27 Semi ;
+│   └── 27..28 Whitespace
 ├── diagnostics
-│   └── 013..014 UnrecognizedInput
+│   └── 13..14 UnrecognizedInput
 ├── recovery
-│   └── 013..014 InvalidLexeme /
+│   └── 13..14 InvalidLexeme /
 └── rules
-    ├── 000..012 a [complete]
-    │   ├── 000..003 lhs <a>
-    │   │   ├── name 001..002 a
-    │   │   └── closing 002..003
-    │   ├── definition 004..007
-    │   ├── alt 008..011 [complete]
-    │   │   └── 008..011 Terminal "x"
-    │   └── terminator 011..012
-    └── 015..027 b [complete]
-        ├── 015..018 lhs <b>
-        │   ├── name 016..017 b
-        │   └── closing 017..018
-        ├── definition 019..022
-        ├── alt 023..026 [complete]
-        │   └── 023..026 Terminal "y"
-        └── terminator 026..027
+    ├── 0..12 a complete
+    │   ├── 0..3 lhs complete <a>
+    │   │   ├── name 1..2 a
+    │   │   └── closing 2..3
+    │   ├── definition 4..7
+    │   ├── 8..11 alt complete
+    │   │   └── 8..11 Terminal complete "x"
+    │   └── terminator 11..12
+    └── 15..27 b complete
+        ├── 15..18 lhs complete <b>
+        │   ├── name 16..17 b
+        │   └── closing 17..18
+        ├── definition 19..22
+        ├── 23..26 alt complete
+        │   └── 23..26 Terminal complete "y"
+        └── terminator 26..27

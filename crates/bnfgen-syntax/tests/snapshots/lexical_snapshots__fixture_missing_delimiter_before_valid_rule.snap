@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <broken ::= "bad";
@@ -8,40 +7,40 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..007 Id broken
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Def ::=
-│   ├── 011..012 Whitespace  
-│   ├── 012..017 Str "bad"
-│   ├── 017..018 Semi ;
-│   ├── 018..019 Whitespace
-│   ├── 019..020 LAngle <
-│   ├── 020..024 Id good
-│   ├── 024..025 RAngle >
-│   ├── 025..026 Whitespace  
-│   ├── 026..029 Def ::=
-│   ├── 029..030 Whitespace  
-│   ├── 030..034 Str "ok"
-│   ├── 034..035 Semi ;
-│   └── 035..036 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..17 Str "bad"
+│   ├── 17..18 Semi ;
+│   ├── 18..19 Whitespace
+│   ├── 19..20 LAngle <
+│   ├── 20..24 Id good
+│   ├── 24..25 RAngle >
+│   ├── 25..26 Whitespace  
+│   ├── 26..29 Def ::=
+│   ├── 29..30 Whitespace  
+│   ├── 30..34 Str "ok"
+│   ├── 34..35 Semi ;
+│   └── 35..36 Whitespace
 ├── diagnostics
-│   └── 008..008 Missing(NonTerminalClosingDelimiter)
+│   └── 8..8 Missing(NonTerminalClosingDelimiter)
 ├── recovery
 └── rules
-    ├── 000..018 broken [partial]
-    │   ├── 000..007 lhs <broken
-    │   │   ├── name 001..007 broken
-    │   │   └── closing <missing>
-    │   ├── definition 008..011
-    │   ├── alt 012..017 [complete]
-    │   │   └── 012..017 Terminal "bad"
-    │   └── terminator 017..018
-    └── 019..035 good [complete]
-        ├── 019..025 lhs <good>
-        │   ├── name 020..024 good
-        │   └── closing 024..025
-        ├── definition 026..029
-        ├── alt 030..034 [complete]
-        │   └── 030..034 Terminal "ok"
-        └── terminator 034..035
+    ├── 0..18 broken partial
+    │   ├── 0..7 lhs partial <broken
+    │   │   ├── name 1..7 broken
+    │   │   └── closing missing
+    │   ├── definition 8..11
+    │   ├── 12..17 alt complete
+    │   │   └── 12..17 Terminal complete "bad"
+    │   └── terminator 17..18
+    └── 19..35 good complete
+        ├── 19..25 lhs complete <good>
+        │   ├── name 20..24 good
+        │   └── closing 24..25
+        ├── definition 26..29
+        ├── 30..34 alt complete
+        │   └── 30..34 Terminal complete "ok"
+        └── terminator 34..35

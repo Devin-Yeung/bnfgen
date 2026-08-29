@@ -5,10 +5,14 @@
 //! it to the snapshot test. Files may omit a trailing newline (see
 //! `.editorconfig`).
 
+mod snapshot;
+
 use std::fs;
 use std::path::Path;
 
 use walkdir::WalkDir;
+
+pub use snapshot::snapshot;
 
 /// Discover every fixture file and return its file stem with its source.
 ///

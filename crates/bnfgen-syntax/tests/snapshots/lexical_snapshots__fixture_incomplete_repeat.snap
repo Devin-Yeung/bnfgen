@@ -1,40 +1,39 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <entry> ::= "value" {2,3
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..006 Id entry
-│   ├── 006..007 RAngle >
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Def ::=
-│   ├── 011..012 Whitespace  
-│   ├── 012..019 Str "value"
-│   ├── 019..020 Whitespace  
-│   ├── 020..021 LBrace {
-│   ├── 021..022 Int 2
-│   ├── 022..023 Comma ,
-│   ├── 023..024 Int 3
-│   └── 024..025 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id entry
+│   ├── 6..7 RAngle >
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..19 Str "value"
+│   ├── 19..20 Whitespace  
+│   ├── 20..21 LBrace {
+│   ├── 21..22 Int 2
+│   ├── 22..23 Comma ,
+│   ├── 23..24 Int 3
+│   └── 24..25 Whitespace
 ├── diagnostics
-│   ├── 024..024 Missing(RepeatClosingDelimiter)
-│   └── 024..024 Missing(RuleTerminator)
+│   ├── 24..24 Missing(RepeatClosingDelimiter)
+│   └── 24..24 Missing(RuleTerminator)
 ├── recovery
 └── rules
-    └── 000..024 entry [partial]
-        ├── 000..007 lhs <entry>
-        │   ├── name 001..006 entry
-        │   └── closing 006..007
-        ├── definition 008..011
-        ├── alt 012..024 [partial]
-        │   ├── 012..019 Terminal "value"
-        │   └── repeat 020..024 {2,3
-        │       ├── lower 021..022 2
-        │       ├── comma 022..023
-        │       ├── upper 023..024 3
-        │       └── closing <missing>
-        └── terminator <missing>
+    └── 0..24 entry partial
+        ├── 0..7 lhs complete <entry>
+        │   ├── name 1..6 entry
+        │   └── closing 6..7
+        ├── definition 8..11
+        ├── 12..24 alt partial
+        │   ├── 12..19 Terminal complete "value"
+        │   └── 20..24 repeat partial {2,3
+        │       ├── 21..22 lower 2
+        │       ├── comma 22..23
+        │       ├── 23..24 upper 3
+        │       └── closing missing
+        └── terminator missing

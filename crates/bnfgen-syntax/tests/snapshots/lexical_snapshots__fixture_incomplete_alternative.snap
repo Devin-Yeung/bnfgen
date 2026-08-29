@@ -1,34 +1,33 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <entry> ::= "first" | 3
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..006 Id entry
-│   ├── 006..007 RAngle >
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Def ::=
-│   ├── 011..012 Whitespace  
-│   ├── 012..019 Str "first"
-│   ├── 019..020 Whitespace  
-│   ├── 020..021 Or |
-│   ├── 021..022 Whitespace  
-│   ├── 022..023 Int 3
-│   └── 023..024 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id entry
+│   ├── 6..7 RAngle >
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..19 Str "first"
+│   ├── 19..20 Whitespace  
+│   ├── 20..21 Or |
+│   ├── 21..22 Whitespace  
+│   ├── 22..23 Int 3
+│   └── 23..24 Whitespace
 ├── diagnostics
-│   ├── 023..023 Missing(Symbol)
-│   └── 023..023 Missing(RuleTerminator)
+│   ├── 23..23 Missing(Symbol)
+│   └── 23..23 Missing(RuleTerminator)
 ├── recovery
 └── rules
-    └── 000..023 entry [partial]
-        ├── 000..007 lhs <entry>
-        │   ├── name 001..006 entry
-        │   └── closing 006..007
-        ├── definition 008..011
-        ├── alt 012..019 [complete]
-        │   └── 012..019 Terminal "first"
-        └── terminator <missing>
+    └── 0..23 entry partial
+        ├── 0..7 lhs complete <entry>
+        │   ├── name 1..6 entry
+        │   └── closing 6..7
+        ├── definition 8..11
+        ├── 12..19 alt complete
+        │   └── 12..19 Terminal complete "first"
+        └── terminator missing

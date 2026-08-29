@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <broken> ::= <target;
@@ -8,49 +7,49 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..007 Id broken
-│   ├── 007..008 RAngle >
-│   ├── 008..009 Whitespace  
-│   ├── 009..012 Def ::=
-│   ├── 012..013 Whitespace  
-│   ├── 013..014 LAngle <
-│   ├── 014..020 Id target
-│   ├── 020..021 Semi ;
-│   ├── 021..022 Whitespace
-│   ├── 022..023 LAngle <
-│   ├── 023..027 Id good
-│   ├── 027..028 RAngle >
-│   ├── 028..029 Whitespace  
-│   ├── 029..032 Def ::=
-│   ├── 032..033 Whitespace  
-│   ├── 033..037 Str "ok"
-│   ├── 037..038 Semi ;
-│   └── 038..039 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 RAngle >
+│   ├── 8..9 Whitespace  
+│   ├── 9..12 Def ::=
+│   ├── 12..13 Whitespace  
+│   ├── 13..14 LAngle <
+│   ├── 14..20 Id target
+│   ├── 20..21 Semi ;
+│   ├── 21..22 Whitespace
+│   ├── 22..23 LAngle <
+│   ├── 23..27 Id good
+│   ├── 27..28 RAngle >
+│   ├── 28..29 Whitespace  
+│   ├── 29..32 Def ::=
+│   ├── 32..33 Whitespace  
+│   ├── 33..37 Str "ok"
+│   ├── 37..38 Semi ;
+│   └── 38..39 Whitespace
 ├── diagnostics
-│   ├── 013..013 Missing(Alternative)
-│   ├── 013..013 Missing(RuleTerminator)
-│   ├── 020..020 Missing(NonTerminalClosingDelimiter)
-│   └── 020..020 Missing(Definition)
+│   ├── 13..13 Missing(Alternative)
+│   ├── 13..13 Missing(RuleTerminator)
+│   ├── 20..20 Missing(NonTerminalClosingDelimiter)
+│   └── 20..20 Missing(Definition)
 ├── recovery
 └── rules
-    ├── 000..012 broken [partial]
-    │   ├── 000..008 lhs <broken>
-    │   │   ├── name 001..007 broken
-    │   │   └── closing 007..008
-    │   ├── definition 009..012
-    │   └── terminator <missing>
-    ├── 013..021 target [partial]
-    │   ├── 013..020 lhs <target
-    │   │   ├── name 014..020 target
-    │   │   └── closing <missing>
-    │   ├── definition <missing>
-    │   └── terminator 020..021
-    └── 022..038 good [complete]
-        ├── 022..028 lhs <good>
-        │   ├── name 023..027 good
-        │   └── closing 027..028
-        ├── definition 029..032
-        ├── alt 033..037 [complete]
-        │   └── 033..037 Terminal "ok"
-        └── terminator 037..038
+    ├── 0..12 broken partial
+    │   ├── 0..8 lhs complete <broken>
+    │   │   ├── name 1..7 broken
+    │   │   └── closing 7..8
+    │   ├── definition 9..12
+    │   └── terminator missing
+    ├── 13..21 target partial
+    │   ├── 13..20 lhs partial <target
+    │   │   ├── name 14..20 target
+    │   │   └── closing missing
+    │   ├── definition missing
+    │   └── terminator 20..21
+    └── 22..38 good complete
+        ├── 22..28 lhs complete <good>
+        │   ├── name 23..27 good
+        │   └── closing 27..28
+        ├── definition 29..32
+        ├── 33..37 alt complete
+        │   └── 33..37 Terminal complete "ok"
+        └── terminator 37..38

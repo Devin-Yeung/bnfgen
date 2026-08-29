@@ -1,29 +1,28 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <entry: "value"
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..006 Id entry
-│   ├── 006..007 Colon :
-│   ├── 007..008 Whitespace  
-│   ├── 008..015 Str "value"
-│   └── 015..016 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id entry
+│   ├── 6..7 Colon :
+│   ├── 7..8 Whitespace  
+│   ├── 8..15 Str "value"
+│   └── 15..16 Whitespace
 ├── diagnostics
-│   ├── 015..015 Missing(NonTerminalClosingDelimiter)
-│   ├── 015..015 Missing(Definition)
-│   └── 015..015 Missing(RuleTerminator)
+│   ├── 15..15 Missing(NonTerminalClosingDelimiter)
+│   ├── 15..15 Missing(Definition)
+│   └── 15..15 Missing(RuleTerminator)
 ├── recovery
 └── rules
-    └── 000..015 entry [partial]
-        ├── 000..015 lhs <entry: "value"
-        │   ├── name 001..006 entry
-        │   ├── type-separator 006..007
-        │   ├── type 008..015 "value"
-        │   └── closing <missing>
-        ├── definition <missing>
-        └── terminator <missing>
+    └── 0..15 entry partial
+        ├── 0..15 lhs partial <entry: "value"
+        │   ├── name 1..6 entry
+        │   ├── type-separator 6..7
+        │   ├── 8..15 type complete "value"
+        │   └── closing missing
+        ├── definition missing
+        └── terminator missing

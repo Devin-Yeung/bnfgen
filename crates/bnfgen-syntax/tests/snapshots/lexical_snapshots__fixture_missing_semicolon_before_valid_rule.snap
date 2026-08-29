@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <broken> ::= "unfinished"
@@ -8,40 +7,40 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..007 Id broken
-│   ├── 007..008 RAngle >
-│   ├── 008..009 Whitespace  
-│   ├── 009..012 Def ::=
-│   ├── 012..013 Whitespace  
-│   ├── 013..025 Str "unfinished"
-│   ├── 025..026 Whitespace
-│   ├── 026..027 LAngle <
-│   ├── 027..031 Id good
-│   ├── 031..032 RAngle >
-│   ├── 032..033 Whitespace  
-│   ├── 033..036 Def ::=
-│   ├── 036..037 Whitespace  
-│   ├── 037..041 Str "ok"
-│   ├── 041..042 Semi ;
-│   └── 042..043 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 RAngle >
+│   ├── 8..9 Whitespace  
+│   ├── 9..12 Def ::=
+│   ├── 12..13 Whitespace  
+│   ├── 13..25 Str "unfinished"
+│   ├── 25..26 Whitespace
+│   ├── 26..27 LAngle <
+│   ├── 27..31 Id good
+│   ├── 31..32 RAngle >
+│   ├── 32..33 Whitespace  
+│   ├── 33..36 Def ::=
+│   ├── 36..37 Whitespace  
+│   ├── 37..41 Str "ok"
+│   ├── 41..42 Semi ;
+│   └── 42..43 Whitespace
 ├── diagnostics
-│   └── 026..026 Missing(RuleTerminator)
+│   └── 26..26 Missing(RuleTerminator)
 ├── recovery
 └── rules
-    ├── 000..025 broken [partial]
-    │   ├── 000..008 lhs <broken>
-    │   │   ├── name 001..007 broken
-    │   │   └── closing 007..008
-    │   ├── definition 009..012
-    │   ├── alt 013..025 [complete]
-    │   │   └── 013..025 Terminal "unfinished"
-    │   └── terminator <missing>
-    └── 026..042 good [complete]
-        ├── 026..032 lhs <good>
-        │   ├── name 027..031 good
-        │   └── closing 031..032
-        ├── definition 033..036
-        ├── alt 037..041 [complete]
-        │   └── 037..041 Terminal "ok"
-        └── terminator 041..042
+    ├── 0..25 broken partial
+    │   ├── 0..8 lhs complete <broken>
+    │   │   ├── name 1..7 broken
+    │   │   └── closing 7..8
+    │   ├── definition 9..12
+    │   ├── 13..25 alt complete
+    │   │   └── 13..25 Terminal complete "unfinished"
+    │   └── terminator missing
+    └── 26..42 good complete
+        ├── 26..32 lhs complete <good>
+        │   ├── name 27..31 good
+        │   └── closing 31..32
+        ├── definition 33..36
+        ├── 37..41 alt complete
+        │   └── 37..41 Terminal complete "ok"
+        └── terminator 41..42

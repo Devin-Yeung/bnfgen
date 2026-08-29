@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <first> ::= "ok";
@@ -8,49 +7,49 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..006 Id first
-│   ├── 006..007 RAngle >
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Def ::=
-│   ├── 011..012 Whitespace  
-│   ├── 012..016 Str "ok"
-│   ├── 016..017 Semi ;
-│   ├── 017..018 Whitespace
-│   ├── 018..019 LAngle <
-│   ├── 019..025 Id second
-│   ├── 025..026 RAngle >
-│   ├── 026..027 Whitespace  
-│   ├── 027..030 Def ::=
-│   ├── 030..031 Whitespace  
-│   ├── 031..032 LAngle <
-│   ├── 032..038 Id target
-│   └── 038..039 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id first
+│   ├── 6..7 RAngle >
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..16 Str "ok"
+│   ├── 16..17 Semi ;
+│   ├── 17..18 Whitespace
+│   ├── 18..19 LAngle <
+│   ├── 19..25 Id second
+│   ├── 25..26 RAngle >
+│   ├── 26..27 Whitespace  
+│   ├── 27..30 Def ::=
+│   ├── 30..31 Whitespace  
+│   ├── 31..32 LAngle <
+│   ├── 32..38 Id target
+│   └── 38..39 Whitespace
 ├── diagnostics
-│   ├── 031..031 Missing(Alternative)
-│   ├── 031..031 Missing(RuleTerminator)
-│   ├── 038..038 Missing(NonTerminalClosingDelimiter)
-│   ├── 038..038 Missing(Definition)
-│   └── 038..038 Missing(RuleTerminator)
+│   ├── 31..31 Missing(Alternative)
+│   ├── 31..31 Missing(RuleTerminator)
+│   ├── 38..38 Missing(NonTerminalClosingDelimiter)
+│   ├── 38..38 Missing(Definition)
+│   └── 38..38 Missing(RuleTerminator)
 ├── recovery
 └── rules
-    ├── 000..017 first [complete]
-    │   ├── 000..007 lhs <first>
-    │   │   ├── name 001..006 first
-    │   │   └── closing 006..007
-    │   ├── definition 008..011
-    │   ├── alt 012..016 [complete]
-    │   │   └── 012..016 Terminal "ok"
-    │   └── terminator 016..017
-    ├── 018..030 second [partial]
-    │   ├── 018..026 lhs <second>
-    │   │   ├── name 019..025 second
-    │   │   └── closing 025..026
-    │   ├── definition 027..030
-    │   └── terminator <missing>
-    └── 031..038 target [partial]
-        ├── 031..038 lhs <target
-        │   ├── name 032..038 target
-        │   └── closing <missing>
-        ├── definition <missing>
-        └── terminator <missing>
+    ├── 0..17 first complete
+    │   ├── 0..7 lhs complete <first>
+    │   │   ├── name 1..6 first
+    │   │   └── closing 6..7
+    │   ├── definition 8..11
+    │   ├── 12..16 alt complete
+    │   │   └── 12..16 Terminal complete "ok"
+    │   └── terminator 16..17
+    ├── 18..30 second partial
+    │   ├── 18..26 lhs complete <second>
+    │   │   ├── name 19..25 second
+    │   │   └── closing 25..26
+    │   ├── definition 27..30
+    │   └── terminator missing
+    └── 31..38 target partial
+        ├── 31..38 lhs partial <target
+        │   ├── name 32..38 target
+        │   └── closing missing
+        ├── definition missing
+        └── terminator missing

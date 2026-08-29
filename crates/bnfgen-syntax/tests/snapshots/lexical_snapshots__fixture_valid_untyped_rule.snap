@@ -1,52 +1,51 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <greeting> ::= "hello" <name> | "bye";
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..009 Id greeting
-│   ├── 009..010 RAngle >
-│   ├── 010..011 Whitespace  
-│   ├── 011..014 Def ::=
-│   ├── 014..015 Whitespace  
-│   ├── 015..022 Str "hello"
-│   ├── 022..023 Whitespace  
-│   ├── 023..024 LAngle <
-│   ├── 024..028 Id name
-│   ├── 028..029 RAngle >
-│   ├── 029..030 Whitespace  
-│   ├── 030..031 Or |
-│   ├── 031..032 Whitespace  
-│   ├── 032..037 Str "bye"
-│   ├── 037..038 Semi ;
-│   └── 038..039 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..9 Id greeting
+│   ├── 9..10 RAngle >
+│   ├── 10..11 Whitespace  
+│   ├── 11..14 Def ::=
+│   ├── 14..15 Whitespace  
+│   ├── 15..22 Str "hello"
+│   ├── 22..23 Whitespace  
+│   ├── 23..24 LAngle <
+│   ├── 24..28 Id name
+│   ├── 28..29 RAngle >
+│   ├── 29..30 Whitespace  
+│   ├── 30..31 Or |
+│   ├── 31..32 Whitespace  
+│   ├── 32..37 Str "bye"
+│   ├── 37..38 Semi ;
+│   └── 38..39 Whitespace
 ├── diagnostics
-│   ├── 023..023 Missing(RuleTerminator)
-│   ├── 030..030 Missing(Definition)
-│   ├── 030..030 Missing(RuleTerminator)
-│   ├── 030..031 UnexpectedToken
-│   ├── 032..037 UnexpectedToken
-│   └── 037..038 UnexpectedToken
+│   ├── 23..23 Missing(RuleTerminator)
+│   ├── 30..30 Missing(Definition)
+│   ├── 30..30 Missing(RuleTerminator)
+│   ├── 30..31 UnexpectedToken
+│   ├── 32..37 UnexpectedToken
+│   └── 37..38 UnexpectedToken
 ├── recovery
-│   ├── 030..031 UnexpectedToken |
-│   ├── 032..037 UnexpectedToken "bye"
-│   └── 037..038 UnexpectedToken ;
+│   ├── 30..31 UnexpectedToken |
+│   ├── 32..37 UnexpectedToken "bye"
+│   └── 37..38 UnexpectedToken ;
 └── rules
-    ├── 000..022 greeting [partial]
-    │   ├── 000..010 lhs <greeting>
-    │   │   ├── name 001..009 greeting
-    │   │   └── closing 009..010
-    │   ├── definition 011..014
-    │   ├── alt 015..022 [complete]
-    │   │   └── 015..022 Terminal "hello"
-    │   └── terminator <missing>
-    └── 023..029 name [partial]
-        ├── 023..029 lhs <name>
-        │   ├── name 024..028 name
-        │   └── closing 028..029
-        ├── definition <missing>
-        └── terminator <missing>
+    ├── 0..22 greeting partial
+    │   ├── 0..10 lhs complete <greeting>
+    │   │   ├── name 1..9 greeting
+    │   │   └── closing 9..10
+    │   ├── definition 11..14
+    │   ├── 15..22 alt complete
+    │   │   └── 15..22 Terminal complete "hello"
+    │   └── terminator missing
+    └── 23..29 name partial
+        ├── 23..29 lhs complete <name>
+        │   ├── name 24..28 name
+        │   └── closing 28..29
+        ├── definition missing
+        └── terminator missing

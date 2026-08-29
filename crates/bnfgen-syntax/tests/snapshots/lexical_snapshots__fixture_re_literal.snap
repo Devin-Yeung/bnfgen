@@ -1,23 +1,22 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 re "[a-z]+";
 </input>
 document
 ├── tokens
-│   ├── 000..002 Re re
-│   ├── 002..003 Whitespace  
-│   ├── 003..011 Str "[a-z]+"
-│   ├── 011..012 Semi ;
-│   └── 012..013 Whitespace
+│   ├── 0..2 Re re
+│   ├── 2..3 Whitespace  
+│   ├── 3..11 Str "[a-z]+"
+│   ├── 11..12 Semi ;
+│   └── 12..13 Whitespace
 ├── diagnostics
-│   ├── 000..002 UnexpectedToken
-│   ├── 003..011 UnexpectedToken
-│   └── 011..012 UnexpectedToken
+│   ├── 0..2 UnexpectedToken
+│   ├── 3..11 UnexpectedToken
+│   └── 11..12 UnexpectedToken
 ├── recovery
-│   ├── 000..002 UnexpectedToken re
-│   ├── 003..011 UnexpectedToken "[a-z]+"
-│   └── 011..012 UnexpectedToken ;
+│   ├── 0..2 UnexpectedToken re
+│   ├── 3..11 UnexpectedToken "[a-z]+"
+│   └── 11..12 UnexpectedToken ;
 └── rules

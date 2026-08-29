@@ -1,6 +1,5 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <Expr: "set"> ::= 10 <Atom: "set"> "U" re("[a-z]+") {1, 5}
@@ -9,49 +8,49 @@ snapshot_kind: text
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..005 Id Expr
-│   ├── 005..006 Colon :
-│   ├── 006..007 Whitespace  
-│   ├── 007..012 Str "set"
-│   ├── 012..013 RAngle >
-│   ├── 013..014 Whitespace  
-│   ├── 014..017 Def ::=
-│   ├── 017..018 Whitespace  
-│   ├── 018..020 Int 10
-│   ├── 020..021 Whitespace  
-│   ├── 021..022 LAngle <
-│   ├── 022..026 Id Atom
-│   ├── 026..027 Colon :
-│   ├── 027..028 Whitespace  
-│   ├── 028..033 Str "set"
-│   ├── 033..034 RAngle >
-│   ├── 034..035 Whitespace  
-│   ├── 035..038 Str "U"
-│   ├── 038..039 Whitespace  
-│   ├── 039..041 Re re
-│   ├── 041..042 LParen (
-│   ├── 042..050 Str "[a-z]+"
-│   ├── 050..051 RParen )
-│   ├── 051..052 Whitespace  
-│   ├── 052..053 LBrace {
-│   ├── 053..054 Int 1
-│   ├── 054..055 Comma ,
-│   ├── 055..056 Whitespace  
-│   ├── 056..057 Int 5
-│   ├── 057..058 RBrace }
-│   ├── 058..077 Whitespace
-│   ├── 077..078 Or |
-│   ├── 078..079 Whitespace  
-│   ├── 079..080 Int 2
-│   ├── 080..081 Whitespace  
-│   ├── 081..088 Str "empty"
-│   ├── 088..089 Whitespace  
-│   ├── 089..090 LBrace {
-│   ├── 090..091 Int 3
-│   ├── 091..092 Comma ,
-│   ├── 092..093 RBrace }
-│   ├── 093..112 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..5 Id Expr
+│   ├── 5..6 Colon :
+│   ├── 6..7 Whitespace  
+│   ├── 7..12 Str "set"
+│   ├── 12..13 RAngle >
+│   ├── 13..14 Whitespace  
+│   ├── 14..17 Def ::=
+│   ├── 17..18 Whitespace  
+│   ├── 18..20 Int 10
+│   ├── 20..21 Whitespace  
+│   ├── 21..22 LAngle <
+│   ├── 22..26 Id Atom
+│   ├── 26..27 Colon :
+│   ├── 27..28 Whitespace  
+│   ├── 28..33 Str "set"
+│   ├── 33..34 RAngle >
+│   ├── 34..35 Whitespace  
+│   ├── 35..38 Str "U"
+│   ├── 38..39 Whitespace  
+│   ├── 39..41 Re re
+│   ├── 41..42 LParen (
+│   ├── 42..50 Str "[a-z]+"
+│   ├── 50..51 RParen )
+│   ├── 51..52 Whitespace  
+│   ├── 52..53 LBrace {
+│   ├── 53..54 Int 1
+│   ├── 54..55 Comma ,
+│   ├── 55..56 Whitespace  
+│   ├── 56..57 Int 5
+│   ├── 57..58 RBrace }
+│   ├── 58..77 Whitespace                   
+│   ├── 77..78 Or |
+│   ├── 78..79 Whitespace  
+│   ├── 79..80 Int 2
+│   ├── 80..81 Whitespace  
+│   ├── 81..88 Str "empty"
+│   ├── 88..89 Whitespace  
+│   ├── 89..90 LBrace {
+│   ├── 90..91 Int 3
+│   ├── 91..92 Comma ,
+│   ├── 92..93 RBrace }
+│   ├── 93..112 Whitespace                   
 │   ├── 112..113 Or |
 │   ├── 113..114 Whitespace  
 │   ├── 114..115 LAngle <
@@ -64,30 +63,30 @@ document
 │   ├── 124..125 Semi ;
 │   └── 125..126 Whitespace
 ├── diagnostics
-│   ├── 021..021 Missing(Symbol)
-│   ├── 021..022 UnexpectedToken
-│   ├── 022..022 Missing(RuleTerminator)
-│   ├── 022..026 UnexpectedToken
-│   ├── 026..027 UnexpectedToken
-│   ├── 028..033 UnexpectedToken
-│   ├── 033..034 UnexpectedToken
-│   ├── 035..038 UnexpectedToken
-│   ├── 039..041 UnexpectedToken
-│   ├── 041..042 UnexpectedToken
-│   ├── 042..050 UnexpectedToken
-│   ├── 050..051 UnexpectedToken
-│   ├── 052..053 UnexpectedToken
-│   ├── 053..054 UnexpectedToken
-│   ├── 054..055 UnexpectedToken
-│   ├── 056..057 UnexpectedToken
-│   ├── 057..058 UnexpectedToken
-│   ├── 077..078 UnexpectedToken
-│   ├── 079..080 UnexpectedToken
-│   ├── 081..088 UnexpectedToken
-│   ├── 089..090 UnexpectedToken
-│   ├── 090..091 UnexpectedToken
-│   ├── 091..092 UnexpectedToken
-│   ├── 092..093 UnexpectedToken
+│   ├── 21..21 Missing(Symbol)
+│   ├── 21..22 UnexpectedToken
+│   ├── 22..22 Missing(RuleTerminator)
+│   ├── 22..26 UnexpectedToken
+│   ├── 26..27 UnexpectedToken
+│   ├── 28..33 UnexpectedToken
+│   ├── 33..34 UnexpectedToken
+│   ├── 35..38 UnexpectedToken
+│   ├── 39..41 UnexpectedToken
+│   ├── 41..42 UnexpectedToken
+│   ├── 42..50 UnexpectedToken
+│   ├── 50..51 UnexpectedToken
+│   ├── 52..53 UnexpectedToken
+│   ├── 53..54 UnexpectedToken
+│   ├── 54..55 UnexpectedToken
+│   ├── 56..57 UnexpectedToken
+│   ├── 57..58 UnexpectedToken
+│   ├── 77..78 UnexpectedToken
+│   ├── 79..80 UnexpectedToken
+│   ├── 81..88 UnexpectedToken
+│   ├── 89..90 UnexpectedToken
+│   ├── 90..91 UnexpectedToken
+│   ├── 91..92 UnexpectedToken
+│   ├── 92..93 UnexpectedToken
 │   ├── 112..113 UnexpectedToken
 │   ├── 121..121 Missing(Definition)
 │   ├── 121..121 Missing(RuleTerminator)
@@ -96,45 +95,45 @@ document
 │   ├── 123..124 UnexpectedToken
 │   └── 124..125 UnexpectedToken
 ├── recovery
-│   ├── 021..022 UnexpectedToken <
-│   ├── 022..026 UnexpectedToken Atom
-│   ├── 026..027 UnexpectedToken :
-│   ├── 028..033 UnexpectedToken "set"
-│   ├── 033..034 UnexpectedToken >
-│   ├── 035..038 UnexpectedToken "U"
-│   ├── 039..041 UnexpectedToken re
-│   ├── 041..042 UnexpectedToken (
-│   ├── 042..050 UnexpectedToken "[a-z]+"
-│   ├── 050..051 UnexpectedToken )
-│   ├── 052..053 UnexpectedToken {
-│   ├── 053..054 UnexpectedToken 1
-│   ├── 054..055 UnexpectedToken ,
-│   ├── 056..057 UnexpectedToken 5
-│   ├── 057..058 UnexpectedToken }
-│   ├── 077..078 UnexpectedToken |
-│   ├── 079..080 UnexpectedToken 2
-│   ├── 081..088 UnexpectedToken "empty"
-│   ├── 089..090 UnexpectedToken {
-│   ├── 090..091 UnexpectedToken 3
-│   ├── 091..092 UnexpectedToken ,
-│   ├── 092..093 UnexpectedToken }
+│   ├── 21..22 UnexpectedToken <
+│   ├── 22..26 UnexpectedToken Atom
+│   ├── 26..27 UnexpectedToken :
+│   ├── 28..33 UnexpectedToken "set"
+│   ├── 33..34 UnexpectedToken >
+│   ├── 35..38 UnexpectedToken "U"
+│   ├── 39..41 UnexpectedToken re
+│   ├── 41..42 UnexpectedToken (
+│   ├── 42..50 UnexpectedToken "[a-z]+"
+│   ├── 50..51 UnexpectedToken )
+│   ├── 52..53 UnexpectedToken {
+│   ├── 53..54 UnexpectedToken 1
+│   ├── 54..55 UnexpectedToken ,
+│   ├── 56..57 UnexpectedToken 5
+│   ├── 57..58 UnexpectedToken }
+│   ├── 77..78 UnexpectedToken |
+│   ├── 79..80 UnexpectedToken 2
+│   ├── 81..88 UnexpectedToken "empty"
+│   ├── 89..90 UnexpectedToken {
+│   ├── 90..91 UnexpectedToken 3
+│   ├── 91..92 UnexpectedToken ,
+│   ├── 92..93 UnexpectedToken }
 │   ├── 112..113 UnexpectedToken |
 │   ├── 121..122 UnexpectedToken {
 │   ├── 122..123 UnexpectedToken 4
 │   ├── 123..124 UnexpectedToken }
 │   └── 124..125 UnexpectedToken ;
 └── rules
-    ├── 000..022 Expr [partial, recovered]
-    │   ├── 000..013 lhs <Expr: "set">
-    │   │   ├── name 001..005 Expr
-    │   │   ├── type-separator 005..006
-    │   │   ├── type 007..012 "set"
-    │   │   └── closing 012..013
-    │   ├── definition 014..017
-    │   └── terminator <missing>
-    └── 114..120 Atom [partial]
-        ├── 114..120 lhs <Atom>
+    ├── 0..22 Expr partial recovered
+    │   ├── 0..13 lhs complete <Expr: "set">
+    │   │   ├── name 1..5 Expr
+    │   │   ├── type-separator 5..6
+    │   │   ├── 7..12 type complete "set"
+    │   │   └── closing 12..13
+    │   ├── definition 14..17
+    │   └── terminator missing
+    └── 114..120 Atom partial
+        ├── 114..120 lhs complete <Atom>
         │   ├── name 115..119 Atom
         │   └── closing 119..120
-        ├── definition <missing>
-        └── terminator <missing>
+        ├── definition missing
+        └── terminator missing

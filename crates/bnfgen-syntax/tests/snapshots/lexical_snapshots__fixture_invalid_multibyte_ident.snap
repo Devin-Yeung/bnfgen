@@ -1,33 +1,32 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <a> ::= "x" ü;
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..002 Id a
-│   ├── 002..003 RAngle >
-│   ├── 003..004 Whitespace  
-│   ├── 004..007 Def ::=
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Str "x"
-│   ├── 011..012 Whitespace  
-│   ├── 012..014 Invalid ü
-│   ├── 014..015 Semi ;
-│   └── 015..016 Whitespace
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Str "x"
+│   ├── 11..12 Whitespace  
+│   ├── 12..14 Invalid ü
+│   ├── 14..15 Semi ;
+│   └── 15..16 Whitespace
 ├── diagnostics
-│   └── 012..014 UnrecognizedInput
+│   └── 12..14 UnrecognizedInput
 ├── recovery
-│   └── 012..014 InvalidLexeme ü
+│   └── 12..14 InvalidLexeme ü
 └── rules
-    └── 000..015 a [complete, recovered]
-        ├── 000..003 lhs <a>
-        │   ├── name 001..002 a
-        │   └── closing 002..003
-        ├── definition 004..007
-        ├── alt 008..011 [complete]
-        │   └── 008..011 Terminal "x"
-        └── terminator 014..015
+    └── 0..15 a complete recovered
+        ├── 0..3 lhs complete <a>
+        │   ├── name 1..2 a
+        │   └── closing 2..3
+        ├── definition 4..7
+        ├── 8..11 alt complete
+        │   └── 8..11 Terminal complete "x"
+        └── terminator 14..15

@@ -1,30 +1,29 @@
 ---
 source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
-snapshot_kind: text
 ---
 <input>
 <entry> ::= "value
 </input>
 document
 ├── tokens
-│   ├── 000..001 LAngle <
-│   ├── 001..006 Id entry
-│   ├── 006..007 RAngle >
-│   ├── 007..008 Whitespace  
-│   ├── 008..011 Def ::=
-│   ├── 011..012 Whitespace  
-│   └── 012..019 UnterminatedStr
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id entry
+│   ├── 6..7 RAngle >
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   └── 12..19 UnterminatedStr "value
 ├── diagnostics
-│   ├── 012..019 UnterminatedString
-│   └── 019..019 Missing(RuleTerminator)
+│   ├── 12..19 UnterminatedString
+│   └── 19..19 Missing(RuleTerminator)
 ├── recovery
-│   └── 012..019 UnterminatedString
+│   └── 12..19 UnterminatedString "value
 └── rules
-    └── 000..019 entry [partial, recovered]
-        ├── 000..007 lhs <entry>
-        │   ├── name 001..006 entry
-        │   └── closing 006..007
-        ├── definition 008..011
-        ├── alt 012..019 [partial, recovered]
-        │   └── 012..019 Terminal <unterminated>
-        └── terminator <missing>
+    └── 0..19 entry partial recovered
+        ├── 0..7 lhs complete <entry>
+        │   ├── name 1..6 entry
+        │   └── closing 6..7
+        ├── definition 8..11
+        ├── 12..19 alt partial recovered
+        │   └── 12..19 Terminal unterminated "value
+        └── terminator missing
