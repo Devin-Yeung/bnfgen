@@ -41,7 +41,7 @@ pub enum Token {
     #[regex(r"[a-zA-Z-_0-9]+", priority = 1, callback = |lex| lex.slice().to_string())]
     Id(String),
     #[rustfmt::skip]
-    #[regex(r#""(\\["nrt\\]|[^"\\])*""#, callback = |lex| {
+    #[regex(r#""(\\["nrt\\]|[^"\\\r\n])*""#, callback = |lex| {
         let text = &lex.slice()[1..lex.slice().len() - 1];
         text.replace("\\\"", "\"")
             .replace("\\n", "\n")
