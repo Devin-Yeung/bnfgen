@@ -1,0 +1,11 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+</input>
+document
+├── tokens
+├── diagnostics
+├── recovery
+└── rules

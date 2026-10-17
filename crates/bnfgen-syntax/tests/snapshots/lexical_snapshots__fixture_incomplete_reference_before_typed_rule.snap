@@ -1,0 +1,56 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<broken> ::= <target;
+<good: "ty"> ::= "ok";
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 RAngle >
+│   ├── 8..9 Whitespace  
+│   ├── 9..12 Def ::=
+│   ├── 12..13 Whitespace  
+│   ├── 13..14 LAngle <
+│   ├── 14..20 Id target
+│   ├── 20..21 Semi ;
+│   ├── 21..22 Whitespace
+│   ├── 22..23 LAngle <
+│   ├── 23..27 Id good
+│   ├── 27..28 Colon :
+│   ├── 28..29 Whitespace  
+│   ├── 29..33 Str "ty"
+│   ├── 33..34 RAngle >
+│   ├── 34..35 Whitespace  
+│   ├── 35..38 Def ::=
+│   ├── 38..39 Whitespace  
+│   ├── 39..43 Str "ok"
+│   ├── 43..44 Semi ;
+│   └── 44..45 Whitespace
+├── diagnostics
+│   └── 20..20 Missing(NonTerminalClosingDelimiter)
+├── recovery
+└── rules
+    ├── 0..21 broken
+    │   ├── 0..8 lhs <broken>
+    │   │   ├── name 1..7 broken
+    │   │   └── closing 7..8
+    │   ├── definition 9..12
+    │   ├── 13..20 alt
+    │   │   └── 13..20 NonTerminal <target
+    │   │       ├── name 14..20 target
+    │   │       └── closing missing
+    │   └── terminator 20..21
+    └── 22..44 good
+        ├── 22..34 lhs <good: "ty">
+        │   ├── name 23..27 good
+        │   ├── type-separator 27..28
+        │   ├── 29..33 type "ty"
+        │   └── closing 33..34
+        ├── definition 35..38
+        ├── 39..43 alt
+        │   └── 39..43 Terminal "ok"
+        └── terminator 43..44

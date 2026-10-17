@@ -1,0 +1,47 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<broken ::= "bad";
+<good> ::= "ok";
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..7 Id broken
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..17 Str "bad"
+│   ├── 17..18 Semi ;
+│   ├── 18..19 Whitespace
+│   ├── 19..20 LAngle <
+│   ├── 20..24 Id good
+│   ├── 24..25 RAngle >
+│   ├── 25..26 Whitespace  
+│   ├── 26..29 Def ::=
+│   ├── 29..30 Whitespace  
+│   ├── 30..34 Str "ok"
+│   ├── 34..35 Semi ;
+│   └── 35..36 Whitespace
+├── diagnostics
+│   └── 7..7 Missing(NonTerminalClosingDelimiter)
+├── recovery
+└── rules
+    ├── 0..18 broken
+    │   ├── 0..7 lhs <broken
+    │   │   ├── name 1..7 broken
+    │   │   └── closing missing
+    │   ├── definition 8..11
+    │   ├── 12..17 alt
+    │   │   └── 12..17 Terminal "bad"
+    │   └── terminator 17..18
+    └── 19..35 good
+        ├── 19..25 lhs <good>
+        │   ├── name 20..24 good
+        │   └── closing 24..25
+        ├── definition 26..29
+        ├── 30..34 alt
+        │   └── 30..34 Terminal "ok"
+        └── terminator 34..35

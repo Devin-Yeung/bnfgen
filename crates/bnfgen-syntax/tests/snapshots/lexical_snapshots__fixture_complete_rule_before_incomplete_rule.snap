@@ -1,0 +1,51 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<first> ::= "ok";
+<second> ::= <target
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id first
+│   ├── 6..7 RAngle >
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..16 Str "ok"
+│   ├── 16..17 Semi ;
+│   ├── 17..18 Whitespace
+│   ├── 18..19 LAngle <
+│   ├── 19..25 Id second
+│   ├── 25..26 RAngle >
+│   ├── 26..27 Whitespace  
+│   ├── 27..30 Def ::=
+│   ├── 30..31 Whitespace  
+│   ├── 31..32 LAngle <
+│   ├── 32..38 Id target
+│   └── 38..39 Whitespace
+├── diagnostics
+│   ├── 38..38 Missing(NonTerminalClosingDelimiter)
+│   └── 38..38 Missing(RuleTerminator)
+├── recovery
+└── rules
+    ├── 0..17 first
+    │   ├── 0..7 lhs <first>
+    │   │   ├── name 1..6 first
+    │   │   └── closing 6..7
+    │   ├── definition 8..11
+    │   ├── 12..16 alt
+    │   │   └── 12..16 Terminal "ok"
+    │   └── terminator 16..17
+    └── 18..38 second
+        ├── 18..26 lhs <second>
+        │   ├── name 19..25 second
+        │   └── closing 25..26
+        ├── definition 27..30
+        ├── 31..38 alt
+        │   └── 31..38 NonTerminal <target
+        │       ├── name 32..38 target
+        │       └── closing missing
+        └── terminator missing

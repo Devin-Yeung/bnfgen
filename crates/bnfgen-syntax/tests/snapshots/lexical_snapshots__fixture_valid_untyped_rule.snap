@@ -1,0 +1,42 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<greeting> ::= "hello" <name> | "bye";
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..9 Id greeting
+│   ├── 9..10 RAngle >
+│   ├── 10..11 Whitespace  
+│   ├── 11..14 Def ::=
+│   ├── 14..15 Whitespace  
+│   ├── 15..22 Str "hello"
+│   ├── 22..23 Whitespace  
+│   ├── 23..24 LAngle <
+│   ├── 24..28 Id name
+│   ├── 28..29 RAngle >
+│   ├── 29..30 Whitespace  
+│   ├── 30..31 Or |
+│   ├── 31..32 Whitespace  
+│   ├── 32..37 Str "bye"
+│   ├── 37..38 Semi ;
+│   └── 38..39 Whitespace
+├── diagnostics
+├── recovery
+└── rules
+    └── 0..38 greeting
+        ├── 0..10 lhs <greeting>
+        │   ├── name 1..9 greeting
+        │   └── closing 9..10
+        ├── definition 11..14
+        ├── 15..29 alt
+        │   ├── 15..22 Terminal "hello"
+        │   └── 23..29 NonTerminal <name>
+        │       ├── name 24..28 name
+        │       └── closing 28..29
+        ├── 32..37 alt
+        │   └── 32..37 Terminal "bye"
+        └── terminator 37..38

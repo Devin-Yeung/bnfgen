@@ -1,0 +1,32 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<a> ::= 18446744073709551616 "x";
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..28 Int 18446744073709551616
+│   ├── 28..29 Whitespace  
+│   ├── 29..32 Str "x"
+│   ├── 32..33 Semi ;
+│   └── 33..34 Whitespace
+├── diagnostics
+├── recovery
+└── rules
+    └── 0..33 a
+        ├── 0..3 lhs <a>
+        │   ├── name 1..2 a
+        │   └── closing 2..3
+        ├── definition 4..7
+        ├── 8..32 alt
+        │   ├── 8..28 weight 18446744073709551616
+        │   └── 29..32 Terminal "x"
+        └── terminator 32..33

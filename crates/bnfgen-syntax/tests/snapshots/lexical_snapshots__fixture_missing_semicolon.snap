@@ -1,0 +1,27 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<greeting> ::= "hello"</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..9 Id greeting
+│   ├── 9..10 RAngle >
+│   ├── 10..11 Whitespace  
+│   ├── 11..14 Def ::=
+│   ├── 14..15 Whitespace  
+│   └── 15..22 Str "hello"
+├── diagnostics
+│   └── 22..22 Missing(RuleTerminator)
+├── recovery
+└── rules
+    └── 0..22 greeting
+        ├── 0..10 lhs <greeting>
+        │   ├── name 1..9 greeting
+        │   └── closing 9..10
+        ├── definition 11..14
+        ├── 15..22 alt
+        │   └── 15..22 Terminal "hello"
+        └── terminator missing

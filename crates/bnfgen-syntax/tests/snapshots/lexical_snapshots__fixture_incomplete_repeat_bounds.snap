@@ -1,0 +1,36 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<entry> ::= "value" {
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..6 Id entry
+│   ├── 6..7 RAngle >
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Def ::=
+│   ├── 11..12 Whitespace  
+│   ├── 12..19 Str "value"
+│   ├── 19..20 Whitespace  
+│   ├── 20..21 LBrace {
+│   └── 21..22 Whitespace
+├── diagnostics
+│   ├── 21..21 Missing(RepeatLowerBound)
+│   ├── 21..21 Missing(RepeatClosingDelimiter)
+│   └── 21..21 Missing(RuleTerminator)
+├── recovery
+└── rules
+    └── 0..21 entry
+        ├── 0..7 lhs <entry>
+        │   ├── name 1..6 entry
+        │   └── closing 6..7
+        ├── definition 8..11
+        ├── 12..21 alt
+        │   ├── 12..19 Terminal "value"
+        │   └── 20..21 repeat {
+        │       ├── lower missing
+        │       └── closing missing
+        └── terminator missing

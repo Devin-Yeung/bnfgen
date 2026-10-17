@@ -1,0 +1,41 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<a> ::= "bad \x escape";
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..14 UnterminatedStr "bad \
+│   ├── 14..15 Id x
+│   ├── 15..16 Whitespace  
+│   ├── 16..22 Id escape
+│   ├── 22..24 UnterminatedStr ";
+│   └── 24..25 Whitespace
+├── diagnostics
+│   ├── 8..14 UnterminatedString
+│   ├── 14..15 UnexpectedToken
+│   ├── 16..22 UnexpectedToken
+│   ├── 22..24 UnterminatedString
+│   └── 24..24 Missing(RuleTerminator)
+├── recovery
+│   ├── 8..14 UnterminatedString "bad \
+│   ├── 14..15 UnexpectedToken x
+│   ├── 16..22 UnexpectedToken escape
+│   └── 22..24 UnterminatedString ";
+└── rules
+    └── 0..24 a
+        ├── 0..3 lhs <a>
+        │   ├── name 1..2 a
+        │   └── closing 2..3
+        ├── definition 4..7
+        ├── 8..14 alt
+        │   └── 8..14 Terminal unterminated "bad \
+        └── terminator missing

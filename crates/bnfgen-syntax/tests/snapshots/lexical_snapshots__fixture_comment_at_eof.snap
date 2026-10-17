@@ -1,0 +1,29 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<a> ::= "x"; // trailing note</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Str "x"
+│   ├── 11..12 Semi ;
+│   ├── 12..13 Whitespace  
+│   └── 13..29 Comment // trailing note
+├── diagnostics
+├── recovery
+└── rules
+    └── 0..12 a
+        ├── 0..3 lhs <a>
+        │   ├── name 1..2 a
+        │   └── closing 2..3
+        ├── definition 4..7
+        ├── 8..11 alt
+        │   └── 8..11 Terminal "x"
+        └── terminator 11..12

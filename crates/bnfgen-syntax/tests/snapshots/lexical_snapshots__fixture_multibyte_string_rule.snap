@@ -1,0 +1,29 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<a> ::= "héllo wörld";
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..23 Str "héllo wörld"
+│   ├── 23..24 Semi ;
+│   └── 24..25 Whitespace
+├── diagnostics
+├── recovery
+└── rules
+    └── 0..24 a
+        ├── 0..3 lhs <a>
+        │   ├── name 1..2 a
+        │   └── closing 2..3
+        ├── definition 4..7
+        ├── 8..23 alt
+        │   └── 8..23 Terminal "héllo wörld"
+        └── terminator 23..24

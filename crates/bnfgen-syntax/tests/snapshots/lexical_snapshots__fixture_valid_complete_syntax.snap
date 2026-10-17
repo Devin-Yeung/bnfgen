@@ -1,0 +1,107 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<Expr: "set"> ::= 10 <Atom: "set"> "U" re("[a-z]+") {1, 5}
+                  | 2 "empty" {3,}
+                  | <Atom> {4};
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..5 Id Expr
+│   ├── 5..6 Colon :
+│   ├── 6..7 Whitespace  
+│   ├── 7..12 Str "set"
+│   ├── 12..13 RAngle >
+│   ├── 13..14 Whitespace  
+│   ├── 14..17 Def ::=
+│   ├── 17..18 Whitespace  
+│   ├── 18..20 Int 10
+│   ├── 20..21 Whitespace  
+│   ├── 21..22 LAngle <
+│   ├── 22..26 Id Atom
+│   ├── 26..27 Colon :
+│   ├── 27..28 Whitespace  
+│   ├── 28..33 Str "set"
+│   ├── 33..34 RAngle >
+│   ├── 34..35 Whitespace  
+│   ├── 35..38 Str "U"
+│   ├── 38..39 Whitespace  
+│   ├── 39..41 Re re
+│   ├── 41..42 LParen (
+│   ├── 42..50 Str "[a-z]+"
+│   ├── 50..51 RParen )
+│   ├── 51..52 Whitespace  
+│   ├── 52..53 LBrace {
+│   ├── 53..54 Int 1
+│   ├── 54..55 Comma ,
+│   ├── 55..56 Whitespace  
+│   ├── 56..57 Int 5
+│   ├── 57..58 RBrace }
+│   ├── 58..77 Whitespace                   
+│   ├── 77..78 Or |
+│   ├── 78..79 Whitespace  
+│   ├── 79..80 Int 2
+│   ├── 80..81 Whitespace  
+│   ├── 81..88 Str "empty"
+│   ├── 88..89 Whitespace  
+│   ├── 89..90 LBrace {
+│   ├── 90..91 Int 3
+│   ├── 91..92 Comma ,
+│   ├── 92..93 RBrace }
+│   ├── 93..112 Whitespace                   
+│   ├── 112..113 Or |
+│   ├── 113..114 Whitespace  
+│   ├── 114..115 LAngle <
+│   ├── 115..119 Id Atom
+│   ├── 119..120 RAngle >
+│   ├── 120..121 Whitespace  
+│   ├── 121..122 LBrace {
+│   ├── 122..123 Int 4
+│   ├── 123..124 RBrace }
+│   ├── 124..125 Semi ;
+│   └── 125..126 Whitespace
+├── diagnostics
+├── recovery
+└── rules
+    └── 0..125 Expr
+        ├── 0..13 lhs <Expr: "set">
+        │   ├── name 1..5 Expr
+        │   ├── type-separator 5..6
+        │   ├── 7..12 type "set"
+        │   └── closing 12..13
+        ├── definition 14..17
+        ├── 18..58 alt
+        │   ├── 18..20 weight 10
+        │   ├── 21..34 NonTerminal <Atom: "set">
+        │   │   ├── name 22..26 Atom
+        │   │   ├── type-separator 26..27
+        │   │   ├── 28..33 type "set"
+        │   │   └── closing 33..34
+        │   ├── 35..38 Terminal "U"
+        │   ├── 39..51 Regex re("[a-z]+")
+        │   │   ├── opening 41..42
+        │   │   ├── 42..50 pattern "[a-z]+"
+        │   │   └── closing 50..51
+        │   └── 52..58 repeat {1, 5}
+        │       ├── 53..54 lower 1
+        │       ├── comma 54..55
+        │       ├── 56..57 upper 5
+        │       └── closing 57..58
+        ├── 79..93 alt
+        │   ├── 79..80 weight 2
+        │   ├── 81..88 Terminal "empty"
+        │   └── 89..93 repeat {3,}
+        │       ├── 90..91 lower 3
+        │       ├── comma 91..92
+        │       └── closing 92..93
+        ├── 114..124 alt
+        │   ├── 114..120 NonTerminal <Atom>
+        │   │   ├── name 115..119 Atom
+        │   │   └── closing 119..120
+        │   └── 121..124 repeat {4}
+        │       ├── 122..123 lower 4
+        │       └── closing 123..124
+        └── terminator 124..125

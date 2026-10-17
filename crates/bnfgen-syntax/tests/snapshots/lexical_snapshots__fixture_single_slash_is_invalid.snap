@@ -1,0 +1,50 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+snapshot_kind: text
+---
+<input>
+<a> ::= "x"; / <b> ::= "y";
+</input>
+document
+├── tokens
+│   ├── 0..1 LAngle <
+│   ├── 1..2 Id a
+│   ├── 2..3 RAngle >
+│   ├── 3..4 Whitespace  
+│   ├── 4..7 Def ::=
+│   ├── 7..8 Whitespace  
+│   ├── 8..11 Str "x"
+│   ├── 11..12 Semi ;
+│   ├── 12..13 Whitespace  
+│   ├── 13..14 Invalid /
+│   ├── 14..15 Whitespace  
+│   ├── 15..16 LAngle <
+│   ├── 16..17 Id b
+│   ├── 17..18 RAngle >
+│   ├── 18..19 Whitespace  
+│   ├── 19..22 Def ::=
+│   ├── 22..23 Whitespace  
+│   ├── 23..26 Str "y"
+│   ├── 26..27 Semi ;
+│   └── 27..28 Whitespace
+├── diagnostics
+│   └── 13..14 UnrecognizedInput
+├── recovery
+│   └── 13..14 InvalidLexeme /
+└── rules
+    ├── 0..12 a
+    │   ├── 0..3 lhs <a>
+    │   │   ├── name 1..2 a
+    │   │   └── closing 2..3
+    │   ├── definition 4..7
+    │   ├── 8..11 alt
+    │   │   └── 8..11 Terminal "x"
+    │   └── terminator 11..12
+    └── 15..27 b
+        ├── 15..18 lhs <b>
+        │   ├── name 16..17 b
+        │   └── closing 17..18
+        ├── definition 19..22
+        ├── 23..26 alt
+        │   └── 23..26 Terminal "y"
+        └── terminator 26..27

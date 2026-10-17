@@ -1,0 +1,22 @@
+---
+source: crates/bnfgen-syntax/tests/lexical_snapshots.rs
+---
+<input>
+re "[a-z]+";
+</input>
+document
+├── tokens
+│   ├── 0..2 Re re
+│   ├── 2..3 Whitespace  
+│   ├── 3..11 Str "[a-z]+"
+│   ├── 11..12 Semi ;
+│   └── 12..13 Whitespace
+├── diagnostics
+│   ├── 0..2 UnexpectedToken
+│   ├── 3..11 UnexpectedToken
+│   └── 11..12 UnexpectedToken
+├── recovery
+│   ├── 0..2 UnexpectedToken re
+│   ├── 3..11 UnexpectedToken "[a-z]+"
+│   └── 11..12 UnexpectedToken ;
+└── rules
