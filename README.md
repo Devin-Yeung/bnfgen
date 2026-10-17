@@ -26,6 +26,9 @@
 
 [deepwiki-url]: https://deepwiki.com/Devin-Yeung/bnfgen
 
+> [!WARNING]
+> This project is in active refactoring, stay tuned for the new version!
+
 Bnfgen is a general purposed BNF grammar based random string generator ⚙️,
 with a powerful grammar extension to make it more 🪑 ergonomic to use.
 
@@ -34,9 +37,9 @@ with a powerful grammar extension to make it more 🪑 ergonomic to use.
 - Generation of complex `token` is hard to maintain, e.g. numbers, variable
 
 ```text
-<letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" 
-           | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" 
-           | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" 
+<letter> ::= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M"
+           | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+           | "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m"
            | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" ;
 ```
 
@@ -101,7 +104,7 @@ Currently, we support the following semantic analysis:
 - [x] Duplicated rule detection
 - [x] Unreachable rule detection
 - [x] Dead loop detection (which avoid the possible infinite loop in the generation)
-- [ ] Invoke limit not enough detection 
+- [ ] Invoke limit not enough detection
 
 We believe that an informative error message is the key to make the tool more __ergonomic__ to use.
 
